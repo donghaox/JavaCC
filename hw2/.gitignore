@@ -1,1 +1,5 @@
 /bin/
+#ignore project and classpath file and ds_store
+.project
+.classpath
+.DS_Store
