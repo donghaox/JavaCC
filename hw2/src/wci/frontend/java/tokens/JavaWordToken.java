@@ -6,12 +6,7 @@ import wci.frontend.pascal.*;
 import static wci.frontend.pascal.PascalTokenType.*;
 
 /**
- * <h1>PascalWordToken</h1>
- *
- * <p> Pascal word tokens (identifiers and reserved words).</p>
- *
- * <p>Copyright (c) 2009 by Ronald Mak</p>
- * <p>For instructional purposes only.  No warranties.</p>
+ * author hai
  */
 public class JavaWordToken extends PascalToken
 {
@@ -27,7 +22,7 @@ public class JavaWordToken extends PascalToken
     }
 
     /**
-     * Extract a Pascal word token from the source.
+     * Extract a Java word token from the source.
      * @throws Exception if an error occurred.
      */
     protected void extract()
@@ -46,8 +41,8 @@ public class JavaWordToken extends PascalToken
         text = textBuffer.toString();
 
         // Is it a reserved word or an identifier?
-        type = (RESERVED_WORDS.contains(text.toLowerCase()))
-               ? PascalTokenType.valueOf(text.toUpperCase())  // reserved word
-               : IDENTIFIER;                                  // identifier
+        type = (RESERVED_WORDS.contains(text))
+               ? PascalTokenType.valueOf(text)  // reserved word
+               : IDENTIFIER;                    // identifier
     }
 }
