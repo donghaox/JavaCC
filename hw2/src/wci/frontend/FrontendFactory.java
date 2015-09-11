@@ -31,6 +31,14 @@ public class FrontendFactory
             Scanner scanner = new PascalScanner(source);
             return new PascalParserTD(scanner);
         }
+        
+        else if(!language.equalsIgnoreCase("Java") &&
+        		type.equalsIgnoreCase("top-down"))
+        {
+        	//Scanner scanner = new JavaScanner(source);
+        	//return new JavaParserTD(scanner);
+        	return null;
+        }
         else if (!language.equalsIgnoreCase("Pascal")) {
             throw new Exception("Parser factory: Invalid language '" +
                                 language + "'");
