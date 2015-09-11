@@ -1,6 +1,7 @@
 package wci.frontend.java;
 
 import wci.frontend.*;
+import wci.frontend.java.tokens.JavaCharacterToken;
 import wci.frontend.java.tokens.JavaErrorToken;
 import wci.frontend.java.tokens.JavaNumberToken;
 import wci.frontend.java.tokens.JavaSpecialSymbolToken;
@@ -44,13 +45,16 @@ public class JavaScanner extends Scanner
             token = new EofToken(source);
         }
         else if (Character.isLetter(currentChar)) {
-            token = new JavaWordToken(source);
+            token = new JavaCharacterToken(source);
         }
         else if (Character.isDigit(currentChar)) {
             token = new JavaNumberToken(source);
         }
-        else if (currentChar == '\'') {
+        else if (currentChar == '\"') {
             token = new JavaStringToken(source);
+        }
+        else if (currentChar == '\''){
+        	token = new JavaCharacterToken(source);
         }
         else if (JavaTokenType.SPECIAL_SYMBOLS
                  .containsKey(Character.toString(currentChar))) {
