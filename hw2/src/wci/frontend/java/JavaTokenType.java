@@ -11,24 +11,24 @@ import wci.frontend.TokenType;
 public enum JavaTokenType implements TokenType
 {
     // Reserved words.
-    AND, ARRAY, BEGIN, CASE, CONST, DIV, DO, DOWNTO, ELSE, END,
-    FILE, FOR, FUNCTION, GOTO, IF, IN, LABEL, MOD, NIL, NOT,
-    OF, OR, PACKED, PROCEDURE, PROGRAM, RECORD, REPEAT, SET,
-    THEN, TO, TYPE, UNTIL, VAR, WHILE, WITH,
+	ABSTRACT, BREAK, CASE, CHAR, CLASS, CONST, CONTINUE, DO, DOUBLE,
+    ELSE, ENUM, EXTENDS, FLOAT, FOR, GOTO, IF, INT, LONG, NATIVE,
+    RETURN, SHORT, PACKAGE, PROTECTED, STATIC, SWITCH, SUPER,
+    THIS, THROW, VOID, VOLATILE, WHILE,
 
     // Special symbols.
-    PLUS("+"), MINUS("-"), STAR("*"), SLASH("/"), COLON_EQUALS(":="),
-    DOT("."), COMMA(","), SEMICOLON(";"), COLON(":"), QUOTE("'"),
-    EQUALS("="), NOT_EQUALS("<>"), LESS_THAN("<"), LESS_EQUALS("<="),
-    GREATER_EQUALS(">="), GREATER_THAN(">"), LEFT_PAREN("("), RIGHT_PAREN(")"),
+    TILT("~"), PIPE("|"), SINGLE_QUOTE("'"), DOUBLE_PLUS("++"), EQUAL_EQUAL("=="),
+    DOUBLE_SLASH("//"), EXCLAIM("!"), SLASH("/"), DOUBLE_QUOTE("\""), MINUS_MINUS("--"),
+    PIPE_EQUAL("|="), SLASH_STAR("/*"), AT("@"), COLON(":"), LEFT_PAREN("("),
+    LESS_LESS("<<"), PERCENT_EQUAL("%="), STAR_SLASH("*/"), RIGHT_PAREN(")"),
     LEFT_BRACKET("["), RIGHT_BRACKET("]"), LEFT_BRACE("{"), RIGHT_BRACE("}"),
     UP_ARROW("^"), DOT_DOT(".."),
 
     IDENTIFIER, INTEGER, REAL, STRING,
     ERROR, END_OF_FILE;
 
-    private static final int FIRST_RESERVED_INDEX = AND.ordinal();
-    private static final int LAST_RESERVED_INDEX  = WITH.ordinal();
+    private static final int FIRST_RESERVED_INDEX = ABSTRACT.ordinal();
+    private static final int LAST_RESERVED_INDEX  = WHILE.ordinal();
 
     private static final int FIRST_SPECIAL_INDEX = PLUS.ordinal();
     private static final int LAST_SPECIAL_INDEX  = DOT_DOT.ordinal();
