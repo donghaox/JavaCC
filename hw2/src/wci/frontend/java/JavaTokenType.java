@@ -20,9 +20,13 @@ public enum JavaTokenType implements TokenType
     TILT("~"), PIPE("|"), SINGLE_QUOTE("'"), DOUBLE_PLUS("++"), EQUAL_EQUAL("=="),
     DOUBLE_SLASH("//"), EXCLAIM("!"), SLASH("/"), DOUBLE_QUOTE("\""), MINUS_MINUS("--"),
     PIPE_EQUAL("|="), SLASH_STAR("/*"), AT("@"), COLON(":"), LEFT_PAREN("("),
-    LESS_LESS("<<"), PERCENT_EQUAL("%="), STAR_SLASH("*/"), RIGHT_PAREN(")"),
-    LEFT_BRACKET("["), RIGHT_BRACKET("]"), LEFT_BRACE("{"), RIGHT_BRACE("}"),
-    UP_ARROW("^"), DOT_DOT(".."),
+    LESS_LESS("<<"), PERCENT_EQUAL("%="), STAR_SLASH("*/"), PERCENT("%"),SEMI_COLON(";"),
+    RIGHT_PAREN(")"), MORE_MORE(">>"), AND_EQUAL("&="), UP_ARROW("^"), QUESTION_MARK("?"),
+    LEFT_BRACKET("["), LESS_EQUAL("<="), UP_EQUAL("^="), AND_SYM("&"), LESS("<"), 
+    RIGHT_BRACKET("]"), MORE_EQUAL(">="), EXCLAIM_EQUAL("!="), STAR("*"), MORE(">"), 
+    LEFT_CURLY_BRACKET("{"), PLUS_EQUAL("+="), LESS_LESS_EQUAL("<<="), MINUS("-"), DOT("."),
+    RIGHT_CURLY_BRACKET("}"), MINUS_EQUAL("-="), MORE_MORE_EQUAL(">>="), PLUS("+"), TILT_QUOTE("`"),
+    STAR_EQUAL("*="), PIPE_PIPE("||"), EQUAL("="), SLASH_EQUAL("/="), AND_AND("&&"),
 
     IDENTIFIER, INTEGER, REAL, STRING,
     ERROR, END_OF_FILE;
@@ -30,8 +34,8 @@ public enum JavaTokenType implements TokenType
     private static final int FIRST_RESERVED_INDEX = ABSTRACT.ordinal();
     private static final int LAST_RESERVED_INDEX  = WHILE.ordinal();
 
-    private static final int FIRST_SPECIAL_INDEX = PLUS.ordinal();
-    private static final int LAST_SPECIAL_INDEX  = DOT_DOT.ordinal();
+    private static final int FIRST_SPECIAL_INDEX = TILT.ordinal();
+    private static final int LAST_SPECIAL_INDEX  = AND_AND.ordinal();
 
     private String text;  // token text
 
