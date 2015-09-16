@@ -1,5 +1,7 @@
 package wci.frontend;
 
+import wci.frontend.java.JavaParserTD;
+import wci.frontend.java.JavaScanner;
 import wci.frontend.pascal.PascalParserTD;
 import wci.frontend.pascal.PascalScanner;
 
@@ -32,12 +34,11 @@ public class FrontendFactory
             return new PascalParserTD(scanner);
         }
         
-        else if(!language.equalsIgnoreCase("Java") &&
+        else if(language.equalsIgnoreCase("Java") &&
         		type.equalsIgnoreCase("top-down"))
         {
-        	//Scanner scanner = new JavaScanner(source);
-        	//return new JavaParserTD(scanner);
-        	return null;
+        	Scanner scanner = new JavaScanner(source);
+        	return new JavaParserTD(scanner);
         }
         else if (!language.equalsIgnoreCase("Pascal")) {
             throw new Exception("Parser factory: Invalid language '" +
