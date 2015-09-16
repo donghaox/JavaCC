@@ -40,7 +40,7 @@ public class Java
             source = new Source(new BufferedReader(new FileReader(filePath)));
             source.addMessageListener(new SourceMessageListener());
 
-            parser = FrontendFactory.createParser("Pascal", "top-down", source);
+            parser = FrontendFactory.createParser("Java", "top-down", source);
             parser.addMessageListener(new ParserMessageListener());
 
             backend = BackendFactory.createBackend(operation);
@@ -119,7 +119,6 @@ public class Java
             Object body[] = (Object []) message.getBody();
 
             switch (type) {
-
                 case SOURCE_LINE: {
                     int lineNumber = (Integer) body[0];
                     String lineText = (String) body[1];
