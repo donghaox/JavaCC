@@ -7,10 +7,8 @@ import wci.frontend.java.tokens.JavaNumberToken;
 import wci.frontend.java.tokens.JavaSpecialSymbolToken;
 import wci.frontend.java.tokens.JavaStringToken;
 import wci.frontend.java.tokens.JavaWordToken;
-import wci.frontend.pascal.tokens.*;
 import static wci.frontend.Source.EOF;
-import static wci.frontend.pascal.PascalTokenType.*;
-import static wci.frontend.pascal.PascalErrorCode.*;
+import static wci.frontend.java.JavaErrorCode.INVALID_CHARACTER;
 
 /*
  * author hai 
@@ -45,7 +43,7 @@ public class JavaScanner extends Scanner
 			token = new EofToken(source);
 		}
 		else if (Character.isLetter(currentChar)) {
-			token = new JavaCharacterToken(source);
+			token = new JavaWordToken(source);
 		}
 		else if (Character.isDigit(currentChar)) {
 			token = new JavaNumberToken(source);
