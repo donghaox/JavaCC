@@ -70,7 +70,7 @@ public enum JavaTokenType implements TokenType
     static {
     	JavaTokenType values[] = JavaTokenType.values();
         for (int i = FIRST_RESERVED_INDEX; i <= LAST_RESERVED_INDEX; ++i) {
-            RESERVED_WORDS.add(values[i].getText());
+            RESERVED_WORDS.add(values[i].getText().toLowerCase());
         }
     }
 
