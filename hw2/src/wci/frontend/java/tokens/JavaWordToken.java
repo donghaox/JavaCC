@@ -1,14 +1,14 @@
 package wci.frontend.java.tokens;
 
 import wci.frontend.*;
-import wci.frontend.pascal.*;
+import wci.frontend.java.*;
 
-import static wci.frontend.pascal.PascalTokenType.*;
+import static wci.frontend.java.JavaTokenType.*;
 
 /**
  * author hai
  */
-public class JavaWordToken extends PascalToken
+public class JavaWordToken extends JavaToken
 {
     /**
      * Constructor.
@@ -39,10 +39,9 @@ public class JavaWordToken extends PascalToken
         }
 
         text = textBuffer.toString();
-
         // Is it a reserved word or an identifier?
         type = (RESERVED_WORDS.contains(text))
-               ? PascalTokenType.valueOf(text)  // reserved word
+               ? JavaTokenType.valueOf(text.toUpperCase())  // reserved word
                : IDENTIFIER;                    // identifier
     }
 }
