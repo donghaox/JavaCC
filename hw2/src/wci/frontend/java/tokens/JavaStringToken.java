@@ -44,21 +44,29 @@ public class JavaStringToken extends PascalToken
                 currentChar = ' ';
             }
 
-            if ((currentChar != '\'') && (currentChar != EOF)) {
+            if(currentChar == '\\'){
+            	char nextChar = nextChar();
+            	textBuffer.append(currentChar);
+        		textBuffer.append(nextChar);
+            	if(nextChar == 't'){
+            		valueBuffer.append("\t");    		
+            	}
+            	else if(nextChar == 'n'){
+            		valueBuffer.append("\n");
+            	}
+            	else{
+            		valueBuffer.append(currentChar);
+            		valueBuffer.append(nextChar);
+            	}
+            	currentChar = nextChar();
+           
+            }
+            else if (currentChar != EOF && currentChar != '\"') {
                 textBuffer.append(currentChar);
                 valueBuffer.append(currentChar);
                 currentChar = nextChar();  // consume character
             }
-
-            // Quote?  Each pair of adjacent quotes represents a single-quote.
-            if (currentChar == '\'') {
-                while ((currentChar == '\'') && (peekChar() == '\'')) {
-                    textBuffer.append("''");
-                    valueBuffer.append(currentChar); // append single-quote
-                    currentChar = nextChar();        // consume pair of quotes
-                    currentChar = nextChar();
-                }
-            }
+            
         } while ((currentChar != '\"') && (currentChar != EOF));
 
         if (currentChar == '\"') {
