@@ -1,14 +1,14 @@
 package wci.frontend.java.tokens;
 
 import wci.frontend.*;
-import wci.frontend.pascal.*;
+import wci.frontend.java.*;
 
-import static wci.frontend.pascal.PascalTokenType.*;
+import static wci.frontend.java.JavaTokenType.*;
 
 /**
  * author hai
  */
-public class JavaCharacterToken extends PascalToken
+public class JavaCharacterToken extends JavaToken
 {
     /**
      * Constructor.
@@ -30,19 +30,42 @@ public class JavaCharacterToken extends PascalToken
     {
         StringBuilder textBuffer = new StringBuilder();
         char currentChar = currentChar();
-
-        // Get the word characters (letter or digit).  The scanner has
-        // already determined that the first character is a letter.
-        while (Character.isLetterOrDigit(currentChar)) {
-            textBuffer.append(currentChar);
-            currentChar = nextChar();  // consume character
+        	
+        if(currentChar == '\''){
+        	currentChar = nextChar();
+        	if(Character.isLetter(currentChar)){
+        		textBuffer.append(currentChar);
+        		nextChar();
+        		nextChar();
+        	}
+        	else if(currentChar == '\\'){
+        		char tmp = currentChar;
+        		currentChar = nextChar();
+        		if(currentChar == 't' || currentChar == 'n'){
+              	textBuffer.append(tmp);
+        		textBuffer.append(currentChar);
+        		nextChar();
+        		nextChar();
+        		}
+        		else{
+        			textBuffer.append(currentChar);
+        			nextChar();
+        			nextChar();
+        		}
+        	}
+        	else{
+        		//error must be character or one of the escape sequence
+        	}
         }
-
+        else{
+        	//error must start with '
+        }
+       
         text = textBuffer.toString();
 
         // Is it a reserved word or an identifier?
         type = (RESERVED_WORDS.contains(text))
-               ? PascalTokenType.valueOf(text)  // reserved word
+               ? JavaTokenType.valueOf(text)  // reserved word
                : IDENTIFIER;                    // identifier
     }
 }
