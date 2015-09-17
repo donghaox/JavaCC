@@ -75,13 +75,18 @@ public class JavaScanner extends Scanner
 			throws Exception
 			{
 		char currentChar = currentChar();
-		boolean comment_ended = false;
 		while ((Character.isWhitespace(currentChar) || (currentChar == '/'))) {
 
 			if (currentChar == '/'){
-				char nextChar = nextChar();
+				char nextChar = this.source.peekChar();
+
+				// if only / then return
+				if(nextChar == ' '){
+					break;
+				}
 				// Start of a block comment
-				if (nextChar == ('*')){
+				else if (nextChar == ('*')){
+					nextChar();
 					while(true){
 						currentChar = nextChar();
 						if( currentChar == EOF){
@@ -91,7 +96,6 @@ public class JavaScanner extends Scanner
 							currentChar = nextChar();
 							if(currentChar == '/'){
 								currentChar = nextChar();
-								comment_ended = true;
 								break;
 							}
 						}
@@ -103,7 +107,6 @@ public class JavaScanner extends Scanner
 						currentChar = nextChar();
 						if (currentChar == '\n' || currentChar == EOF){
 							currentChar = nextChar();
-							comment_ended = true;
 							break;
 						}
 					}
