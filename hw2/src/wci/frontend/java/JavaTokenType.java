@@ -28,7 +28,7 @@ public enum JavaTokenType implements TokenType
     RIGHT_CURLY_BRACKET("}"), MINUS_EQUAL("-="), MORE_MORE_EQUAL(">>="), PLUS("+"), COMMA(","),
     STAR_EQUAL("*="), PIPE_PIPE("||"), EQUAL("="), SLASH_EQUAL("/="), AND_AND("&&"),
 
-    IDENTIFIER, INTEGER, REAL, STRING,
+    IDENTIFIER, INTEGER, CHARACTER, STRING,
     ERROR, END_OF_FILE;
 
     private static final int FIRST_RESERVED_INDEX = ABSTRACT.ordinal();
