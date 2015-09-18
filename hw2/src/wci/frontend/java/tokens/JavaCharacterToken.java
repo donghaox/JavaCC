@@ -66,6 +66,6 @@ public class JavaCharacterToken extends JavaToken
         // Is it a reserved word or an identifier?
         type = (RESERVED_WORDS.contains(text))
                ? JavaTokenType.valueOf(text)  // reserved word
-               : IDENTIFIER;                    // identifier
+               : CHARACTER;                    // identifier
     }
 }
