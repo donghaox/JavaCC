@@ -53,6 +53,9 @@ public class PascalScanner extends Scanner
         else if (currentChar == '\'') {
             token = new PascalStringToken(source);
         }
+        else if (currentChar == '['){
+        	token = new PascalSetToken(source);
+        }
         else if (PascalTokenType.SPECIAL_SYMBOLS
                  .containsKey(Character.toString(currentChar))) {
             token = new PascalSpecialSymbolToken(source);
