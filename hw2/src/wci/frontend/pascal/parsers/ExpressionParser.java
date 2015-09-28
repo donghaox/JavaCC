@@ -2,6 +2,7 @@ package wci.frontend.pascal.parsers;
 
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import wci.frontend.*;
 import wci.frontend.pascal.*;
@@ -13,6 +14,7 @@ import static wci.frontend.pascal.PascalTokenType.NOT;
 import static wci.frontend.pascal.PascalErrorCode.*;
 import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
 import static wci.intermediate.icodeimpl.ICodeKeyImpl.*;
+import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.SET;
 
 /**
  * <h1>ExpressionParser</h1>
@@ -36,7 +38,7 @@ public class ExpressionParser extends StatementParser
     // Synchronization set for starting an expression.
     static final EnumSet<PascalTokenType> EXPR_START_SET =
         EnumSet.of(PLUS, MINUS, IDENTIFIER, INTEGER, REAL, STRING,
-                   PascalTokenType.NOT, LEFT_PAREN);
+                   PascalTokenType.NOT, LEFT_PAREN, PascalTokenType.SET);
 
     /**
      * Parse an expression.
@@ -290,6 +292,14 @@ public class ExpressionParser extends StatementParser
                 rootNode.setAttribute(VALUE, value);
 
                 token = nextToken();  // consume the string
+                break;
+            }
+
+            case SET:{
+                HashSet<Integer> value = (HashSet<Integer>) token.getValue();
+                rootNode = ICodeFactory.createICodeNode(SET);
+                rootNode.setAttribute(VALUE, value);
+                token = nextToken();
                 break;
             }
 

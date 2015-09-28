@@ -6,7 +6,6 @@ import wci.intermediate.*;
 import wci.backend.*;
 import wci.message.*;
 import wci.util.*;
-
 import static wci.message.MessageType.*;
 
 /**
