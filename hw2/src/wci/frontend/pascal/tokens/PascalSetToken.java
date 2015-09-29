@@ -1,5 +1,6 @@
 package wci.frontend.pascal.tokens;
 
+import com.sun.tools.classfile.Opcode;
 import wci.frontend.*;
 import wci.frontend.pascal.*;
 import static wci.frontend.Source.EOF;
@@ -8,6 +9,7 @@ import static wci.frontend.pascal.PascalErrorCode.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Set;
 
 import static wci.frontend.pascal.PascalTokenType.*;
 
@@ -28,7 +30,7 @@ public class PascalSetToken extends PascalToken
         super(source);
     }
     //declaration
-    protected HashSet<Integer> valueSet = new HashSet<>();
+    protected Set<Integer> valueSet;
 
     protected void extract()
         throws Exception
@@ -37,18 +39,20 @@ public class PascalSetToken extends PascalToken
         StringBuilder textBuilder = new StringBuilder();
         textBuilder.append('[');
         char cur = nextChar();
-
-        while(cur != ']' && cur != EOF){
+        String tokenValue = "";
+        while((cur != ']') && (cur != EOF)){
             if (Character.isWhitespace(cur)) cur = ' ';
             textBuilder.append(cur);
+            tokenValue += Character.toString(cur);
+            cur = nextChar();
         }
-        String[] parts = textBuilder.toString().split(",");
+       /* String[] parts = textBuilder.substring(1).split(",");
+        int i = 0;
         for (String e: parts) e.trim();//get rid of white spaces.
-
-        strToHashSet(parts);
+        strToHashSet(parts);*/
         if (cur == ']'){
             type = SET;
-            value = valueSet;
+            value = tokenValue;
             textBuilder.append(']');
             nextChar();
         }else {
@@ -59,13 +63,16 @@ public class PascalSetToken extends PascalToken
         text = textBuilder.toString();
     }
 
-    private void strToHashSet(String[] parts){
+   /* private void strToHashSet(String[] parts){
         String[] temp;
         int n1, n2;
+        valueSet = new HashSet<>();
         for ( String e : parts){
-            if (e.matches("\\d+")) valueSet.add(Integer.parseInt(e));
+            if (e.matches("\\d+")) {
+                valueSet.add(Integer.parseInt(e));
+            }
             else if (e.contains("..")) {
-                 temp = e.split("..");
+                 temp = e.split("\\.\\.");
                 n1 = Integer.parseInt(temp[0]);
                 n2 = Integer.parseInt(temp[1]);
                 while(n1 <= n2){
@@ -74,5 +81,5 @@ public class PascalSetToken extends PascalToken
                 }
             }
         }
-    }
+    }*/
 }
