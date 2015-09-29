@@ -3,9 +3,11 @@ package wci.frontend.pascal.parsers;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 import wci.frontend.*;
 import wci.frontend.pascal.*;
+import wci.frontend.pascal.tokens.PascalSetToken;
 import wci.intermediate.*;
 import wci.intermediate.icodeimpl.*;
 
@@ -15,6 +17,7 @@ import static wci.frontend.pascal.PascalErrorCode.*;
 import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
 import static wci.intermediate.icodeimpl.ICodeKeyImpl.*;
 import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.SET;
+import static  wci.intermediate.symtabimpl.SymTabKeyImpl.DATA_VALUE;
 
 /**
  * <h1>ExpressionParser</h1>
@@ -297,7 +300,9 @@ public class ExpressionParser extends StatementParser
             }
 
             case SET: {
-                String value = (String) token.getValue();
+              /*  strToHashSet(token);
+                HashSet<Integer> value = (HashSet<Integer>)token.getValue();*/
+                String value =(String)token.getValue();
                 rootNode = ICodeFactory.createICodeNode(SET);
                 rootNode.setAttribute(VALUE, value);
                 token = nextToken();
@@ -343,4 +348,33 @@ public class ExpressionParser extends StatementParser
 
         return rootNode;
     }
+/*    private void strToHashSet(Token token){
+        SymTabEntry entry;
+        String str = (String)token.getValue();
+        String[] parts = str.split(",");
+        String[] temp;
+        int n1;
+        int n2;
+        Object i;
+        Set<Integer> valueSet = new HashSet<>();
+        for ( String e : parts){
+            if (e.matches("\\d+")) {
+                valueSet.add(Integer.parseInt(e));
+            }else if (e.matches("\\w+")){
+                entry = symTabStack.getLocalSymTab().lookup(e);
+                i = entry.getAttribute(DATA_VALUE);
+                System.out.println("dd "+ entry.getName() + entry.get(DATA_VALUE));
+            }
+            else if (e.contains("..")) {
+                 temp = e.split("\\.\\.");
+                n1 = Integer.parseInt(temp[0]);
+                n2 = Integer.parseInt(temp[1]);
+                while(n1 <= n2){
+                    valueSet.add(n1);
+                    n1++;
+                }
+            }
+        }
+        ((PascalSetToken)token).setValue(valueSet);
+    }*/
 }

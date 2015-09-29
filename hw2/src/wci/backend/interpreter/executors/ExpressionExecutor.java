@@ -2,6 +2,8 @@ package wci.backend.interpreter.executors;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Set;
 
 import wci.intermediate.*;
 import wci.intermediate.icodeimpl.*;
@@ -50,7 +52,6 @@ public class ExpressionExecutor extends StatementExecutor
             }
 
             case INTEGER_CONSTANT: {
-
                 // Return the integer value.
                 return (Integer) node.getAttribute(VALUE);
             }
@@ -67,6 +68,10 @@ public class ExpressionExecutor extends StatementExecutor
                 return (String) node.getAttribute(VALUE);
             }
 
+            case SET:{
+                strToHashSet(node);
+                return (HashSet<Integer>)node.getAttribute(VALUE);
+            }
             case NEGATE: {
 
                 // Get the NEGATE node's expression node child.
@@ -123,6 +128,8 @@ public class ExpressionExecutor extends StatementExecutor
 
         boolean integerMode = (operand1 instanceof Integer) &&
                               (operand2 instanceof Integer);
+        boolean setMode = (operand1 instanceof  Set &&
+                           operand2 instanceof  Set);
 
         // ====================
         // Arithmetic operators
@@ -174,6 +181,15 @@ public class ExpressionExecutor extends StatementExecutor
                             return 0;
                         }
                     }
+                }
+            }else if (setMode){
+                //my new set binary operations
+                Set<Integer> value1 = (HashSet<Integer>)operand1;
+                Set<Integer> value2 = (HashSet<Integer>)operand2;
+                switch (nodeType){
+                    case MULTIPLY:return intersection(value1, value2);
+                    case ADD: return union(value1,value2);
+                    case SUBTRACT: return difference(value1, value2);
                 }
             }
             else {
@@ -254,4 +270,100 @@ public class ExpressionExecutor extends StatementExecutor
 
         return 0;  // should never get here
     }
+
+    private void strToHashSet(ICodeNode node){
+
+        String str = (String)node.getAttribute(VALUE);
+        SymTabEntry entry;
+        String[] parts = str.split(",");
+        String[] temp;
+        int n1;
+        int n2;
+        int i;
+        Set<Integer> valueSet = new HashSet<>();
+        for ( String e : parts){
+            e = e.trim();
+            if (e.matches("\\d+")) {
+                valueSet.add(Integer.parseInt(e));
+            }else if (e.matches("\\w+")){
+                entry = symTabStack.getLocalSymTab().lookup(e);
+                i = (int)entry.getAttribute(DATA_VALUE);
+                valueSet.add(i);
+            }
+            else if (e.contains("..")) {
+                 temp = e.split("\\.\\.");
+                if (temp[0].matches("[a-zA-Z]\\w*")){
+                    entry = symTabStack.getLocalSymTab().lookup(temp[0]);
+                    n1 = (int)entry.getAttribute(DATA_VALUE);
+                }else
+                n1 = Integer.parseInt(temp[0]);
+                if(temp[1].matches("[a-zA-Z]\\w*")){
+                    entry = symTabStack.getLocalSymTab().lookup(temp[1]);
+                    n2 = (int)entry.getAttribute(DATA_VALUE);
+                }else
+                n2 = Integer.parseInt(temp[1]);
+                while(n1 <= n2){
+                    valueSet.add(n1);
+                    n1++;
+                }
+            }else if(e.matches("\\w+\\*\\w+")){
+                temp = e.split("\\*");
+                if (temp[0].matches("[a-zA-Z]\\w*"))
+                    n1 = idToInt(temp[0]);
+                else
+                    n1 = Integer.parseInt(temp[0]);
+
+                if (temp[1].matches("[a-zA-Z]\\w*"))
+                    n2 = idToInt(temp[1]);
+                else
+                    n2 = Integer.parseInt(temp[1]);
+
+                valueSet.add(n1*n2);
+            }
+        }
+        node.setAttribute(VALUE, valueSet);
+    }
+
+    private int idToInt(String e){
+        SymTabEntry entry = symTabStack.getLocalSymTab().lookup(e);
+        return (int)entry.getAttribute(DATA_VALUE);
+    }
+
+    public static <T> Set<T> union(Set<T> setA, Set<T> setB) {
+        Set<T> tmp = new HashSet<T>(setA);
+        tmp.addAll(setB);
+        return tmp;
+    }
+
+    public static <T> Set<T> intersection(Set<T> setA, Set<T> setB) {
+        Set<T> tmp = new HashSet<T>();
+        for (T x : setA)
+            if (setB.contains(x))
+                tmp.add(x);
+        return tmp;
+    }
+
+    public static <T> Set<T> difference(Set<T> setA, Set<T> setB) {
+        Set<T> tmp = new HashSet<T>(setA);
+        tmp.removeAll(setB);
+        return tmp;
+    }
+
+    public static <T> Set<T> symDifference(Set<T> setA, Set<T> setB) {
+        Set<T> tmpA;
+        Set<T> tmpB;
+
+        tmpA = union(setA, setB);
+        tmpB = intersection(setA, setB);
+        return difference(tmpA, tmpB);
+    }
+
+    public static <T> boolean isSubset(Set<T> setA, Set<T> setB) {
+        return setB.containsAll(setA);
+    }
+
+    public static <T> boolean isSuperset(Set<T> setA, Set<T> setB) {
+        return setA.containsAll(setB);
+    }
+
 }

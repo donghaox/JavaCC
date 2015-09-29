@@ -9,6 +9,7 @@ import static wci.frontend.pascal.PascalErrorCode.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import static wci.frontend.pascal.PascalTokenType.*;
@@ -31,7 +32,9 @@ public class PascalSetToken extends PascalToken
     }
     //declaration
     protected Set<Integer> valueSet;
-
+    public void setValue(Object value){
+        this.value = value;
+    }
     protected void extract()
         throws Exception
     {
