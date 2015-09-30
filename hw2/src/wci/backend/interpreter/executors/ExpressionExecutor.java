@@ -1,9 +1,6 @@
 package wci.backend.interpreter.executors;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.TreeSet;
-import java.util.Set;
+import java.util.*;
 
 import wci.intermediate.*;
 import wci.intermediate.icodeimpl.*;
@@ -69,9 +66,11 @@ public class ExpressionExecutor extends StatementExecutor
             }
 
             case SET:{
-                strToTreeSet(node);
+                //strToTreeSet(node);
+                setUpSet(node);
                 return (TreeSet<Integer>)node.getAttribute(VALUE);
             }
+
             case NEGATE: {
 
                 // Get the NEGATE node's expression node child.
@@ -106,7 +105,7 @@ public class ExpressionExecutor extends StatementExecutor
 
     // Set of arithmetic operator node types.
     private static final EnumSet<ICodeNodeTypeImpl> ARITH_OPS =
-        EnumSet.of(ADD, SUBTRACT, MULTIPLY, FLOAT_DIVIDE, INTEGER_DIVIDE, MOD);
+        EnumSet.of(ADD, SUBTRACT, MULTIPLY, FLOAT_DIVIDE, INTEGER_DIVIDE, MOD,SET_RANGE);
 
     /**
      * Execute a binary operator.
@@ -142,6 +141,15 @@ public class ExpressionExecutor extends StatementExecutor
 
                 // Integer operations.
                 switch (nodeType) {
+                    //new here SET_RANGE
+                    case SET_RANGE:{
+                        ArrayList<Integer> list = new ArrayList<>();
+                        while (value1 <= value2){
+                            list.add(value1);
+                            value1++;
+                        }
+                        return list;
+                    }
                     case ADD:      return value1 + value2;
                     case SUBTRACT: return value1 - value2;
                     case MULTIPLY: return value1 * value2;
@@ -288,7 +296,6 @@ public class ExpressionExecutor extends StatementExecutor
                 }
             }
 
-
         return 0;  // should never get here
     }
 
@@ -390,6 +397,33 @@ public class ExpressionExecutor extends StatementExecutor
 
     public static <T> boolean isSuperset(Set<T> setA, Set<T> setB) {
         return setA.containsAll(setB);
+    }
+
+    protected void setUpSet(ICodeNode node){
+        Set<Integer> valueSet;
+        valueSet = new TreeSet<>();
+        ArrayList<ICodeNode> children = node.getChildren();
+/*        children.stream().forEach(i ->{
+            if(execute(i) instanceof Integer)
+            valueSet.add((Integer)execute(i));
+            else {
+                valueSet.addAll((ArrayList<Integer>)ex)
+            }
+        });*/
+        Object result;
+        for (ICodeNode i : children){
+            result = execute(i);
+            if (result instanceof Integer){
+                valueSet.add((Integer)result);
+            }
+            else {
+                ArrayList<Integer> list = (ArrayList<Integer>)result;
+                valueSet.addAll(list);
+            }
+        }
+
+
+        node.setAttribute(VALUE, valueSet);
     }
 
 }

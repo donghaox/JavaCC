@@ -41,7 +41,7 @@ public class ExpressionParser extends StatementParser
     // Synchronization set for starting an expression.
     static final EnumSet<PascalTokenType> EXPR_START_SET =
         EnumSet.of(PLUS, MINUS, IDENTIFIER, INTEGER, REAL, STRING,
-                   PascalTokenType.NOT, LEFT_PAREN, PascalTokenType.SET);
+                   PascalTokenType.NOT, LEFT_PAREN, PascalTokenType.SET,LEFT_BRACKET);
 
     /**
      * Parse an expression.
@@ -185,7 +185,7 @@ public class ExpressionParser extends StatementParser
 
     // Set of multiplicative operators.
     private static final EnumSet<PascalTokenType> MULT_OPS =
-        EnumSet.of(STAR, SLASH, DIV, PascalTokenType.MOD, PascalTokenType.AND);
+        EnumSet.of(STAR, SLASH, DIV, PascalTokenType.MOD, PascalTokenType.AND, DOT_DOT);
 
     // Map multiplicative operator tokens to node types.
     private static final HashMap<PascalTokenType, ICodeNodeType>
@@ -196,6 +196,7 @@ public class ExpressionParser extends StatementParser
         MULT_OPS_OPS_MAP.put(DIV, INTEGER_DIVIDE);
         MULT_OPS_OPS_MAP.put(PascalTokenType.MOD, ICodeNodeTypeImpl.MOD);
         MULT_OPS_OPS_MAP.put(PascalTokenType.AND, ICodeNodeTypeImpl.AND);
+        MULT_OPS_OPS_MAP.put(DOT_DOT, ICodeNodeTypeImpl.SET_RANGE);
     };
 
     /**
@@ -299,14 +300,44 @@ public class ExpressionParser extends StatementParser
                 break;
             }
 
-            case SET: {
-              /*  strToHashSet(token);
-                HashSet<Integer> value = (HashSet<Integer>)token.getValue();*/
+/*            case SET: {
+              *//*  strToHashSet(token);
+                HashSet<Integer> value = (HashSet<Integer>)token.getValue();*//*
                 String value =(String)token.getValue();
                 rootNode = ICodeFactory.createICodeNode(SET);
                 rootNode.setAttribute(VALUE, value);
                 token = nextToken();
                 break;
+            }*/
+            case LEFT_BRACKET:{
+                token = nextToken();// consume the [
+                //create a SET node as the root node
+                rootNode = ICodeFactory.createICodeNode(ICodeNodeTypeImpl.SET);
+
+                //parse an expression and add it as a child
+/*                rootNode.addChild(parseExpression(token));
+
+                //look for the matching .. , ] token
+                token = currentToken();
+                if (token.getType() == DOT_DOT){
+                    token = nextToken();
+                    rootNode.addChild(parseExpression(token));
+                    token = currentToken();
+
+                }else if (token.getType() == COMMA){
+                    token = nextToken();
+                    rootNode.addChild(parseExpression(token));
+                    token = currentToken();
+
+                }else if (token.getType() == LEFT_BRACKET){
+                    token = nextToken();//consume the ]
+
+                }else {
+                    errorHandler.flag(token, MISSING_RIGHT_BRACKET, this);
+                }*/
+                parseSet(token, rootNode, MISSING_RIGHT_BRACKET);
+                break;
+
             }
 
             case NOT: {
@@ -377,4 +408,48 @@ public class ExpressionParser extends StatementParser
         }
         ((PascalSetToken)token).setValue(valueSet);
     }*/
+    protected void parseSet(Token token, ICodeNode parentNode,
+                         PascalErrorCode errorCode)
+        throws Exception
+    {
+    // Synchronization set for the terminator.
+
+    // Loop to parse each statement until the END token
+    // or the end of the source file.
+    while (!(token instanceof EofToken) &&
+            (token.getType() != RIGHT_BRACKET)) {
+
+        // Parse a statement.  The parent node adopts the statement node.
+        ICodeNode statementNode = parse(token);
+        parentNode.addChild(statementNode);
+
+        token = currentToken();
+        TokenType tokenType = token.getType();
+
+        // Look for the semicolon between statements.
+        if (tokenType == COMMA) {
+            token = nextToken();  // consume the ;
+        }
+
+        else if (tokenType == DOT_DOT){
+            token = nextToken();
+        }
+
+        // If at the start of the next statement, then missing a semicolon.
+        else if (tokenType == IDENTIFIER) {
+            errorHandler.flag(token, MISSING_COMMA, this);
+        }
+
+        // Synchronize at the start of the next statement
+        // or at the terminator.
+    }
+
+    // Look for the terminator token.
+    if (token.getType() == RIGHT_BRACKET) {
+        token = nextToken();  // consume the terminator token
+    }
+    else {
+        errorHandler.flag(token, errorCode, this);
+    }
+}
 }

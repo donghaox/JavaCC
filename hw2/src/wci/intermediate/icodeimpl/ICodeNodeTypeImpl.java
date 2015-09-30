@@ -35,8 +35,8 @@ public enum ICodeNodeTypeImpl implements ICodeNodeType
     SET,
 
     //Set operator
-    IN_CODE, INCLUDE, EXCLUDE,
+    IN_CODE, INCLUDE, EXCLUDE, EMPTY_SET,
 
     // WRITE parameter
-    WRITE_PARM,
+    WRITE_PARM, SET_RANGE,
 }
