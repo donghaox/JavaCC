@@ -2,7 +2,7 @@ package wci.backend.interpreter.executors;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.Set;
 
 import wci.intermediate.*;
@@ -26,7 +26,7 @@ public class ExpressionExecutor extends StatementExecutor
 {
     /**
      * Constructor.
-     * @param the parent executor.
+     * @param parent executor.
      */
     public ExpressionExecutor(Executor parent)
     {
@@ -69,8 +69,8 @@ public class ExpressionExecutor extends StatementExecutor
             }
 
             case SET:{
-                strToHashSet(node);
-                return (HashSet<Integer>)node.getAttribute(VALUE);
+                strToTreeSet(node);
+                return (TreeSet<Integer>)node.getAttribute(VALUE);
             }
             case NEGATE: {
 
@@ -128,7 +128,7 @@ public class ExpressionExecutor extends StatementExecutor
 
         boolean integerMode = (operand1 instanceof Integer) &&
                               (operand2 instanceof Integer);
-        boolean setMode = (operand1 instanceof  Set &&
+        boolean setMode = (operand1 instanceof  Set || operand1 instanceof Integer &&
                            operand2 instanceof  Set);
 
         // ====================
@@ -184,8 +184,8 @@ public class ExpressionExecutor extends StatementExecutor
                 }
             }else if (setMode){
                 //my new set binary operations
-                Set<Integer> value1 = (HashSet<Integer>)operand1;
-                Set<Integer> value2 = (HashSet<Integer>)operand2;
+                Set<Integer> value1 = (TreeSet<Integer>)operand1;
+                Set<Integer> value2 = (TreeSet<Integer>)operand2;
                 switch (nodeType){
                     case MULTIPLY:return intersection(value1, value2);
                     case ADD: return union(value1,value2);
@@ -251,36 +251,62 @@ public class ExpressionExecutor extends StatementExecutor
                 case GE: return value1 >= value2;
             }
         }
-        else {
-            float value1 = operand1 instanceof Integer
-                               ? (Integer) operand1 : (Float) operand1;
-            float value2 = operand2 instanceof Integer
-                               ? (Integer) operand2 : (Float) operand2;
+        else if(setMode) {
+            //mew set relational operators
+            Set<Integer> value1, value2;
+            if(operand1 instanceof Integer){
+                value1 = new TreeSet<>();
+                value1.add((Integer)operand1);
+            } else
+            value1 = (TreeSet<Integer>)operand1;
+            value2 = (TreeSet<Integer>)operand2;
 
-            // Float operands.
             switch (nodeType) {
-                case EQ: return value1 == value2;
-                case NE: return value1 != value2;
-                case LT: return value1 <  value2;
-                case LE: return value1 <= value2;
-                case GT: return value1 >  value2;
-                case GE: return value1 >= value2;
+                case EQ: return (value1.containsAll(value2) && value2.containsAll(value1));
+                case LE: return isSubset(value1, value2);
+                case GE: return isSuperset(value1, value2);
+                case NE: return !value1.equals(value2);
+                case IN_CODE: {
+                    return  value2.containsAll(value1);
+                }
+
             }
-        }
+        }else {
+                float value1 = operand1 instanceof Integer
+                        ? (Integer) operand1 : (Float) operand1;
+                float value2 = operand2 instanceof Integer
+                        ? (Integer) operand2 : (Float) operand2;
+
+                // Float operands.
+                switch (nodeType) {
+                    case EQ: return value1 == value2;
+                    case NE: return value1 != value2;
+                    case LT: return value1 <  value2;
+                    case LE: return value1 <= value2;
+                    case GT: return value1 >  value2;
+                    case GE: return value1 >= value2;
+                }
+            }
+
 
         return 0;  // should never get here
     }
 
-    private void strToHashSet(ICodeNode node){
+    private void strToTreeSet(ICodeNode node){
+        String str;
 
-        String str = (String)node.getAttribute(VALUE);
+        if (node.getAttribute(VALUE) instanceof Set) {
+            return;
+        }
+        else
+        str = (String)node.getAttribute(VALUE);
         SymTabEntry entry;
         String[] parts = str.split(",");
         String[] temp;
         int n1;
         int n2;
         int i;
-        Set<Integer> valueSet = new HashSet<>();
+        Set<Integer> valueSet = new TreeSet<>();
         for ( String e : parts){
             e = e.trim();
             if (e.matches("\\d+")) {
@@ -330,13 +356,13 @@ public class ExpressionExecutor extends StatementExecutor
     }
 
     public static <T> Set<T> union(Set<T> setA, Set<T> setB) {
-        Set<T> tmp = new HashSet<T>(setA);
+        Set<T> tmp = new TreeSet<T>(setA);
         tmp.addAll(setB);
         return tmp;
     }
 
     public static <T> Set<T> intersection(Set<T> setA, Set<T> setB) {
-        Set<T> tmp = new HashSet<T>();
+        Set<T> tmp = new TreeSet<T>();
         for (T x : setA)
             if (setB.contains(x))
                 tmp.add(x);
@@ -344,7 +370,7 @@ public class ExpressionExecutor extends StatementExecutor
     }
 
     public static <T> Set<T> difference(Set<T> setA, Set<T> setB) {
-        Set<T> tmp = new HashSet<T>(setA);
+        Set<T> tmp = new TreeSet<T>(setA);
         tmp.removeAll(setB);
         return tmp;
     }
