@@ -67,6 +67,8 @@ public enum PascalErrorCode
     UNIMPLEMENTED("Unimplemented feature"),
     UNRECOGNIZABLE("Unrecognizable input"),
     WRONG_NUMBER_OF_PARMS("Wrong number of actual parameters"),
+    NONE_UNIQUE_MEMBER("None unique number"),
+    INVALID_OPERATOR("Invalid operator"),
 
     // Fatal errors.
     IO_ERROR(-101, "Object I/O error"),
