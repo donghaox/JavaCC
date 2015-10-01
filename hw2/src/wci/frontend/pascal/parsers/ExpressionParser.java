@@ -215,14 +215,14 @@ public class ExpressionParser extends StatementParser
 		TokenType tokenType = token.getType();
 		
 		if (rootNode.getType() == SET){
-			if ((tokenType == SLASH) || tokenType == LESS_THAN || tokenType ==  IN || tokenType == PascalTokenType.OR){
+			if ((tokenType == SLASH) || tokenType == LESS_THAN || tokenType == PascalTokenType.OR){
 				errorHandler.flag(token, INVALID_OPERATOR, this);
 			}
 		}
 		
 		if (rootNode.getType() == INTEGER_CONSTANT){
 			if(tokenType == IN){
-				errorHandler.flag(token, INVALID_OPERATOR, this);
+				//errorHandler.flag(token, INVALID_OPERATOR, this);
 			}
 		}
 
@@ -498,7 +498,10 @@ public class ExpressionParser extends StatementParser
 		 */
 
 		if(pNode.getChildren().contains(child)){
-			return  false;
+			if(child.getType() == MULTIPLY){
+				return true;
+			}
+			return false;
 		}
 
 		for (int i = 0; i < pNode.getChildren().size(); i++){
@@ -511,10 +514,15 @@ public class ExpressionParser extends StatementParser
 			}	
 			else {
 				if (child.getType() == SET_RANGE){
+					try{
 					int _value = (int)pNode.getChildren().get(i).getAttribute(VALUE);
 					if(_value >= (int)child.getChildren().get(0).getAttribute(VALUE) 
 							&& _value <= (int)child.getChildren().get(1).getAttribute(VALUE)){
 						return false;
+					}
+					}
+					catch (Exception e){
+						return true;
 					}
 				}
 			}
