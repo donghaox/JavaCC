@@ -213,6 +213,18 @@ public class ExpressionParser extends StatementParser
 
 		token = currentToken();
 		TokenType tokenType = token.getType();
+		
+		if (rootNode.getType() == SET){
+			if ((tokenType == SLASH) || tokenType == LESS_THAN || tokenType ==  IN || tokenType == PascalTokenType.OR){
+				errorHandler.flag(token, INVALID_OPERATOR, this);
+			}
+		}
+		
+		if (rootNode.getType() == INTEGER_CONSTANT){
+			if(tokenType == IN){
+				errorHandler.flag(token, INVALID_OPERATOR, this);
+			}
+		}
 
 		// Loop over multiplicative operators.
 		while (MULT_OPS.contains(tokenType)) {
@@ -377,6 +389,7 @@ public class ExpressionParser extends StatementParser
 		}
 		}
 
+
 		return rootNode;
 	}
 	/*    private void strToHashSet(Token token){
@@ -418,17 +431,28 @@ public class ExpressionParser extends StatementParser
 		// or the end of the source file.
 		while (!(token instanceof EofToken) &&
 				(token.getType() != RIGHT_BRACKET)) {
-			
+
 			previous_token = token.getType();
 			// Parse a statement.  The parent node adopts the statement node.
 			if(token.getType() != COMMA){
 				ICodeNode statementNode = parse(token);
-				parentNode.addChild(statementNode);
+
+				//handle non unique member
+				boolean is_unique = check_unique(token, parentNode, statementNode);
+				boolean valid_set = valid_set(statementNode);
+				if(valid_set){
+					if(is_unique){
+						parentNode.addChild(statementNode);
+					}
+					else{
+						errorHandler.flag(token, NONE_UNIQUE_MEMBER, this);
+					}
+				}
 			}
-		
+
 			token = currentToken();
 			TokenType tokenType = token.getType();
-			
+
 			//handle missing comma
 			if(previous_token == INTEGER && tokenType == INTEGER){
 				errorHandler.flag(token, MISSING_COMMA, this);
@@ -445,6 +469,9 @@ public class ExpressionParser extends StatementParser
 
 			else if (tokenType == DOT_DOT){
 				token = nextToken();
+				if(token.getType() != INTEGER){
+					errorHandler.flag(token, UNEXPECTED_TOKEN, this);
+				}
 			}
 
 			else if (tokenType == SEMICOLON){
@@ -463,5 +490,39 @@ public class ExpressionParser extends StatementParser
 		else {
 			errorHandler.flag(token, errorCode, this);
 		}
+	}
+
+	protected boolean check_unique(Token token, ICodeNode pNode, ICodeNode child){
+		/*
+		 * this method make sure set's members are unique
+		 */
+
+		if(pNode.getChildren().contains(child)){
+			return  false;
+		}
+
+		for (int i = 0; i < pNode.getChildren().size(); i++){
+			if (pNode.getChildren().get(i).getType() == SET_RANGE){
+				int child_value = (int)child.getAttribute(VALUE);
+				if(child_value >= (int)pNode.getChildren().get(i).getChildren().get(0).getAttribute(VALUE) 
+						&& child_value <= (int)pNode.getChildren().get(i).getChildren().get(1).getAttribute(VALUE)){
+					return false;
+				}
+			}		
+		}
+		return true;
+	}
+
+	protected boolean valid_set(ICodeNode child){
+		if (child.getType() != SET_RANGE){
+			return true;
+		}
+		else{
+			if (child.getChildren().size() < 2){
+				return false;
+			}
+		}
+		return true;
+
 	}
 }
