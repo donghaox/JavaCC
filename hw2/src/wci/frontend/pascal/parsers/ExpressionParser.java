@@ -447,7 +447,7 @@ public class ExpressionParser extends StatementParser
 					else{
 						errorHandler.flag(token, NONE_UNIQUE_MEMBER, this);
 					}
-				}
+				}		
 			}
 
 			token = currentToken();
@@ -508,7 +508,16 @@ public class ExpressionParser extends StatementParser
 						&& child_value <= (int)pNode.getChildren().get(i).getChildren().get(1).getAttribute(VALUE)){
 					return false;
 				}
-			}		
+			}	
+			else {
+				if (child.getType() == SET_RANGE){
+					int _value = (int)pNode.getChildren().get(i).getAttribute(VALUE);
+					if(_value >= (int)child.getChildren().get(0).getAttribute(VALUE) 
+							&& _value <= (int)child.getChildren().get(1).getAttribute(VALUE)){
+						return false;
+					}
+				}
+			}
 		}
 		return true;
 	}
