@@ -438,6 +438,7 @@ public class ExpressionParser extends StatementParser
         // If at the start of the next statement, then missing a semicolon.
         else if (tokenType == IDENTIFIER) {
             errorHandler.flag(token, MISSING_COMMA, this);
+            return;
         }
 
         // Synchronize at the start of the next statement
