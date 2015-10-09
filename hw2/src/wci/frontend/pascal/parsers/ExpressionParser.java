@@ -40,8 +40,8 @@ public class ExpressionParser extends StatementParser
 
     // Synchronization set for starting an expression.
     static final EnumSet<PascalTokenType> EXPR_START_SET =
-        EnumSet.of(PLUS, MINUS, IDENTIFIER, INTEGER, REAL, STRING,
-                   PascalTokenType.NOT, LEFT_PAREN, PascalTokenType.SET,LEFT_BRACKET);
+            EnumSet.of(PLUS, MINUS, IDENTIFIER, INTEGER, REAL, STRING,
+                    PascalTokenType.NOT, LEFT_PAREN, PascalTokenType.SET,LEFT_BRACKET);
 
     /**
      * Parse an expression.
@@ -50,19 +50,19 @@ public class ExpressionParser extends StatementParser
      * @throws Exception if an error occurred.
      */
     public ICodeNode parse(Token token)
-        throws Exception
+            throws Exception
     {
         return parseExpression(token);
     }
 
     // Set of relational operators.
     private static final EnumSet<PascalTokenType> REL_OPS =
-        EnumSet.of(EQUALS, NOT_EQUALS, LESS_THAN, LESS_EQUALS,
-                   GREATER_THAN, GREATER_EQUALS, PascalTokenType.IN);
+            EnumSet.of(EQUALS, NOT_EQUALS, LESS_THAN, LESS_EQUALS,
+                    GREATER_THAN, GREATER_EQUALS, PascalTokenType.IN);
 
     // Map relational operator tokens to node types.
     private static final HashMap<PascalTokenType, ICodeNodeType>
-        REL_OPS_MAP = new HashMap<PascalTokenType, ICodeNodeType>();
+            REL_OPS_MAP = new HashMap<PascalTokenType, ICodeNodeType>();
     static {
         REL_OPS_MAP.put(EQUALS, EQ);
         REL_OPS_MAP.put(NOT_EQUALS, NE);
@@ -80,7 +80,7 @@ public class ExpressionParser extends StatementParser
      * @throws Exception if an error occurred.
      */
     private ICodeNode parseExpression(Token token)
-        throws Exception
+            throws Exception
     {
         // Parse a simple expression and make the root of its tree
         // the root node.
@@ -113,11 +113,11 @@ public class ExpressionParser extends StatementParser
 
     // Set of additive operators.
     private static final EnumSet<PascalTokenType> ADD_OPS =
-        EnumSet.of(PLUS, MINUS, PascalTokenType.OR);
+            EnumSet.of(PLUS, MINUS, PascalTokenType.OR);
 
     // Map additive operator tokens to node types.
     private static final HashMap<PascalTokenType, ICodeNodeTypeImpl>
-        ADD_OPS_OPS_MAP = new HashMap<PascalTokenType, ICodeNodeTypeImpl>();
+            ADD_OPS_OPS_MAP = new HashMap<PascalTokenType, ICodeNodeTypeImpl>();
     static {
         ADD_OPS_OPS_MAP.put(PLUS, ADD);
         ADD_OPS_OPS_MAP.put(MINUS, SUBTRACT);
@@ -131,7 +131,7 @@ public class ExpressionParser extends StatementParser
      * @throws Exception if an error occurred.
      */
     private ICodeNode parseSimpleExpression(Token token)
-        throws Exception
+            throws Exception
     {
         TokenType signType = null;  // type of leading sign (if any)
 
@@ -185,11 +185,11 @@ public class ExpressionParser extends StatementParser
 
     // Set of multiplicative operators.
     private static final EnumSet<PascalTokenType> MULT_OPS =
-        EnumSet.of(STAR, SLASH, DIV, PascalTokenType.MOD, PascalTokenType.AND, DOT_DOT);
+            EnumSet.of(STAR, SLASH, DIV, PascalTokenType.MOD, PascalTokenType.AND, DOT_DOT);
 
     // Map multiplicative operator tokens to node types.
     private static final HashMap<PascalTokenType, ICodeNodeType>
-        MULT_OPS_OPS_MAP = new HashMap<PascalTokenType, ICodeNodeType>();
+            MULT_OPS_OPS_MAP = new HashMap<PascalTokenType, ICodeNodeType>();
     static {
         MULT_OPS_OPS_MAP.put(STAR, MULTIPLY);
         MULT_OPS_OPS_MAP.put(SLASH, FLOAT_DIVIDE);
@@ -206,13 +206,25 @@ public class ExpressionParser extends StatementParser
      * @throws Exception if an error occurred.
      */
     private ICodeNode parseTerm(Token token)
-        throws Exception
+            throws Exception
     {
         // Parse a factor and make its node the root node.
         ICodeNode rootNode = parseFactor(token);
 
         token = currentToken();
         TokenType tokenType = token.getType();
+
+        if (rootNode.getType() == SET){
+            if ((tokenType == SLASH) || tokenType == LESS_THAN || tokenType == PascalTokenType.OR){
+                errorHandler.flag(token, INVALID_OPERATOR, this);
+            }
+        }
+
+        if (rootNode.getType() == INTEGER_CONSTANT){
+            if(tokenType == IN){
+                //errorHandler.flag(token, INVALID_OPERATOR, this);
+            }
+        }
 
         // Loop over multiplicative operators.
         while (MULT_OPS.contains(tokenType)) {
@@ -246,7 +258,7 @@ public class ExpressionParser extends StatementParser
      * @throws Exception if an error occurred.
      */
     private ICodeNode parseFactor(Token token)
-        throws Exception
+            throws Exception
     {
         TokenType tokenType = token.getType();
         ICodeNode rootNode = null;
@@ -300,8 +312,8 @@ public class ExpressionParser extends StatementParser
                 break;
             }
 
-/*            case SET: {
-              *//*  strToHashSet(token);
+		/*            case SET: {
+		 *//*  strToHashSet(token);
                 HashSet<Integer> value = (HashSet<Integer>)token.getValue();*//*
                 String value =(String)token.getValue();
                 rootNode = ICodeFactory.createICodeNode(SET);
@@ -315,7 +327,7 @@ public class ExpressionParser extends StatementParser
                 rootNode = ICodeFactory.createICodeNode(ICodeNodeTypeImpl.SET);
 
                 //parse an expression and add it as a child
-/*                rootNode.addChild(parseExpression(token));
+			/*                rootNode.addChild(parseExpression(token));
 
                 //look for the matching .. , ] token
                 token = currentToken();
@@ -377,9 +389,10 @@ public class ExpressionParser extends StatementParser
             }
         }
 
+
         return rootNode;
     }
-/*    private void strToHashSet(Token token){
+    /*    private void strToHashSet(Token token){
         SymTabEntry entry;
         String str = (String)token.getValue();
         String[] parts = str.split(",");
@@ -409,48 +422,124 @@ public class ExpressionParser extends StatementParser
         ((PascalSetToken)token).setValue(valueSet);
     }*/
     protected void parseSet(Token token, ICodeNode parentNode,
-                         PascalErrorCode errorCode)
-        throws Exception
+                            PascalErrorCode errorCode)
+            throws Exception
     {
-    // Synchronization set for the terminator.
+        // Synchronization set for the terminator.
+        TokenType previous_token = token.getType();
+        // Loop to parse each statement until the END token
+        // or the end of the source file.
+        while (!(token instanceof EofToken) &&
+                (token.getType() != RIGHT_BRACKET)) {
 
-    // Loop to parse each statement until the END token
-    // or the end of the source file.
-    while (!(token instanceof EofToken) &&
-            (token.getType() != RIGHT_BRACKET)) {
+            previous_token = token.getType();
+            // Parse a statement.  The parent node adopts the statement node.
+            if(token.getType() != COMMA){
+                ICodeNode statementNode = parse(token);
 
-        // Parse a statement.  The parent node adopts the statement node.
-        ICodeNode statementNode = parse(token);
-        parentNode.addChild(statementNode);
+                //handle non unique member
+                boolean is_unique = check_unique(token, parentNode, statementNode);
+                boolean valid_set = valid_set(statementNode);
+                if(valid_set){
+                    if(is_unique){
+                        parentNode.addChild(statementNode);
+                    }
+                    else{
+                        errorHandler.flag(token, NONE_UNIQUE_MEMBER, this);
+                    }
+                }
+            }
 
-        token = currentToken();
-        TokenType tokenType = token.getType();
+            token = currentToken();
+            TokenType tokenType = token.getType();
 
-        // Look for the semicolon between statements.
-        if (tokenType == COMMA) {
-            token = nextToken();  // consume the ;
+            //handle missing comma
+            if(previous_token == INTEGER && tokenType == INTEGER){
+                errorHandler.flag(token, MISSING_COMMA, this);
+            }
+
+            // Look for the semicolon between statements.
+            if (tokenType == COMMA) {
+                token = nextToken();  // consume the ;
+                //handle double comma
+                if(tokenType == token.getType()){
+                    errorHandler.flag(token, UNEXPECTED_TOKEN, this);
+                }
+            }
+
+            else if (tokenType == DOT_DOT){
+                token = nextToken();
+                if(token.getType() != INTEGER){
+                    errorHandler.flag(token, UNEXPECTED_TOKEN, this);
+                }
+            }
+
+            else if (tokenType == SEMICOLON){
+                errorHandler.flag(token, MISSING_RIGHT_BRACKET, this);
+                return;
+            }
+
+            // Synchronize at the start of the next statement
+            // or at the terminator.
         }
 
-        else if (tokenType == DOT_DOT){
-            token = nextToken();
+        // Look for the terminator token.
+        if (token.getType() == RIGHT_BRACKET) {
+            token = nextToken();  // consume the terminator token
+        }
+        else {
+            errorHandler.flag(token, errorCode, this);
+        }
+    }
+
+    protected boolean check_unique(Token token, ICodeNode pNode, ICodeNode child){
+		/*
+		 * this method make sure set's members are unique
+		 */
+
+        if(pNode.getChildren().contains(child)){
+            if(child.getType() == MULTIPLY){
+                return true;
+            }
+            return false;
         }
 
-        // If at the start of the next statement, then missing a semicolon.
-        else if (tokenType == IDENTIFIER) {
-            errorHandler.flag(token, MISSING_COMMA, this);
-            return;
+        for (int i = 0; i < pNode.getChildren().size(); i++){
+            if (pNode.getChildren().get(i).getType() == SET_RANGE){
+                int child_value = (int)child.getAttribute(VALUE);
+                if(child_value >= (int)pNode.getChildren().get(i).getChildren().get(0).getAttribute(VALUE)
+                        && child_value <= (int)pNode.getChildren().get(i).getChildren().get(1).getAttribute(VALUE)){
+                    return false;
+                }
+            }
+            else {
+                if (child.getType() == SET_RANGE){
+                    try{
+                        int _value = (int)pNode.getChildren().get(i).getAttribute(VALUE);
+                        if(_value >= (int)child.getChildren().get(0).getAttribute(VALUE)
+                                && _value <= (int)child.getChildren().get(1).getAttribute(VALUE)){
+                            return false;
+                        }
+                    }
+                    catch (Exception e){
+                        return true;
+                    }
+                }
+            }
         }
-
-        // Synchronize at the start of the next statement
-        // or at the terminator.
+        return true;
     }
 
-    // Look for the terminator token.
-    if (token.getType() == RIGHT_BRACKET) {
-        token = nextToken();  // consume the terminator token
+    protected boolean valid_set(ICodeNode child){
+        if (child.getType() != SET_RANGE){
+            return true;
+        }
+        else{
+            if (child.getChildren().size() < 2){
+                return false;
+            }
+        }
+        return true;
+
     }
-    else {
-        errorHandler.flag(token, errorCode, this);
-    }
-}
 }

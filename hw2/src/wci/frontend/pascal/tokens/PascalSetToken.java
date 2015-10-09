@@ -1,6 +1,5 @@
 package wci.frontend.pascal.tokens;
 
-import com.sun.tools.classfile.Opcode;
 import wci.frontend.*;
 import wci.frontend.pascal.*;
 import static wci.frontend.Source.EOF;
