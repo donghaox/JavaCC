@@ -32,12 +32,12 @@ public class StatementParser extends PascalParserTD
 
     // Synchronization set for starting a statement.
     protected static final EnumSet<PascalTokenType> STMT_START_SET =
-        EnumSet.of(BEGIN, CASE, FOR, PascalTokenType.IF, REPEAT, WHILE,
-                   IDENTIFIER, SEMICOLON);
+            EnumSet.of(BEGIN, CASE, FOR, PascalTokenType.IF, REPEAT, WHILE,
+                    IDENTIFIER, SEMICOLON);
 
     // Synchronization set for following a statement.
     protected static final EnumSet<PascalTokenType> STMT_FOLLOW_SET =
-        EnumSet.of(SEMICOLON, END, ELSE, UNTIL, DOT);
+            EnumSet.of(SEMICOLON, END, ELSE, UNTIL, DOT);
 
     /**
      * Parse a statement.
@@ -47,7 +47,7 @@ public class StatementParser extends PascalParserTD
      * @throws Exception if an error occurred.
      */
     public ICodeNode parse(Token token)
-        throws Exception
+            throws Exception
     {
         ICodeNode statementNode = null;
 
@@ -55,7 +55,7 @@ public class StatementParser extends PascalParserTD
 
             case BEGIN: {
                 CompoundStatementParser compoundParser =
-                    new CompoundStatementParser(this);
+                        new CompoundStatementParser(this);
                 statementNode = compoundParser.parse(token);
                 break;
             }
@@ -63,21 +63,21 @@ public class StatementParser extends PascalParserTD
             // An assignment statement begins with a variable's identifier.
             case IDENTIFIER: {
                 AssignmentStatementParser assignmentParser =
-                    new AssignmentStatementParser(this);
+                        new AssignmentStatementParser(this);
                 statementNode = assignmentParser.parse(token);
                 break;
             }
 
             case REPEAT: {
                 RepeatStatementParser repeatParser =
-                    new RepeatStatementParser(this);
+                        new RepeatStatementParser(this);
                 statementNode = repeatParser.parse(token);
                 break;
             }
 
             case WHILE: {
                 WhileStatementParser whileParser =
-                    new WhileStatementParser(this);
+                        new WhileStatementParser(this);
                 statementNode = whileParser.parse(token);
                 break;
             }
@@ -135,7 +135,7 @@ public class StatementParser extends PascalParserTD
     protected void parseList(Token token, ICodeNode parentNode,
                              PascalTokenType terminator,
                              PascalErrorCode errorCode)
-        throws Exception
+            throws Exception
     {
         // Synchronization set for the terminator.
         EnumSet<PascalTokenType> terminatorSet = STMT_START_SET.clone();
@@ -144,7 +144,7 @@ public class StatementParser extends PascalParserTD
         // Loop to parse each statement until the END token
         // or the end of the source file.
         while (!(token instanceof EofToken) &&
-               (token.getType() != terminator)) {
+                (token.getType() != terminator)) {
 
             // Parse a statement.  The parent node adopts the statement node.
             ICodeNode statementNode = parse(token);

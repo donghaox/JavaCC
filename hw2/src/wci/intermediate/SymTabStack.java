@@ -44,4 +44,14 @@ public interface SymTabStack
      * @return the entry, or null if it does not exist.
      */
     public SymTabEntry lookup(String name);
+
+    public SymTab push();
+
+    public SymTab push(SymTab symTab);
+
+    public SymTab pop();
+
+    void setProgramId(SymTabEntry symTabEntry);
+
+    SymTabEntry getProgramId();
 }

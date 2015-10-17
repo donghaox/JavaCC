@@ -34,7 +34,7 @@ public class Executor extends Backend
 
     /**
      * Constructor for subclasses.
-     * @param the parent executor.
+     * @param  parent executor.
      */
     public Executor(Executor parent)
     {
@@ -58,7 +58,7 @@ public class Executor extends Backend
      * @throws Exception if an error occurred.
      */
     public void process(ICode iCode, SymTabStack symTabStack)
-        throws Exception
+            throws Exception
     {
         this.symTabStack = symTabStack;
         this.iCode = iCode;
@@ -75,8 +75,8 @@ public class Executor extends Backend
 
         // Send the interpreter summary message.
         sendMessage(new Message(INTERPRETER_SUMMARY,
-                                new Number[] {executionCount,
-                                              runtimeErrors,
-                                              elapsedTime}));
+                new Number[] {executionCount,
+                        runtimeErrors,
+                        elapsedTime}));
     }
 }

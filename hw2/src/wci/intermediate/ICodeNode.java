@@ -56,4 +56,9 @@ public interface ICodeNode
      * @return the copy.
      */
     public ICodeNode copy();
+
+    //new methods for type declaration
+    void setTypeSpec(TypeSpec typeSpec);
+
+    TypeSpec getTypeSpec();
 }

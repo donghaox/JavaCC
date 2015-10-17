@@ -6,6 +6,8 @@ import wci.intermediate.*;
 import wci.backend.*;
 import wci.message.*;
 import wci.util.*;
+
+import static wci.intermediate.symtabimpl.SymTabKeyImpl.*;
 import static wci.message.MessageType.*;
 
 /**
@@ -49,8 +51,10 @@ public class Pascal
             source.close();
 
             if (parser.getErrorCount() == 0) {
-                iCode = parser.getICode();
                 symTabStack = parser.getSymTabStack();
+
+                SymTabEntry programId = symTabStack.getProgramId();
+                iCode = (ICode) programId.getAttribute(ROUTINE_ICODE);
 
                 if (xref) {
                     CrossReferencer crossReferencer = new CrossReferencer();
@@ -59,8 +63,8 @@ public class Pascal
 
                 if (intermediate) {
                     ParseTreePrinter treePrinter =
-                                         new ParseTreePrinter(System.out);
-                    treePrinter.print(iCode);
+                            new ParseTreePrinter(System.out);
+                    treePrinter.print(symTabStack);
                 }
 
                 backend.process(iCode, symTabStack);
@@ -74,7 +78,7 @@ public class Pascal
 
     private static final String FLAGS = "[-ix]";
     private static final String USAGE =
-        "Usage: Pascal execute|compile " + FLAGS + " <source file path>";
+            "Usage: Pascal execute|compile " + FLAGS + " <source file path>";
 
     /**
      * The main method.
@@ -88,7 +92,7 @@ public class Pascal
 
             // Operation.
             if (!(   operation.equalsIgnoreCase("compile")
-                  || operation.equalsIgnoreCase("execute"))) {
+                    || operation.equalsIgnoreCase("execute"))) {
                 throw new Exception();
             }
 
@@ -137,7 +141,7 @@ public class Pascal
                     String lineText = (String) body[1];
 
                     System.out.println(String.format(SOURCE_LINE_FORMAT,
-                                                     lineNumber, lineText));
+                            lineNumber, lineText));
                     break;
                 }
             }
@@ -145,9 +149,9 @@ public class Pascal
     }
 
     private static final String PARSER_SUMMARY_FORMAT =
-        "\n%,20d source lines." +
-        "\n%,20d syntax errors." +
-        "\n%,20.2f seconds total parsing time.\n";
+            "\n%,20d source lines." +
+                    "\n%,20d syntax errors." +
+                    "\n%,20.2f seconds total parsing time.\n";
 
     private static final int PREFIX_WIDTH = 5;
 
@@ -173,8 +177,8 @@ public class Pascal
                     float elapsedTime = (Float) body[2];
 
                     System.out.printf(PARSER_SUMMARY_FORMAT,
-                                      statementCount, syntaxErrors,
-                                      elapsedTime);
+                            statementCount, syntaxErrors,
+                            elapsedTime);
                     break;
                 }
 
@@ -199,7 +203,7 @@ public class Pascal
                     // Text, if any, of the bad token.
                     if (tokenText != null) {
                         flagBuffer.append(" [at \"").append(tokenText)
-                            .append("\"]");
+                                .append("\"]");
                     }
 
                     System.out.println(flagBuffer.toString());
@@ -210,19 +214,19 @@ public class Pascal
     }
 
     private static final String INTERPRETER_SUMMARY_FORMAT =
-        "\n%,20d statements executed." +
-        "\n%,20d runtime errors." +
-        "\n%,20.2f seconds total execution time.\n";
+            "\n%,20d statements executed." +
+                    "\n%,20d runtime errors." +
+                    "\n%,20.2f seconds total execution time.\n";
 
     private static final String COMPILER_SUMMARY_FORMAT =
-        "\n%,20d instructions generated." +
-        "\n%,20.2f seconds total code generation time.\n";
+            "\n%,20d instructions generated." +
+                    "\n%,20.2f seconds total code generation time.\n";
 
     private static final String LINE_FORMAT =
-        ">>> AT LINE %03d\n";
+            ">>> AT LINE %03d\n";
 
     private static final String ASSIGN_FORMAT =
-        ">>> LINE %03d: %s = %s\n";
+            ">>> LINE %03d: %s = %s\n";
 
     /**
      * Listener for back end messages.
@@ -253,7 +257,7 @@ public class Pascal
                     Object value = body[2];
 
                     System.out.printf(ASSIGN_FORMAT,
-                                      lineNumber, variableName, value);
+                            lineNumber, variableName, value);
                     break;
                 }
 
@@ -265,7 +269,7 @@ public class Pascal
                     System.out.print("*** RUNTIME ERROR");
                     if (lineNumber != null) {
                         System.out.print(" AT LINE " +
-                                         String.format("%03d", lineNumber));
+                                String.format("%03d", lineNumber));
                     }
                     System.out.println(": " + errorMessage);
                     break;
@@ -278,8 +282,8 @@ public class Pascal
                     float elapsedTime = (Float) body[2];
 
                     System.out.printf(INTERPRETER_SUMMARY_FORMAT,
-                                      executionCount, runtimeErrors,
-                                      elapsedTime);
+                            executionCount, runtimeErrors,
+                            elapsedTime);
                     break;
                 }
 
@@ -289,10 +293,11 @@ public class Pascal
                     float elapsedTime = (Float) body[1];
 
                     System.out.printf(COMPILER_SUMMARY_FORMAT,
-                                      instructionCount, elapsedTime);
+                            instructionCount, elapsedTime);
                     break;
                 }
             }
+
         }
     }
 }

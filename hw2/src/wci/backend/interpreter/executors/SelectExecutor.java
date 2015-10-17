@@ -22,7 +22,7 @@ public class SelectExecutor extends StatementExecutor
 {
     /**
      * Constructor.
-     * @param the parent executor.
+     * @param  parent executor.
      */
     public SelectExecutor(Executor parent)
     {
@@ -34,7 +34,7 @@ public class SelectExecutor extends StatementExecutor
     // Jump table: entry key is a selection value,
     //             entry value is the branch statement.
     private static HashMap<ICodeNode, HashMap<Object, ICodeNode>> jumpCache =
-        new HashMap<ICodeNode, HashMap<Object, ICodeNode>>();
+            new HashMap<ICodeNode, HashMap<Object, ICodeNode>>();
 
     /**
      * Execute SELECT statement.
@@ -91,7 +91,11 @@ public class SelectExecutor extends StatementExecutor
             for (ICodeNode constantNode : constantsList) {
 
                 // Create a jump table entry.
+                // Convert a single-character string constant to a character.
                 Object value = constantNode.getAttribute(VALUE);
+                if (constantNode.getType() == STRING_CONSTANT) {
+                    value = ((String) value).charAt(0);
+                }
                 jumpTable.put(value, statementNode);
             }
         }

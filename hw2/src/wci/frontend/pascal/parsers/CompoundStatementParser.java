@@ -7,6 +7,7 @@ import wci.intermediate.*;
 import static wci.frontend.pascal.PascalTokenType.*;
 import static wci.frontend.pascal.PascalErrorCode.*;
 import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
+import static wci.intermediate.icodeimpl.ICodeKeyImpl.*;
 
 /**
  * <h1>CompoundStatementParser</h1>
@@ -34,7 +35,7 @@ public class CompoundStatementParser extends StatementParser
      * @throws Exception if an error occurred.
      */
     public ICodeNode parse(Token token)
-        throws Exception
+            throws Exception
     {
         token = nextToken();  // consume the BEGIN
 

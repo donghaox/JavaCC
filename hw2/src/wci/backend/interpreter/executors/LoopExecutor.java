@@ -22,7 +22,7 @@ public class LoopExecutor extends StatementExecutor
 {
     /**
      * Constructor.
-     * @param the parent executor.
+     * @param  parent executor.
      */
     public LoopExecutor(Executor parent)
     {
@@ -50,7 +50,7 @@ public class LoopExecutor extends StatementExecutor
             // Execute the children of the LOOP node.
             for (ICodeNode child : loopChildren) {
                 ICodeNodeTypeImpl childType =
-                                      (ICodeNodeTypeImpl) child.getType();
+                        (ICodeNodeTypeImpl) child.getType();
 
                 // TEST node?
                 if (childType == TEST) {

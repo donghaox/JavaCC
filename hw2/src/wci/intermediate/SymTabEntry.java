@@ -49,4 +49,13 @@ public interface SymTabEntry
      * @return the attribute value.
      */
     public Object getAttribute(SymTabKey key);
+
+    //new methods for type declaration
+    public void setDefinition(Definition definition);
+
+    public Definition getDefinition();
+
+    public void setTypeSpec(TypeSpec typeSpec);
+
+    public TypeSpec getTypeSpec();
 }
