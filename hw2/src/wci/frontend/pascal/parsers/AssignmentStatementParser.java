@@ -11,6 +11,7 @@ import wci.intermediate.typeimpl.*;
 import static wci.frontend.pascal.PascalTokenType.*;
 import static wci.frontend.pascal.PascalErrorCode.*;
 import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
+import static wci.intermediate.typeimpl.TypeKeyImpl.*;
 
 /**
  * <h1>AssignmentStatementParser</h1>
@@ -78,8 +79,6 @@ public class AssignmentStatementParser extends StatementParser
         // Type check: Assignment compatible?
         TypeSpec exprType = exprNode != null ? exprNode.getTypeSpec()
                 : Predefined.undefinedType;
-        System.out.println("targetType = " + targetType.getForm());
-        System.out.println("expreType = " + exprType.getForm());
 
         if (!TypeChecker.areAssignmentCompatible(targetType, exprType)) {
             errorHandler.flag(token, INCOMPATIBLE_TYPES, this);

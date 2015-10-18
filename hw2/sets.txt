@@ -3,8 +3,10 @@ CONST
 TYPE
 
 VAR
-        low, mid, high : integer;
+        i, low, mid, high : integer;
         evens, odds, primes, teens : SET OF integer;
+        s1,s2,s3,s4,s5,s6,s7: SET OF integer;
+        b1,b2,b3,b4,b5:boolean;
 BEGIN
         low := 15;
         mid := 45;

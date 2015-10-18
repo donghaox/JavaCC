@@ -18,7 +18,8 @@ import static wci.intermediate.symtabimpl.DefinitionImpl.*;
 import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.*;
 import static wci.intermediate.icodeimpl.ICodeKeyImpl.*;
 import static wci.intermediate.icodeimpl.ICodeNodeTypeImpl.SET;
-
+import static wci.intermediate.typeimpl.TypeKeyImpl.*;
+import static wci.intermediate.typeimpl.TypeFormImpl.*;
 /**
  * <h1>ExpressionParser</h1>
  *
@@ -117,6 +118,11 @@ public class ExpressionParser extends StatementParser
             if (TypeChecker.areComparisonCompatible(resultType, simExprType)) {
                 resultType = Predefined.booleanType;
             }
+
+            else if(resultType.getForm() == SCALAR && simExprType.getForm() == TypeFormImpl.SET){
+                resultType = Predefined.booleanType;
+            }
+
             else {
                 errorHandler.flag(token, INCOMPATIBLE_TYPES, this);
                 resultType = Predefined.undefinedType;
@@ -215,6 +221,10 @@ public class ExpressionParser extends StatementParser
                     else if (TypeChecker.isAtLeastOneReal(resultType,
                             termType)) {
                         resultType = Predefined.realType;
+                    }
+
+                    else if(TypeChecker.areBothSet(resultType, termType)){
+                        resultType = TypeFactory.createType(TypeFormImpl.SET);
                     }
 
                     else {
@@ -327,6 +337,9 @@ public class ExpressionParser extends StatementParser
                     else if (TypeChecker.isAtLeastOneReal(resultType,
                             factorType)) {
                         resultType = Predefined.realType;
+                    }
+                    else if (TypeChecker.areBothSet(resultType, factorType)){
+                        resultType = TypeFactory.createType(TypeFormImpl.SET);
                     }
 
                     else {
@@ -477,6 +490,7 @@ public class ExpressionParser extends StatementParser
                 }*/
 
                 parseSet(token, rootNode, MISSING_RIGHT_BRACKET);
+
                 break;
 
             }
@@ -554,6 +568,9 @@ public class ExpressionParser extends StatementParser
                             PascalErrorCode errorCode)
             throws Exception
     {
+        TypeSpec typeSpec = TypeFactory.createType(TypeFormImpl.SET);
+        ICodeNode statementNode = null;
+
         // Synchronization set for the terminator.
         TokenType previous_token = token.getType();
         // Loop to parse each statement until the END token
@@ -564,7 +581,7 @@ public class ExpressionParser extends StatementParser
             previous_token = token.getType();
             // Parse a statement.  The parent node adopts the statement node.
             if(token.getType() != COMMA){
-                ICodeNode statementNode = parse(token);
+                 statementNode = parse(token);
 
                 //handle non unique member
                 boolean is_unique = check_unique(token, parentNode, statementNode);
@@ -619,6 +636,10 @@ public class ExpressionParser extends StatementParser
         else {
             errorHandler.flag(token, errorCode, this);
         }
+        if(statementNode != null)
+        typeSpec.setAttribute(SET_ELEMENT_TYPE, statementNode);
+
+        parentNode.setTypeSpec(typeSpec);
     }
 
     protected boolean check_unique(Token token, ICodeNode pNode, ICodeNode child){

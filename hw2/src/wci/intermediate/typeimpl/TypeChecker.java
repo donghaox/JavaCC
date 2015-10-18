@@ -48,6 +48,11 @@ public class TypeChecker
         return (type != null) && (type.baseType() == Predefined.realType);
     }
 
+    public static boolean areBothSet(TypeSpec type1, TypeSpec type2)
+    {
+        return (type1 != null) && (type1.getForm() == type2.getForm());
+    }
+
     /**
      * Check if a type specification is integer or real.
      * @param type the type specification to check.
@@ -125,8 +130,14 @@ public class TypeChecker
             compatible = true;
         }
 
+
         // real := integer
         else if (isReal(targetType) && isInteger(valueType)) {
+            compatible = true;
+        }
+
+        else if(targetType.getForm() == valueType.getForm())
+        {
             compatible = true;
         }
 
@@ -168,7 +179,11 @@ public class TypeChecker
             compatible = true;
         }
 
-        // Two strings.
+        else if (type1.getForm() == type2.getForm())
+        {
+            compatible = true;
+        }
+        //two strings
         else {
             compatible = type1.isPascalString() && type2.isPascalString();
         }
