@@ -646,7 +646,7 @@ public class ExpressionParser extends StatementParser
 		/*
 		 * this method make sure set's members are unique
 		 */
-
+    	try{
         if(pNode.getChildren().contains(child)){
             if(child.getType() == MULTIPLY){
                 return true;
@@ -676,8 +676,13 @@ public class ExpressionParser extends StatementParser
                     }
                 }
             }
+            
         }
         return true;
+    }
+    	catch(Exception e){
+    		return false;
+    	}
     }
 
     protected boolean valid_set(ICodeNode child){

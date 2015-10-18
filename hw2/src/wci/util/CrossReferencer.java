@@ -100,6 +100,7 @@ public class CrossReferencer
     private void printSymTab(SymTab symTab, ArrayList<TypeSpec> recordTypes)
     {
         // Loop over the sorted list of symbol table entries.
+    	try{
         ArrayList<SymTabEntry> sorted = symTab.sortedEntries();
         for (SymTabEntry entry : sorted) {
             ArrayList<Integer> lineNumbers = entry.getLineNumbers();
@@ -117,6 +118,10 @@ public class CrossReferencer
             System.out.println();
             printEntry(entry, recordTypes);
         }
+    	}
+    	catch (Exception e){
+    		
+    	}
     }
 
     /**
