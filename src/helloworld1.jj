@@ -1,0 +1,30 @@
+options {
+    BUILD_PARSER=false;
+    IGNORE_CASE=true;
+}
+
+PARSER_BEGIN(HelloWorld)
+    public class HelloWorld {}
+PARSER_END(HelloWorld)
+
+TOKEN_MGR_DECLS : {
+    public static void main(String[] args)
+    {
+        java.io.BufferedReader sr = new java.io.BufferedReader(new FileReader(args[0]));
+        SimpleCharStream scs = new SimpleCharStream(sr);
+        HelloWorldTokenManager mgr = new HelloWorldTokenManager(scs);
+
+        while (mgr.getNextToken().kind != EOF) {}
+    }
+}
+
+SKIP : {
+    <IGNORE : [" ", ","]>
+}
+
+TOKEN : {
+    <HELLO : "hello">
+      { debugStream.println("HELLO token: " + matchedToken.image); }
+  | <WORLD : "world">
+      { debugStream.println("WORLD token: " + matchedToken.image); }
+}

@@ -1,0 +1,33 @@
+options {
+    OUTPUT_DIRECTORY="src";
+}
+
+PARSER_BEGIN(PhoneParser)
+import java.io.*;
+
+public class PhoneParser
+{
+    public static void main(String [] args)
+    {
+        Reader sr = new BufferedReader(new FileReader(args [0]));
+        PhoneParser parser = new PhoneParser(sr);
+        try {
+            parser.PhoneNumber();
+        }
+        catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+    }
+}
+PARSER_END(PhoneParser)
+
+TOKEN : {
+    <FOUR_DIGITS  : (<DIGITS>){4}>
+  | <THREE_DIGITS : (<DIGITS>){3}>
+  | <#DIGITS      : ["0"-"9"]>
+}
+
+void PhoneNumber() : {} {
+  <THREE_DIGITS> "-" <THREE_DIGITS> "-" <FOUR_DIGITS> <EOF>
+    { System.out.println("Successfully parsed a phone number!"); }
+}

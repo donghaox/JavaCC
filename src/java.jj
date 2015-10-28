@@ -1,0 +1,111 @@
+options{
+COMMON_TOKEN_ACTION = false;
+STATIC = false;
+OUTPUT_DIRECTORY = "src";
+}
+
+PARSER_BEGIN(JavaParser)
+import java.io.*;
+public class JavaParser {
+
+}
+PARSER_END(JavaParser)
+
+TOKEN_MGR_DECLS : {
+    public static void main(String[] args) throws FileNotFoundException
+    {
+        Reader sr = new BufferedReader(new FileReader(args[0]));
+        SimpleCharStream scs = new SimpleCharStream(sr);
+        JavaParserTokenManager mgr = new JavaParserTokenManager(scs);
+
+        while (mgr.getNextToken().kind != EOF) {}
+    }
+
+    void CommonTokenAction(Token t)
+    {
+        System.out.println(t.kind + t.image);
+    }
+}
+
+SKIP : {
+    <IGNORE : [" ", ","]>
+}
+
+
+TOKEN : {
+    <ABSTRACT: "abstract">
+  | <BOOLEAN : "boolean">
+  | <BREAK : "break">
+  | <BYTE : "byte">
+  | <CASE : "case">
+  | <CATCH : "catch">
+  | <CHAR : "char">
+  | <CLASS : "class">
+  | <CONST : "const">
+  | <CONTINUE : "continue">
+  | <DEF : "default">
+  | <DO : "do">
+  | <DOUBLE : "double">
+  | <ELSE : "else">
+  | <ENUM : "enum">
+  | <EXTENDS : "extends">
+  | <FALSE : "false">
+  | <FINAL : "final">
+  | <FINALLY : "finally">
+  | <FLOAT : "float">
+  | <FOR : "for">
+  | <GOTO : "goto">
+  | <IF : "if">
+  | <IMPLEMENTS : "implements">
+  | <IMPORTS : "imports">
+  | <INSTANCEOF : "instanceof">
+  | <INT : "int">
+  | <INTERFACE : "instance">
+  | <LONG : "long">
+  | <NATIVE : "native">
+  | <NEW : "new">
+  | <NULL : "null">
+  | <PACKAGE : "package">
+  | <PRIVATE : "private">
+  | <PROTECTED : "protected">
+  | <PUBLIC : "public">
+  | <RETURN : "return">
+  | <SHORT : "short">
+  | <STATIC : "static">
+  | <STRICTFP : "strictfp">
+  | <SUPER : "super">
+  | <SWITCH : "switch">
+  | <SYCHRONIZED : "sychronized">
+  | <THIS : "this">
+  | <THROW : "throw">
+  | <THROWS : "throws">
+  | <TRANSIENT : "transient">
+  | <TRUE : "true">
+  | <TRY : "try">
+  | <VOID : "void">
+  | <VOLATILE : "volatile">
+  | <WHILE : "while">
+  | <#DIGIT : ["0"-"9"]>
+  | <#LOWER_CASE : ["a"-"z"]>
+  | <#UPPER_CASE : ["A"-"Z"]>
+  | <#LETTER : (<LOWER_CASE>)|(<UPPER_CASE>)>
+  | <ID : <LETTER>(<LETTER>|<DIGIT>|"_")*>
+  | <CHARARCTER : "'" ~[] "'">
+    {System.out.println("CHARACTER :" + matchedToken.image);}
+  | <STRING : "\"" (~["\n"])* "\"">
+    {System.out.println("STRING :" + matchedToken.image);}
+  | <COMMENT_LINE : "//" (~["\n"])* "\n">
+    {System.out.println("COMMENT: " + matchedToken.image);}
+  | <COMMENT_BLOCK : "/*" (~["*"])* >
+    {System.out.println("BLOCK: " + matchedToken.image);}
+
+}
+void character_token():{}
+{
+    "'" (<(~[])>)  "'"
+    {System.out.println("CHARACTER :" );}
+
+}
+
+
+
