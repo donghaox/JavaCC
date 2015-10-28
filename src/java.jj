@@ -28,76 +28,127 @@ TOKEN_MGR_DECLS : {
 }
 
 SKIP : {
-    <IGNORE : [" ", ","]>
+    <IGNORE : [" ", ",", "\n", "\t"]>
+    |<COMMENT_LINE : "//" (~["\n"])* "\n">
+    |<COMMENT_BLOCK: "/*" (~["*"])* |
+                      "/*" (~["*"])* "*" (~["/"])* |
+                      "/*" (~["*"])* "*" (~["/"])* "/" >
 }
-
 
 TOKEN : {
     <ABSTRACT: "abstract">
+    {debugStream.println("ABSTRACT: "+ matchedToken.image);}
   | <BOOLEAN : "boolean">
+     {debugStream.println("BOOLEAN: "+ matchedToken.image);}
   | <BREAK : "break">
+      {debugStream.println("BREAK: "+ matchedToken.image);}
   | <BYTE : "byte">
+  {debugStream.println("BYTE: "+ matchedToken.image);}
   | <CASE : "case">
+  {debugStream.println("CASE: "+ matchedToken.image);}
   | <CATCH : "catch">
+  {debugStream.println("CATCH: "+ matchedToken.image);}
   | <CHAR : "char">
+  {debugStream.println("CHAR: "+ matchedToken.image);}
   | <CLASS : "class">
+  {debugStream.println("CLASS: "+ matchedToken.image);}
   | <CONST : "const">
+  {debugStream.println("CONST: "+ matchedToken.image);}
   | <CONTINUE : "continue">
+  {debugStream.println("CONTINUE: "+ matchedToken.image);}
   | <DEF : "default">
+  {debugStream.println("DEFAULT: "+ matchedToken.image);}
   | <DO : "do">
+  {debugStream.println("DO: "+ matchedToken.image);}
   | <DOUBLE : "double">
+  {debugStream.println("DOUBLE: "+ matchedToken.image);}
   | <ELSE : "else">
+  {debugStream.println("ELSE: "+ matchedToken.image);}
   | <ENUM : "enum">
+  {debugStream.println("ENUM: "+ matchedToken.image);}
   | <EXTENDS : "extends">
+  {debugStream.println("EXTENDS: "+ matchedToken.image);}
   | <FALSE : "false">
+  {debugStream.println("FALSE: "+ matchedToken.image);}
   | <FINAL : "final">
+  {debugStream.println("FINAL: "+ matchedToken.image);}
   | <FINALLY : "finally">
+  {debugStream.println("FINALLY: "+ matchedToken.image);}
   | <FLOAT : "float">
+  {debugStream.println("FLOAT: "+ matchedToken.image);}
   | <FOR : "for">
+  {debugStream.println("FOR: "+ matchedToken.image);}
   | <GOTO : "goto">
+  {debugStream.println("GOTO: "+ matchedToken.image);}
   | <IF : "if">
+  {debugStream.println("IF: "+ matchedToken.image);}
   | <IMPLEMENTS : "implements">
+  {debugStream.println("IMPLEMENTS: "+ matchedToken.image);}
   | <IMPORTS : "imports">
+  {debugStream.println("IMPORTS: "+ matchedToken.image);}
   | <INSTANCEOF : "instanceof">
+  {debugStream.println("INSTANCEOF: "+ matchedToken.image);}
   | <INT : "int">
+  {debugStream.println("INT: "+ matchedToken.image);}
   | <INTERFACE : "instance">
+  {debugStream.println("INTERFACE: "+ matchedToken.image);}
   | <LONG : "long">
+  {debugStream.println("LONG: "+ matchedToken.image);}
   | <NATIVE : "native">
+  {debugStream.println("NATIVE: "+ matchedToken.image);}
   | <NEW : "new">
+  {debugStream.println("NEW: "+ matchedToken.image);}
   | <NULL : "null">
+  {debugStream.println("NULL: "+ matchedToken.image);}
   | <PACKAGE : "package">
+  {debugStream.println("PACKAGE: "+ matchedToken.image);}
   | <PRIVATE : "private">
+  {debugStream.println("PRIVATE: "+ matchedToken.image);}
   | <PROTECTED : "protected">
+  {debugStream.println("PROTECTED: "+ matchedToken.image);}
   | <PUBLIC : "public">
+  {debugStream.println("PUBLIC: "+ matchedToken.image);}
   | <RETURN : "return">
+  {debugStream.println("RETURN: "+ matchedToken.image);}
   | <SHORT : "short">
+  {debugStream.println("SHORT: "+ matchedToken.image);}
   | <STATIC : "static">
+  {debugStream.println("STATIC: "+ matchedToken.image);}
   | <STRICTFP : "strictfp">
+  {debugStream.println("SRICTFP: "+ matchedToken.image);}
   | <SUPER : "super">
+  {debugStream.println("SUPER: "+ matchedToken.image);}
   | <SWITCH : "switch">
+  {debugStream.println("SWITCH: "+ matchedToken.image);}
   | <SYCHRONIZED : "sychronized">
+  {debugStream.println("SYCHRONIZED: "+ matchedToken.image);}
   | <THIS : "this">
+  {debugStream.println("THIS: "+ matchedToken.image);}
   | <THROW : "throw">
+  {debugStream.println("THR: "+ matchedToken.image);}
   | <THROWS : "throws">
+  {debugStream.println("ABSTRACT: "+ matchedToken.image);}
   | <TRANSIENT : "transient">
+  {debugStream.println("ABSTRACT: "+ matchedToken.image);}
   | <TRUE : "true">
+  {debugStream.println("ABSTRACT: "+ matchedToken.image);}
   | <TRY : "try">
+  {debugStream.println("ABSTRACT: "+ matchedToken.image);}
   | <VOID : "void">
+  {debugStream.println("ABSTRACT: "+ matchedToken.image);}
   | <VOLATILE : "volatile">
+  {debugStream.println("ABSTRACT: "+ matchedToken.image);}
   | <WHILE : "while">
   | <#DIGIT : ["0"-"9"]>
   | <#LOWER_CASE : ["a"-"z"]>
   | <#UPPER_CASE : ["A"-"Z"]>
   | <#LETTER : (<LOWER_CASE>)|(<UPPER_CASE>)>
   | <ID : <LETTER>(<LETTER>|<DIGIT>|"_")*>
+    {debugStream.println("IDENTIFIER: "+ matchedToken.image);}
   | <CHARARCTER : "'" ~[] "'">
     {System.out.println("CHARACTER :" + matchedToken.image);}
   | <STRING : "\"" (~["\n"])* "\"">
     {System.out.println("STRING :" + matchedToken.image);}
-  | <COMMENT_LINE : "//" (~["\n"])* "\n">
-    {System.out.println("COMMENT: " + matchedToken.image);}
-  | <COMMENT_BLOCK : "/*" (~["*"])* >
-    {System.out.println("BLOCK: " + matchedToken.image);}
 
 }
 void character_token():{}
