@@ -1,7 +1,6 @@
 options{
 COMMON_TOKEN_ACTION = false;
 STATIC = false;
-OUTPUT_DIRECTORY = "src";
 }
 
 PARSER_BEGIN(JavaParser)
@@ -30,9 +29,7 @@ TOKEN_MGR_DECLS : {
 SKIP : {
     <IGNORE : [" ", ",", "\n", "\t"]>
     |<COMMENT_LINE : "//" (~["\n"])* "\n">
-    |<COMMENT_BLOCK: "/*" (~["*"])* |
-                      "/*" (~["*"])* "*" (~["/"])* |
-                      "/*" (~["*"])* "*" (~["/"])* "/" >
+    |<COMMENT_BLOCK: "/*"  ((~["*"])* (~["/"])*) >
 }
 
 TOKEN : {
@@ -139,6 +136,11 @@ TOKEN : {
   | <VOLATILE : "volatile">
   {debugStream.println("ABSTRACT: "+ matchedToken.image);}
   | <WHILE : "while">
+  | <NUMBER: (<HEX>)>
+  {debugStream.println("NUMBER: "+ matchedToken.image);}
+  | <DECIMAL : (~["0"])(<DIGIT>)>
+  {debugStream.println("DECIMAL: "+ matchedToken.image);}  | <OCTAL : (["0"-"7"])+>
+  {debugStream.println("OCTAL: "+ matchedToken.image);}  | <HEX  : ["0"](["x"]|["X"])((<DIGIT>)|(["A"-"F"])|(["a"-"f"]))+ > 
   | <#DIGIT : ["0"-"9"]>
   | <#LOWER_CASE : ["a"-"z"]>
   | <#UPPER_CASE : ["A"-"Z"]>
@@ -149,6 +151,7 @@ TOKEN : {
     {System.out.println("CHARACTER :" + matchedToken.image);}
   | <STRING : "\"" (~["\n"])* "\"">
     {System.out.println("STRING :" + matchedToken.image);}
+    
 
 }
 void character_token():{}
