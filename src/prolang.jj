@@ -4,28 +4,25 @@ STATIC = false;
 OUTPUT_DIRECTORY = "src";
 }
 
-PARSER_BEGIN(JavaParser)
+PARSER_BEGIN(ProlangParser)
 import java.io.*;
-public class JavaParser {
-
-}
-PARSER_END(JavaParser)
-
-TOKEN_MGR_DECLS : {
+public class ProlangParser {
     public static void main(String[] args) throws FileNotFoundException
     {
         Reader sr = new BufferedReader(new FileReader(args[0]));
-        SimpleCharStream scs = new SimpleCharStream(sr);
-        JavaParserTokenManager mgr = new JavaParserTokenManager(scs);
+        ProlangParser parser = new ProlangParser(sr);
 
-        while (mgr.getNextToken().kind != EOF) {}
-    }
-
-    void CommonTokenAction(Token t)
-    {
-        System.out.println(t.kind + t.image);
+        try{
+            parser.program();
+        }
+        catch (ParseException ex)
+        {
+            ex.printStackTrace();
+        }
     }
 }
+PARSER_END(ProlangParser)
+
 
 SKIP : {
     <IGNORE : [" ", ",", "\n", "\t"]>
@@ -257,7 +254,78 @@ TOKEN : {
       {debugStream.println("LSHIFT_ASSIGN: "+ matchedToken.image);}
 
 }
-s
+void program():{}
+{
+    statementList()
+    <EOF>
+}
+
+void statementList():{}
+{
+    statement()
+    statementList()
+    | {}
+}
+
+void statement():{}
+{
+    assignmentStatement()
+}
+
+void assignmentStatement():{}
+{
+    <ID>
+    "="
+    expr()
+    ";"
+}
+
+void expr():{}
+{
+    term()
+    termList()
+}
+
+void termList():{}
+{
+    "+"
+    term()
+    termList()
+    |
+    "-"
+    term()
+    termList()
+    |
+    {}
+}
+
+void term():{}
+{
+    factor()
+    factorList()
+}
+
+void factor():{}
+{
+    <DECIMAL>
+    |
+    <STRING>
+    |
+    <CHARARCTER>
+    |
+    <ID>
+    |
+    "(" expr() ")"
+}
+
+void factorList():{}
+{
+    ("/"|"*")
+    factor()
+    factorList()
+    |
+    {}
+}
 
 
 
