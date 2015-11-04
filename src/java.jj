@@ -1,7 +1,6 @@
 options{
 COMMON_TOKEN_ACTION = false;
 STATIC = false;
-OUTPUT_DIRECTORY = "src";
 }
 
 PARSER_BEGIN(JavaParser)
@@ -30,9 +29,7 @@ TOKEN_MGR_DECLS : {
 SKIP : {
     <IGNORE : [" ", ",", "\n", "\t"]>
     |<COMMENT_LINE : "//" (~["\n"])* "\n">
-    |<COMMENT_BLOCK: "/*" (~["*"])* |
-                      "/*" (~["*"])* "*" (~["/"])* |
-                      "/*" (~["*"])* "*" (~["/"])* "/" >
+    |<COMMENT_BLOCK: "/*"  ((~["*"])* (~["/"])*) >
 }
 
 TOKEN : {
@@ -142,6 +139,7 @@ TOKEN : {
   | <VOLATILE : "volatile">
   {debugStream.println("VOLATILE: "+ matchedToken.image);}
   | <WHILE : "while">
+<<<<<<< HEAD
       {debugStream.println("WHILE: "+ matchedToken.image);}
   /*************************
   Numbers
@@ -157,6 +155,13 @@ TOKEN : {
           | (<DIGIT>)+ (<DECIMAL_EXPONENT>)?>
     {debugStream.println("REAL: "+ matchedToken.image);}
   | <#DECIMAL_EXPONENT: ["e","E"] (["+","-"])? (<DIGIT>)+>
+=======
+  | <NUMBER: (<HEX>)>
+  {debugStream.println("NUMBER: "+ matchedToken.image);}
+  | <DECIMAL : (~["0"])(<DIGIT>)>
+  {debugStream.println("DECIMAL: "+ matchedToken.image);}  | <OCTAL : (["0"-"7"])+>
+  {debugStream.println("OCTAL: "+ matchedToken.image);}  | <HEX  : ["0"](["x"]|["X"])((<DIGIT>)|(["A"-"F"])|(["a"-"f"]))+ > 
+>>>>>>> FETCH_HEAD
   | <#DIGIT : ["0"-"9"]>
   | <#LOWER_CASE : ["a"-"z"]>
   | <#UPPER_CASE : ["A"-"Z"]>
@@ -167,6 +172,7 @@ TOKEN : {
     {System.out.println("CHARACTER :" + matchedToken.image);}
   | <STRING : "\"" (~["\n"])* "\"">
     {System.out.println("STRING :" + matchedToken.image);}
+<<<<<<< HEAD
     /*************************
     Separators
     *************************/
@@ -255,6 +261,9 @@ TOKEN : {
     {debugStream.println("RSHIFT_ASSIGN: "+ matchedToken.image);}
   | <LSHIFT_ASSIGN : "<<=">
       {debugStream.println("LSHIFT_ASSIGN: "+ matchedToken.image);}
+=======
+    
+>>>>>>> FETCH_HEAD
 
 }
 s
