@@ -1,0 +1,331 @@
+options{
+COMMON_TOKEN_ACTION = false;
+STATIC = false;
+OUTPUT_DIRECTORY = "src";
+}
+
+PARSER_BEGIN(ProlangParser)
+import java.io.*;
+public class ProlangParser {
+    public static void main(String[] args) throws FileNotFoundException
+    {
+        Reader sr = new BufferedReader(new FileReader(args[0]));
+        ProlangParser parser = new ProlangParser(sr);
+
+        try{
+            parser.program();
+        }
+        catch (ParseException ex)
+        {
+            ex.printStackTrace();
+        }
+    }
+}
+PARSER_END(ProlangParser)
+
+
+SKIP : {
+    <IGNORE : [" ", ",", "\n", "\t"]>
+    |<COMMENT_LINE : "//" (~["\n"])* "\n">
+    |<COMMENT_BLOCK: "/*" (~["*"])* |
+                      "/*" (~["*"])* "*" (~["/"])* |
+                      "/*" (~["*"])* "*" (~["/"])* "/" >
+}
+
+TOKEN : {
+  /*************************
+  Reserved Words
+  *************************/
+    <ABSTRACT: "abstract">
+    {debugStream.println("ABSTRACT: "+ matchedToken.image);}
+  | <BOOLEAN : "boolean">
+     {debugStream.println("BOOLEAN: "+ matchedToken.image);}
+  | <BREAK : "break">
+      {debugStream.println("BREAK: "+ matchedToken.image);}
+  | <BYTE : "byte">
+  {debugStream.println("BYTE: "+ matchedToken.image);}
+  | <CASE : "case">
+  {debugStream.println("CASE: "+ matchedToken.image);}
+  | <CATCH : "catch">
+  {debugStream.println("CATCH: "+ matchedToken.image);}
+  | <CHAR : "char">
+  {debugStream.println("CHAR: "+ matchedToken.image);}
+  | <CLASS : "class">
+  {debugStream.println("CLASS: "+ matchedToken.image);}
+  | <CONST : "const">
+  {debugStream.println("CONST: "+ matchedToken.image);}
+  | <CONTINUE : "continue">
+  {debugStream.println("CONTINUE: "+ matchedToken.image);}
+  | <DEF : "default">
+  {debugStream.println("DEFAULT: "+ matchedToken.image);}
+  | <DO : "do">
+  {debugStream.println("DO: "+ matchedToken.image);}
+  | <DOUBLE : "double">
+  {debugStream.println("DOUBLE: "+ matchedToken.image);}
+  | <ELSE : "else">
+  {debugStream.println("ELSE: "+ matchedToken.image);}
+  | <ENUM : "enum">
+  {debugStream.println("ENUM: "+ matchedToken.image);}
+  | <EXTENDS : "extends">
+  {debugStream.println("EXTENDS: "+ matchedToken.image);}
+  | <FALSE : "false">
+  {debugStream.println("FALSE: "+ matchedToken.image);}
+  | <FINAL : "final">
+  {debugStream.println("FINAL: "+ matchedToken.image);}
+  | <FINALLY : "finally">
+  {debugStream.println("FINALLY: "+ matchedToken.image);}
+  | <FLOAT : "float">
+  {debugStream.println("FLOAT: "+ matchedToken.image);}
+  | <FOR : "for">
+  {debugStream.println("FOR: "+ matchedToken.image);}
+  | <GOTO : "goto">
+  {debugStream.println("GOTO: "+ matchedToken.image);}
+  | <IF : "if">
+  {debugStream.println("IF: "+ matchedToken.image);}
+  | <IMPLEMENTS : "implements">
+  {debugStream.println("IMPLEMENTS: "+ matchedToken.image);}
+  | <IMPORTS : "imports">
+  {debugStream.println("IMPORTS: "+ matchedToken.image);}
+  | <INSTANCEOF : "instanceof">
+  {debugStream.println("INSTANCEOF: "+ matchedToken.image);}
+  | <INT : "int">
+  {debugStream.println("INT: "+ matchedToken.image);}
+  | <INTERFACE : "instance">
+  {debugStream.println("INTERFACE: "+ matchedToken.image);}
+  | <LONG : "long">
+  {debugStream.println("LONG: "+ matchedToken.image);}
+  | <NATIVE : "native">
+  {debugStream.println("NATIVE: "+ matchedToken.image);}
+  | <NEW : "new">
+  {debugStream.println("NEW: "+ matchedToken.image);}
+  | <NULL : "null">
+  {debugStream.println("NULL: "+ matchedToken.image);}
+  | <PACKAGE : "package">
+  {debugStream.println("PACKAGE: "+ matchedToken.image);}
+  | <PRIVATE : "private">
+  {debugStream.println("PRIVATE: "+ matchedToken.image);}
+  | <PROTECTED : "protected">
+  {debugStream.println("PROTECTED: "+ matchedToken.image);}
+  | <PUBLIC : "public">
+  {debugStream.println("PUBLIC: "+ matchedToken.image);}
+  | <RETURN : "return">
+  {debugStream.println("RETURN: "+ matchedToken.image);}
+  | <SHORT : "short">
+  {debugStream.println("SHORT: "+ matchedToken.image);}
+  | <STATIC : "static">
+  {debugStream.println("STATIC: "+ matchedToken.image);}
+  | <STRICTFP : "strictfp">
+  {debugStream.println("SRICTFP: "+ matchedToken.image);}
+  | <SUPER : "super">
+  {debugStream.println("SUPER: "+ matchedToken.image);}
+  | <SWITCH : "switch">
+  {debugStream.println("SWITCH: "+ matchedToken.image);}
+  | <SYCHRONIZED : "sychronized">
+  {debugStream.println("SYCHRONIZED: "+ matchedToken.image);}
+  | <THIS : "this">
+  {debugStream.println("THIS: "+ matchedToken.image);}
+  | <THROW : "throw">
+  {debugStream.println("THR: "+ matchedToken.image);}
+  | <THROWS : "throws">
+  {debugStream.println("THROWS: "+ matchedToken.image);}
+  | <TRANSIENT : "transient">
+  {debugStream.println("TRANSIENT: "+ matchedToken.image);}
+  | <TRUE : "true">
+  {debugStream.println("TRUE: "+ matchedToken.image);}
+  | <TRY : "try">
+  {debugStream.println("TRY: "+ matchedToken.image);}
+  | <VOID : "void">
+  {debugStream.println("VOID: "+ matchedToken.image);}
+  | <VOLATILE : "volatile">
+  {debugStream.println("VOLATILE: "+ matchedToken.image);}
+  | <WHILE : "while">
+      {debugStream.println("WHILE: "+ matchedToken.image);}
+  /*************************
+  Numbers
+  *************************/
+  | <DECIMAL : (["1"-"9"])(<DIGIT>)*>
+     {debugStream.println("DECIMAL: "+ matchedToken.image);}
+  | <OCTAL : "0" (["0"-"7"])*>
+     {debugStream.println("OCTAL: "+ matchedToken.image);}
+  | <HEX  : "0" ["x", "X"] ((<DIGIT>)|(["A"-"F"])|(["a"-"f"]))+ >
+    {debugStream.println("HEX: "+ matchedToken.image);}
+  | <REAL: (<DIGIT>)+ "." (<DIGIT>)* (<DECIMAL_EXPONENT>)?
+          | "." (<DIGIT>)+ (<DECIMAL_EXPONENT>)?
+          | (<DIGIT>)+ (<DECIMAL_EXPONENT>)?>
+    {debugStream.println("REAL: "+ matchedToken.image);}
+  | <#DECIMAL_EXPONENT: ["e","E"] (["+","-"])? (<DIGIT>)+>
+  | <#DIGIT : ["0"-"9"]>
+  | <#LOWER_CASE : ["a"-"z"]>
+  | <#UPPER_CASE : ["A"-"Z"]>
+  | <#LETTER : (<LOWER_CASE>)|(<UPPER_CASE>)>
+  | <ID : <LETTER>(<LETTER>|<DIGIT>|"_")*>
+    {debugStream.println("IDENTIFIER: "+ matchedToken.image);}
+  | <CHARARCTER : "'" ~[] "'">
+    {System.out.println("CHARACTER :" + matchedToken.image);}
+  | <STRING : "\"" (~["\n"])* "\"">
+    {System.out.println("STRING :" + matchedToken.image);}
+    /*************************
+    Separators
+    *************************/
+  | <LPAREN: "(">
+    {debugStream.println("LPAREN: "+ matchedToken.image);}
+  | <RPAREN: ")">
+    {debugStream.println("RPAREN: "+ matchedToken.image);}
+  | <LBRACE: "{">
+    {debugStream.println("LBRACE: "+ matchedToken.image);}
+  | <RBRACE: "}">
+    {debugStream.println("RBRACE: "+ matchedToken.image);}
+  | <LBRACKET: "[">
+    {debugStream.println("LBRACKET: "+ matchedToken.image);}
+  | <RBRACKET: "]">
+    {debugStream.println("RBRACKET: "+ matchedToken.image);}
+  | <SEMICOLON: ";">
+    {debugStream.println("SEMICOLON: "+ matchedToken.image);}
+  | <COMMA: ",">
+    {debugStream.println("COMMA: "+ matchedToken.image);}
+  | <DOT: ".">
+    {debugStream.println("DOT: "+ matchedToken.image);}
+  /*************************
+  Operators
+  *************************/
+  |<ASSIGN: "=">
+    {debugStream.println("ASSIGN: "+ matchedToken.image);}
+  | <LT: "<">
+    {debugStream.println("LT: "+ matchedToken.image);}
+  | <BANG: "!">
+    {debugStream.println("BANG: "+ matchedToken.image);}
+  | <TILDE: "~">
+    {debugStream.println("TILDE: "+ matchedToken.image);}
+  | <HOOK: "?">
+    {debugStream.println("HOOK: "+ matchedToken.image);}
+  | <COLON: ":">
+    {debugStream.println("COLON: "+ matchedToken.image);}
+  | <EQ: "==">
+    {debugStream.println("EQ: "+ matchedToken.image);}
+  | <LE: "<=">
+    {debugStream.println("LE: "+ matchedToken.image);}
+  | <GE: ">=">
+    {debugStream.println("GE: "+ matchedToken.image);}
+  | <NE: "!=">
+    {debugStream.println("NE: "+ matchedToken.image);}
+  | <SC_OR: "||">
+    {debugStream.println("SC_OR: "+ matchedToken.image);}
+  | <SC_AND: "&&">
+    {debugStream.println("SC_AND: "+ matchedToken.image);}
+  | <INCR: "++">
+    {debugStream.println("ICNR: "+ matchedToken.image);}
+  | <DECR: "--">
+    {debugStream.println("DECR: "+ matchedToken.image);}
+  | <PLUS: "+">
+    {debugStream.println("PLUS: "+ matchedToken.image);}
+  | <MINUS: "-">
+    {debugStream.println("MINUS: "+ matchedToken.image);}
+  | <STAR: "*">
+    {debugStream.println("STAR: "+ matchedToken.image);}
+  | <SLASH: "/">
+    {debugStream.println("SLASH: "+ matchedToken.image);}
+  | <BIT_AND: "&">
+    {debugStream.println("BIT_AND: "+ matchedToken.image);}
+  | <BIT_OR: "|">
+    {debugStream.println("BIT_OR: "+ matchedToken.image);}
+  | <XOR: "^">
+    {debugStream.println("XOR: "+ matchedToken.image);}
+  | <REM: "%">
+    {debugStream.println("REM: "+ matchedToken.image);}
+  | <PLUSASSIGN: "+=">
+    {debugStream.println("PLUS_ASSIGN: "+ matchedToken.image);}
+  | <MINUSASSIGN: "-=">
+    {debugStream.println("MINUS_ASSIGN: "+ matchedToken.image);}
+  | <STARASSIGN: "*=">
+    {debugStream.println("STAR_ASSIGN: "+ matchedToken.image);}
+  | <SLASHASSIGN: "/=">
+    {debugStream.println("SLASH_ASSIGN: "+ matchedToken.image);}
+  | <ANDASSIGN: "&=">
+    {debugStream.println("AND_ASSIGN: "+ matchedToken.image);}
+  | <ORASSIGN: "|=">
+    {debugStream.println("OR_ASSIGN: "+ matchedToken.image);}
+  | <XORASSIGN: "^=">
+    {debugStream.println("XOR_ASSIGN: "+ matchedToken.image);}
+  | <REMASSIGN: "%=">
+    {debugStream.println("REM_ASSIGN: "+ matchedToken.image);}
+  | <RSHIFT_ASSIGN : ">>=">
+    {debugStream.println("RSHIFT_ASSIGN: "+ matchedToken.image);}
+  | <LSHIFT_ASSIGN : "<<=">
+      {debugStream.println("LSHIFT_ASSIGN: "+ matchedToken.image);}
+
+}
+void program():{}
+{
+    statementList()
+    <EOF>
+}
+
+void statementList():{}
+{
+    statement()
+    statementList()
+    | {}
+}
+
+void statement():{}
+{
+    assignmentStatement()
+}
+
+void assignmentStatement():{}
+{
+    <ID>
+    "="
+    expr()
+    ";"
+}
+
+void expr():{}
+{
+    term()
+    termList()
+}
+
+void termList():{}
+{
+    "+"
+    term()
+    termList()
+    |
+    "-"
+    term()
+    termList()
+    |
+    {}
+}
+
+void term():{}
+{
+    factor()
+    factorList()
+}
+
+void factor():{}
+{
+    <DECIMAL>
+    |
+    <STRING>
+    |
+    <CHARARCTER>
+    |
+    <ID>
+    |
+    "(" expr() ")"
+}
+
+void factorList():{}
+{
+    ("/"|"*")
+    factor()
+    factorList()
+    |
+    {}
+}
+
+
+
