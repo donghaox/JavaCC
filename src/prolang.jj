@@ -1,9 +1,5 @@
 options{
-<<<<<<< HEAD
 COMMON_TOKEN_ACTION = true;
-=======
-COMMON_TOKEN_ACTION = false;
->>>>>>> c57e5b0db914238c74c77cedb937ae6eb799fa70
 STATIC = false;
 OUTPUT_DIRECTORY = "src";
 }
@@ -24,7 +20,6 @@ public class ProlangParser {
             ex.printStackTrace();
         }
     }
-<<<<<<< HEAD
 
 }
 PARSER_END(ProlangParser)
@@ -38,11 +33,6 @@ TOKEN_MGR_DECLS :
                  t.image);
     }
 }
-=======
-}
-PARSER_END(ProlangParser)
-
->>>>>>> c57e5b0db914238c74c77cedb937ae6eb799fa70
 
 SKIP : {
     <IGNORE : [" ", ",", "\n", "\t"]>
@@ -290,12 +280,9 @@ void statementList():{}
 void statement():{}
 {
     assignmentStatement()
-<<<<<<< HEAD
     | loopStatement()
     | declaratoinStatement()
 
-=======
->>>>>>> c57e5b0db914238c74c77cedb937ae6eb799fa70
 }
 
 void assignmentStatement():{}
@@ -353,7 +340,6 @@ void factorList():{}
     {}
 }
 
-<<<<<<< HEAD
 void loopStatement():{}
 {
     <WHILE>
@@ -384,7 +370,5 @@ void ifStatement():{}
 
 
 
-=======
->>>>>>> c57e5b0db914238c74c77cedb937ae6eb799fa70
 
 
