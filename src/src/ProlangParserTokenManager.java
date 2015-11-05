@@ -4,6 +4,13 @@ import java.io.*;
 /** Token Manager. */
 public class ProlangParserTokenManager implements ProlangParserConstants
 {
+    void CommonTokenAction(Token t)
+    {
+            System.out.printf(
+                ">> kind=%3d line=%3d column=%3d image=%s%n",
+                t.kind, t.beginLine, t.beginColumn, t.endLine,
+                 t.image);
+    }
 
   /** Debug output. */
   public  java.io.PrintStream debugStream = System.out;
@@ -1333,6 +1340,7 @@ public Token getNextToken()
    {
       jjmatchedKind = 0;
       matchedToken = jjFillToken();
+      CommonTokenAction(matchedToken);
       return matchedToken;
    }
    image = jjimage;
@@ -1350,6 +1358,7 @@ public Token getNextToken()
       {
          matchedToken = jjFillToken();
          TokenLexicalActions(matchedToken);
+         CommonTokenAction(matchedToken);
          return matchedToken;
       }
       else

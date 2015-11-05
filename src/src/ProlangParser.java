@@ -22,6 +22,7 @@ public class ProlangParser implements ProlangParserConstants {
 
   final public void statementList() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case WHILE:
     case ID:
       statement();
       statementList();
@@ -33,7 +34,18 @@ public class ProlangParser implements ProlangParserConstants {
   }
 
   final public void statement() throws ParseException {
-    assignmentStatement();
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case ID:
+      assignmentStatement();
+      break;
+    case WHILE:
+      loopStatement();
+      break;
+    default:
+      jj_la1[1] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
   }
 
   final public void assignmentStatement() throws ParseException {
@@ -61,7 +73,7 @@ public class ProlangParser implements ProlangParserConstants {
       termList();
       break;
     default:
-      jj_la1[1] = jj_gen;
+      jj_la1[2] = jj_gen;
 
     }
   }
@@ -91,7 +103,7 @@ public class ProlangParser implements ProlangParserConstants {
       jj_consume_token(RPAREN);
       break;
     default:
-      jj_la1[2] = jj_gen;
+      jj_la1[3] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -109,7 +121,7 @@ public class ProlangParser implements ProlangParserConstants {
         jj_consume_token(STAR);
         break;
       default:
-        jj_la1[3] = jj_gen;
+        jj_la1[4] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -117,7 +129,45 @@ public class ProlangParser implements ProlangParserConstants {
       factorList();
       break;
     default:
-      jj_la1[4] = jj_gen;
+      jj_la1[5] = jj_gen;
+
+    }
+  }
+
+  final public void loopStatement() throws ParseException {
+    jj_consume_token(WHILE);
+    jj_consume_token(LPAREN);
+    expr();
+    jj_consume_token(RPAREN);
+    codeBlock();
+  }
+
+  final public void codeBlock() throws ParseException {
+    jj_consume_token(LBRACE);
+    statementList();
+    jj_consume_token(RBRACE);
+  }
+
+  final public void ifStatement() throws ParseException {
+    jj_consume_token(IF);
+    jj_consume_token(LPAREN);
+    expr();
+    jj_consume_token(RPAREN);
+    codeBlock();
+    elseStatement();
+  }
+
+  final public void elseStatement() throws ParseException {
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case ELSE:
+      jj_consume_token(ELSE);
+      jj_consume_token(IF);
+      codeBlock();
+      break;
+      jj_consume_token(ELSE);
+      break;
+    default:
+      jj_la1[6] = jj_gen;
 
     }
   }
@@ -131,7 +181,7 @@ public class ProlangParser implements ProlangParserConstants {
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[5];
+  final private int[] jj_la1 = new int[7];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static private int[] jj_la1_2;
@@ -143,16 +193,16 @@ public class ProlangParser implements ProlangParserConstants {
       jj_la1_init_3();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_0 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x20000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x1000000,0x0,0x0,};
+      jj_la1_1 = new int[] {0x800000,0x800000,0x0,0x1000000,0x0,0x0,0x0,};
    }
    private static void jj_la1_init_2() {
-      jj_la1_2 = new int[] {0x2,0x18000000,0x1e,0x60000000,0x60000000,};
+      jj_la1_2 = new int[] {0x2,0x2,0x18000000,0x1e,0x60000000,0x60000000,0x0,};
    }
    private static void jj_la1_init_3() {
-      jj_la1_3 = new int[] {0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_3 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
    }
 
   /** Constructor with InputStream. */
@@ -166,7 +216,7 @@ public class ProlangParser implements ProlangParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 5; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -180,7 +230,7 @@ public class ProlangParser implements ProlangParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 5; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -190,7 +240,7 @@ public class ProlangParser implements ProlangParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 5; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -200,7 +250,7 @@ public class ProlangParser implements ProlangParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 5; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -209,7 +259,7 @@ public class ProlangParser implements ProlangParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 5; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -218,7 +268,7 @@ public class ProlangParser implements ProlangParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 5; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -274,7 +324,7 @@ public class ProlangParser implements ProlangParserConstants {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 7; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {

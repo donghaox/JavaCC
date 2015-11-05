@@ -1,5 +1,5 @@
 options{
-COMMON_TOKEN_ACTION = false;
+COMMON_TOKEN_ACTION = true;
 STATIC = false;
 OUTPUT_DIRECTORY = "src";
 }
@@ -20,9 +20,19 @@ public class ProlangParser {
             ex.printStackTrace();
         }
     }
+
 }
 PARSER_END(ProlangParser)
-
+TOKEN_MGR_DECLS :
+{
+    void CommonTokenAction(Token t)
+    {
+            System.out.printf(
+                ">> kind=%3d line=%3d column=%3d image=%s%n",
+                t.kind, t.beginLine, t.beginColumn, t.endLine,
+                 t.image);
+    }
+}
 
 SKIP : {
     <IGNORE : [" ", ",", "\n", "\t"]>
@@ -270,6 +280,7 @@ void statementList():{}
 void statement():{}
 {
     assignmentStatement()
+    | loopStatement()
 }
 
 void assignmentStatement():{}
@@ -326,6 +337,41 @@ void factorList():{}
     |
     {}
 }
+
+void loopStatement():{}
+{
+    <WHILE>
+    "("
+    expr()
+    ")"
+    codeBlock()
+}
+
+void codeBlock():{}
+{
+    <LBRACE>
+    (statementList()|{})
+    <RBRACE>
+}
+
+void ifStatement():{}
+{
+    <IF>
+    "("
+    expr()
+    ")"
+    codeBlock()
+    elseStatement()
+}
+
+void elseStatement():{}
+{
+    <ELSE> <IF> codeBlock()
+    | <ELSE>
+    | {}
+}
+
+
 
 
 
