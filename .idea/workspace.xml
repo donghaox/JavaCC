@@ -1,23 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2b1b4c90-6827-4348-81fd-705103794b80" name="Default" comment="prolang compiler">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/JavaCC/ParseException.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/JavaCC/ProlangParser.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/JavaCC/ProlangParserConstants.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/JavaCC/ProlangParserTokenManager.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/JavaCC/SimpleCharStream.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/JavaCC/Token.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/JavaCC/TokenMgrError.class" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/src/ProlangParser.java" afterPath="$PROJECT_DIR$/src/src/ProlangParser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/src/ProlangParserTokenManager.java" afterPath="$PROJECT_DIR$/src/src/ProlangParserTokenManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/JavaCC/input.txt" afterPath="$PROJECT_DIR$/out/production/JavaCC/input.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/input.txt" afterPath="$PROJECT_DIR$/src/input.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/JavaCC/java.jj" afterPath="$PROJECT_DIR$/out/production/JavaCC/java.jj" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/JavaCC/prolang.jj" afterPath="$PROJECT_DIR$/out/production/JavaCC/prolang.jj" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/prolang.jj" afterPath="$PROJECT_DIR$/src/prolang.jj" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="2b1b4c90-6827-4348-81fd-705103794b80" name="Default" comment="prolang compiler" />
     <ignored path="JavaCC.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -42,8 +26,8 @@
       <file leaf-file-name="prolang.jj" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/prolang.jj">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6695464">
-              <caret line="368" column="0" selection-start-line="368" selection-start-column="0" selection-end-line="368" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.63282937">
+              <caret line="365" column="19" selection-start-line="365" selection-start-column="18" selection-end-line="365" selection-end-column="19" />
               <folding />
             </state>
           </provider>
@@ -405,7 +389,7 @@
       <workItem from="1446262172824" duration="311000" />
       <workItem from="1446488448129" duration="119000" />
       <workItem from="1446488582196" duration="1494000" />
-      <workItem from="1446672386790" duration="9843000" />
+      <workItem from="1446672386790" duration="9909000" />
     </task>
     <task id="LOCAL-00001" summary="java.jj">
       <created>1446053050574</created>
@@ -435,7 +419,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="38041000" />
+    <option name="totallyTimeSpent" value="38107000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -721,8 +705,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/prolang.jj">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6695464">
-          <caret line="368" column="0" selection-start-line="368" selection-start-column="0" selection-end-line="368" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.63282937">
+          <caret line="365" column="19" selection-start-line="365" selection-start-column="18" selection-end-line="365" selection-end-column="19" />
           <folding />
         </state>
       </provider>
