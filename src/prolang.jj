@@ -139,7 +139,11 @@ TOKEN : {
   | <VOLATILE : "volatile">
   {debugStream.println("VOLATILE: "+ matchedToken.image);}
   | <WHILE : "while">
-      {debugStream.println("WHILE: "+ matchedToken.image);}
+  {debugStream.println("WHILE: "+ matchedToken.image);}
+  | <GUARD : "guard">
+  {debugStream.println("GUARD: "+ matchedToken.image);}
+  | <LOOP : "loop">
+  {debugStream.println("LOOP: "+ matchedToken.image);}
   /*************************
   Numbers
   *************************/
@@ -270,6 +274,13 @@ void statementList():{}
 void statement():{}
 {
     assignmentStatement()
+    |
+    if_statement()
+    |
+    guard_statement()
+    |
+    loop_statement()
+   
 }
 
 void assignmentStatement():{}
@@ -327,5 +338,39 @@ void factorList():{}
     {}
 }
 
+void if_statement():{}
+{   <IF>
+    condition()
+    code_block()
+    else_block()
+}
+
+void condition():{}
+{
+  (<TRUE>|<FALSE>)}
+
+void else_block():{}
+{
+ <ELSE>
+ code_block()}
+
+
+void code_block():{}
+{
+	statementList()
+}
+
+void guard_statement():{}
+{	<GUARD>
+	condition()
+	<ELSE>
+	code_block()
+}
+
+void loop_statement():{}
+{	<LOOP>
+	<DECIMAL>
+	code_block() 
+}
 
 
