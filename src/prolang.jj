@@ -262,6 +262,8 @@ TOKEN : {
     {debugStream.println("RSHIFT_ASSIGN: "+ matchedToken.image);}
   | <LSHIFT_ASSIGN : "<<=">
       {debugStream.println("LSHIFT_ASSIGN: "+ matchedToken.image);}
+  |<RELATIONAL_OPERATORS: (<LT>|<EQ>|<GE>|<LE>|<NE>|<SC_OR>|<SC_AND>)>
+  |<TYPE: (<DECIMAL>)>
 
 }
 void program():{}
@@ -281,7 +283,7 @@ void statement():{}
 {
     assignmentStatement()
     | loopStatement()
-    | declaratoinStatement()
+    | variable_declaration()
 
 }
 
@@ -295,17 +297,23 @@ void assignmentStatement():{}
 
 void expr():{}
 {
+    simpleExpression()
+   (
+    <RELATIONAL_OPERATORS>
+    simpleExpression()
+   )?
+
+}
+
+void simpleExpression():{}
+{
+    ("-"|"+")?
     term()
     termList()
 }
-
 void termList():{}
 {
-    "+"
-    term()
-    termList()
-    |
-    "-"
+    ("+"|"-")
     term()
     termList()
     |
@@ -342,8 +350,28 @@ void factorList():{}
 
 void loopStatement():{}
 {
+    while_loop()
+    |for_loop()
+
+}
+
+void while_loop():{}
+{
     <WHILE>
+        "("
+        expr()
+        ")"
+        codeBlock()
+}
+
+void for_loop():{}
+{
+    <FOR>
     "("
+    declaration_statement()
+
+    expr()
+    <SEMICOLON>
     expr()
     ")"
     codeBlock()
@@ -366,6 +394,14 @@ void ifStatement():{}
     elseStatement()
 }
 
+void variable_declaration():{}
+{
+    <TYPE>
+    <ID>
+    <ASSIGN>
+    expr()
+    <SEMICOLON>
+}
 
 
 
