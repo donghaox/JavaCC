@@ -394,6 +394,11 @@ void ifStatement():{}
     elseStatement()
 }
 
+void else_statement():{}
+{
+    <ELSE>
+    codeBlock()
+}
 void variable_declaration():{}
 {
     <TYPE>
