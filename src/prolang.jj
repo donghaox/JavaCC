@@ -1,7 +1,7 @@
 options{
 COMMON_TOKEN_ACTION = true;
 STATIC = false;
-OUTPUT_DIRECTORY = "src";
+OUTPUT_DIRECTORY = "tree";
 }
 
 PARSER_BEGIN(ProlangParser)
@@ -153,7 +153,7 @@ TOKEN : {
   /*************************
   Numbers
   *************************/
-  | <DECIMAL : (["1"-"9"])(<DIGIT>)*>
+  | <DECIMAL : "0" | (["1"-"9"])(<DIGIT>)*>
      {debugStream.println("DECIMAL: "+ matchedToken.image);}
   | <OCTAL : "0" (["0"-"7"])*>
      {debugStream.println("OCTAL: "+ matchedToken.image);}
@@ -263,7 +263,7 @@ TOKEN : {
   | <LSHIFT_ASSIGN : "<<=">
       {debugStream.println("LSHIFT_ASSIGN: "+ matchedToken.image);}
   |<RELATIONAL_OPERATORS: (<LT>|<EQ>|<GE>|<LE>|<NE>|<SC_OR>|<SC_AND>)>
-  |<TYPE: (<DECIMAL>)>
+  |<TYPE: (<INT>)>
 
 }
 void program():{}
@@ -284,6 +284,7 @@ void statement():{}
     assignmentStatement()
     | loopStatement()
     | variable_declaration()
+    | ifStatement()
 
 }
 
@@ -292,14 +293,14 @@ void assignmentStatement():{}
     <ID>
     "="
     expr()
-    ";"
+    (";")?
 }
 
 void expr():{}
 {
     simpleExpression()
    (
-    <RELATIONAL_OPERATORS>
+    (<LT>|<EQ>|<GE>|<LE>|<NE>|<SC_OR>|<SC_AND>)
     simpleExpression()
    )?
 
@@ -368,11 +369,11 @@ void for_loop():{}
 {
     <FOR>
     "("
-    declaration_statement()
+    assignmentStatement()
 
     expr()
     <SEMICOLON>
-    expr()
+    assignmentStatement()
     ")"
     codeBlock()
 }
@@ -391,7 +392,7 @@ void ifStatement():{}
     expr()
     ")"
     codeBlock()
-    elseStatement()
+    else_statement()
 }
 
 void else_statement():{}
@@ -401,10 +402,12 @@ void else_statement():{}
 }
 void variable_declaration():{}
 {
-    <TYPE>
+    <INT>
     <ID>
+    (
     <ASSIGN>
     expr()
+    )?
     <SEMICOLON>
 }
 
