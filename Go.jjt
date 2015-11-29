@@ -143,7 +143,7 @@ void statement() #void :
         | switchStatement(syncSet)
         | ifStatement(syncSet)
         | forStatement(syncSet)
-        | printStatement(syncSet) <DOT>
+        | printStatement(syncSet)
         | LOOKAHEAD(2) functionCall(syncSet) <DOT>
     }
     catch (ParseException ex)
@@ -260,6 +260,7 @@ void functionDeclaration(HashSet syncSet):
             jjtThis.setAttribute(ID, functionId);
             counter.add(0);
         }
+        
         <OPEN_PAREN> parameterList(syncSet) <CLOSE_PAREN> returnTypeNode = returnType() {
             functionId.setTypeSpec(returnTypeNode.getTypeSpec());
             jjtThis.setTypeSpec(functionId.getTypeSpec());
