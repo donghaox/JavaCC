@@ -1,0 +1,489 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>BNF for prolang.jj</TITLE>
+</HEAD>
+<BODY>
+<H1 ALIGN=CENTER>BNF for prolang.jj</H1>
+<H2 ALIGN=CENTER>TOKENS</H2>
+<TABLE>
+ <!-- Token -->
+ <TR>
+  <TD>
+   <PRE>
+&lt;DEFAULT&gt; SKIP : {
+&lt;IGNORE: [" ",",","\n","\t"]&gt;
+| &lt;COMMENT_LINE: "//" (~["\n"])* "\n"&gt;
+| &lt;COMMENT_BLOCK: "/*" (~["*"])* | "/*" (~["*"])* "*" (~["/"])* | "/*" (~["*"])* "*" (~["/"])* "/"&gt;
+}
+
+   </PRE>
+  </TD>
+ </TR>
+ <!-- Token -->
+ <TR>
+  <TD>
+   <PRE>
+&lt;DEFAULT&gt; TOKEN : {
+&lt;ABSTRACT: "abstract"&gt; : {
+| &lt;BOOLEAN: "boolean"&gt; : {
+| &lt;BREAK: "break"&gt; : {
+| &lt;BYTE: "byte"&gt; : {
+| &lt;CASE: "case"&gt; : {
+| &lt;CATCH: "catch"&gt; : {
+| &lt;CHAR: "char"&gt; : {
+| &lt;CLASS: "class"&gt; : {
+| &lt;CONST: "const"&gt; : {
+| &lt;CONTINUE: "continue"&gt; : {
+| &lt;DEF: "default"&gt; : {
+| &lt;DO: "do"&gt; : {
+| &lt;DOUBLE: "double"&gt; : {
+| &lt;ELSE: "else"&gt; : {
+| &lt;ENUM: "enum"&gt; : {
+| &lt;EXTENDS: "extends"&gt; : {
+| &lt;FALSE: "false"&gt; : {
+| &lt;FINAL: "final"&gt; : {
+| &lt;FINALLY: "finally"&gt; : {
+| &lt;FLOAT: "float"&gt; : {
+| &lt;FOR: "for"&gt; : {
+| &lt;GOTO: "goto"&gt; : {
+| &lt;IF: "if"&gt; : {
+| &lt;IMPLEMENTS: "implements"&gt; : {
+| &lt;IMPORTS: "imports"&gt; : {
+| &lt;INSTANCEOF: "instanceof"&gt; : {
+| &lt;INT: "int"&gt; : {
+| &lt;INTERFACE: "instance"&gt; : {
+| &lt;LONG: "long"&gt; : {
+| &lt;NATIVE: "native"&gt; : {
+| &lt;NEW: "new"&gt; : {
+| &lt;NULL: "null"&gt; : {
+| &lt;PACKAGE: "package"&gt; : {
+| &lt;PRIVATE: "private"&gt; : {
+| &lt;PROTECTED: "protected"&gt; : {
+| &lt;PUBLIC: "public"&gt; : {
+| &lt;RETURN: "return"&gt; : {
+| &lt;SHORT: "short"&gt; : {
+| &lt;STATIC: "static"&gt; : {
+| &lt;STRICTFP: "strictfp"&gt; : {
+| &lt;SUPER: "super"&gt; : {
+| &lt;SWITCH: "switch"&gt; : {
+| &lt;SYCHRONIZED: "sychronized"&gt; : {
+| &lt;THIS: "this"&gt; : {
+| &lt;THROW: "throw"&gt; : {
+| &lt;THROWS: "throws"&gt; : {
+| &lt;TRANSIENT: "transient"&gt; : {
+| &lt;TRUE: "true"&gt; : {
+| &lt;TRY: "try"&gt; : {
+| &lt;VOID: "void"&gt; : {
+| &lt;VOLATILE: "volatile"&gt; : {
+| &lt;WHILE: "while"&gt; : {
+| &lt;STRING_TYPE: "STRING"&gt;
+| &lt;DECIMAL: "0" | ["1"-"9"] (&lt;DIGIT&gt;)*&gt; : {
+| &lt;OCTAL: "0" (["0"-"7"])*&gt; : {
+| &lt;HEX: "0" ["x","X"] (&lt;DIGIT&gt; | ["A"-"F"] | ["a"-"f"])+&gt; : {
+| &lt;REAL: (&lt;DIGIT&gt;)+ "." (&lt;DIGIT&gt;)* (&lt;DECIMAL_EXPONENT&gt;)? | "." (&lt;DIGIT&gt;)+ (&lt;DECIMAL_EXPONENT&gt;)? | (&lt;DIGIT&gt;)+ (&lt;DECIMAL_EXPONENT&gt;)?&gt; : {
+| &lt;#DECIMAL_EXPONENT: ["e","E"] (["+","-"])? (&lt;DIGIT&gt;)+&gt;
+| &lt;#DIGIT: ["0"-"9"]&gt;
+| &lt;#LOWER_CASE: ["a"-"z"]&gt;
+| &lt;#UPPER_CASE: ["A"-"Z"]&gt;
+| &lt;#LETTER: &lt;LOWER_CASE&gt; | &lt;UPPER_CASE&gt;&gt;
+| &lt;IDD: &lt;LETTER&gt; (&lt;LETTER&gt; | &lt;DIGIT&gt; | "_")*&gt; : {
+| &lt;CHARARCTER: "\'" ~[] "\'"&gt; : {
+| &lt;STRING: "\"" (~["\n"])* "\""&gt; : {
+| &lt;LPAREN: "("&gt; : {
+| &lt;RPAREN: ")"&gt; : {
+| &lt;LBRACE: "{"&gt; : {
+| &lt;RBRACE: "}"&gt; : {
+| &lt;LBRACKET: "["&gt; : {
+| &lt;RBRACKET: "]"&gt; : {
+| &lt;SEMICOLON: ";"&gt; : {
+| &lt;COMMA: ","&gt; : {
+| &lt;DOT: "."&gt; : {
+| &lt;ASSIGN: "="&gt; : {
+| &lt;LT: "&lt;"&gt; : {
+| &lt;BANG: "!"&gt; : {
+| &lt;TILDE: "~"&gt; : {
+| &lt;HOOK: "?"&gt; : {
+| &lt;COLON: ":"&gt; : {
+| &lt;EQ: "=="&gt; : {
+| &lt;LE: "&lt;="&gt; : {
+| &lt;GE: "&gt;="&gt; : {
+| &lt;NE: "!="&gt; : {
+| &lt;SC_OR: "||"&gt; : {
+| &lt;SC_AND: "&amp;&amp;"&gt; : {
+| &lt;INCR: "++"&gt; : {
+| &lt;DECR: "--"&gt; : {
+| &lt;PLUS: "+"&gt; : {
+| &lt;MINUS: "-"&gt; : {
+| &lt;STAR: "*"&gt; : {
+| &lt;SLASH: "/"&gt; : {
+| &lt;BIT_AND: "&amp;"&gt; : {
+| &lt;BIT_OR: "|"&gt; : {
+| &lt;XOR: "^"&gt; : {
+| &lt;REM: "%"&gt; : {
+| &lt;PLUSASSIGN: "+="&gt; : {
+| &lt;MINUSASSIGN: "-="&gt; : {
+| &lt;STARASSIGN: "*="&gt; : {
+| &lt;SLASHASSIGN: "/="&gt; : {
+| &lt;ANDASSIGN: "&amp;="&gt; : {
+| &lt;ORASSIGN: "|="&gt; : {
+| &lt;XORASSIGN: "^="&gt; : {
+| &lt;REMASSIGN: "%="&gt; : {
+| &lt;RSHIFT_ASSIGN: "&gt;&gt;="&gt; : {
+| &lt;LSHIFT_ASSIGN: "&lt;&lt;="&gt; : {
+| &lt;RELATIONAL_OPERATORS: &lt;LT&gt; | &lt;EQ&gt; | &lt;GE&gt; | &lt;LE&gt; | &lt;NE&gt; | &lt;SC_OR&gt; | &lt;SC_AND&gt;&gt;
+| &lt;TYPE: &lt;INT&gt;&gt;
+}
+
+   </PRE>
+  </TD>
+ </TR>
+ <!-- Token -->
+ <TR>
+  <TD>
+   <PRE>
+&lt;DEFAULT&gt; TOKEN : {
+&lt;ERROR: ~["\r","\n"]&gt;
+}
+
+   </PRE>
+  </TD>
+ </TR>
+</TABLE>
+<H2 ALIGN=CENTER>NON-TERMINALS</H2>
+<TABLE>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+/************************START OF GRAMAR*******************************/
+
+/*
+******************Grammar*******************
+program → statementList
+********************************************
+*/</PRE>
+  </TD>
+ </TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod1">program</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod2">statementList</A> &lt;EOF&gt;</TD>
+</TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+/*
+******************Grammar*******************
+statementList → statement
+********************************************
+*/</PRE>
+  </TD>
+ </TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod2">statementList</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod3">statement</A> )*</TD>
+</TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+/*
+******************Grammar*******************
+statement → assignmentStatement | loopStatement
+         | variable_declaration | ifStatmentement
+********************************************
+*/</PRE>
+  </TD>
+ </TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod3">statement</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod4">assignmentStatement</A> | <A HREF="#prod5">loopStatement</A> | <A HREF="#prod6">variable_declaration</A> | <A HREF="#prod7">ifStatement</A> )</TD>
+</TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+/*
+******************Grammar*******************
+assignmentStatment → ID “=” expr “;”
+********************************************
+*/</PRE>
+  </TD>
+ </TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod4">assignmentStatement</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod8">identifier</A> &lt;ASSIGN&gt; <A HREF="#prod9">expr</A> ( &lt;HOOK&gt; )?</TD>
+</TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+/*
+******************Grammar*******************
+expr → simple expression ((relationship operators) simple expression)?
+********************************************
+*/</PRE>
+  </TD>
+ </TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod9">expr</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod10">simpleExpression</A> ( &lt;RELATIONAL_OPERATORS&gt; <A HREF="#prod10">simpleExpression</A> )?</TD>
+</TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+/*
+******************Grammar*******************
+simple expression → (+|-)? term (+|-|or term)* | term
+********************************************
+*/</PRE>
+  </TD>
+ </TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod10">simpleExpression</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( ( ( &lt;PLUS&gt; | &lt;MINUS&gt; )? <A HREF="#prod11">term</A> ( ( &lt;PLUS&gt; | &lt;MINUS&gt; | &lt;SC_OR&gt; ) <A HREF="#prod11">term</A> )* ) | <A HREF="#prod11">term</A> )</TD>
+</TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+/*
+******************Grammar*******************
+term → factor (+|-|/|and factor)* | factor
+********************************************
+*/</PRE>
+  </TD>
+ </TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod11">term</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod12">factor</A> ( ( &lt;STAR&gt; | &lt;SLASH&gt; | &lt;REM&gt; | &lt;SC_AND&gt; ) <A HREF="#prod12">factor</A> )* )</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>|</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod12">factor</A></TD>
+</TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+/*
+******************Grammar*******************
+factor → identifier| integer | string
+********************************************
+*/</PRE>
+  </TD>
+ </TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod12">factor</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( ( <A HREF="#prod8">identifier</A> | <A HREF="#prod13">integerConstant</A> | <A HREF="#prod14">stringType</A> ) | "(" <A HREF="#prod9">expr</A> ")" )</TD>
+</TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+/*
+******************Grammar*******************
+string → "\"" (~["\n"])* "\""
+********************************************
+*/</PRE>
+  </TD>
+ </TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod14">stringType</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;STRING&gt;</TD>
+</TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+/*
+******************Grammar*******************
+loopStatment → while_loop | for_loop
+********************************************
+*/</PRE>
+  </TD>
+ </TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod5">loopStatement</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod15">while_loop</A> | <A HREF="#prod16">for_loop</A> )</TD>
+</TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+/*
+******************Grammar*******************
+while_loop → WHILE ( expr ) codeBlock
+********************************************
+*/</PRE>
+  </TD>
+ </TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod15">while_loop</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;WHILE&gt; "(" <A HREF="#prod9">expr</A> ")" <A HREF="#prod17">codeBlock</A></TD>
+</TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+/*
+******************Grammar*******************
+for_loop → FOR ( assignmentStatement ) codeBlock
+********************************************
+*/</PRE>
+  </TD>
+ </TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod16">for_loop</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;FOR&gt; "(" <A HREF="#prod4">assignmentStatement</A> <A HREF="#prod9">expr</A> &lt;SEMICOLON&gt; <A HREF="#prod4">assignmentStatement</A> ")" <A HREF="#prod17">codeBlock</A></TD>
+</TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+/*
+******************Grammar*******************
+codeBlock →{ statementList }
+********************************************
+*/</PRE>
+  </TD>
+ </TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod17">codeBlock</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;LBRACE&gt; ( <A HREF="#prod2">statementList</A> |  ) &lt;RBRACE&gt;</TD>
+</TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+/*
+******************Grammar*******************
+ifStatement → IF ( expr ) codeBlock elseStatement
+********************************************
+*/</PRE>
+  </TD>
+ </TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod7">ifStatement</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;IF&gt; "(" <A HREF="#prod9">expr</A> ")" <A HREF="#prod17">codeBlock</A> <A HREF="#prod18">elseStatement</A></TD>
+</TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+/*
+******************Grammar*******************
+elseStatement → ELSE codeBlock() | {}
+********************************************
+*/</PRE>
+  </TD>
+ </TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod18">elseStatement</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( &lt;ELSE&gt; <A HREF="#prod17">codeBlock</A> |  )</TD>
+</TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+/*
+******************Grammar*******************
+elseStatement → ELSE codeBlock() | {}
+********************************************
+*/</PRE>
+  </TD>
+ </TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod6">variable_declaration</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod19">type</A> ) <A HREF="#prod8">identifier</A> (  )</TD>
+</TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+/*
+******************Grammar*******************
+type → INT | STRING
+********************************************
+*/</PRE>
+  </TD>
+ </TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod19">type</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;INT&gt;</TD>
+</TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>|</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;STRING_TYPE&gt;</TD>
+</TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+/*
+******************Grammar*******************
+identifier → <LETTER>(<LETTER>|<DIGIT>|"_")*
+********************************************
+*/</PRE>
+  </TD>
+ </TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod8">identifier</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;IDD&gt;</TD>
+</TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+/*
+******************Grammar*******************
+integerConstant → DECIMAL
+********************************************
+*/</PRE>
+  </TD>
+ </TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod13">integerConstant</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE>&lt;DECIMAL&gt;</TD>
+</TR>
+ <!-- Special token -->
+ <TR>
+  <TD>
+<PRE>
+/************************END OF GRAMAR*******************************/</PRE>
+  </TD>
+ </TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod20">processVariableDecl</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><I>java code</I></TD></TR>
+<TR>
+<TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod21">handleError</A></TD>
+<TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
+<TD ALIGN=LEFT VALIGN=BASELINE><I>java code</I></TD></TR>
+</TABLE>
+</BODY>
+</HTML>
