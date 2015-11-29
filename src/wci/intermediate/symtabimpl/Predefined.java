@@ -9,6 +9,7 @@ import static wci.intermediate.symtabimpl.DefinitionImpl.PROCEDURE;
 import static wci.intermediate.symtabimpl.RoutineCodeImpl.*;
 import static wci.intermediate.symtabimpl.SymTabKeyImpl.CONSTANT_VALUE;
 import static wci.intermediate.symtabimpl.SymTabKeyImpl.ROUTINE_CODE;
+import static wci.intermediate.typeimpl.TypeFormImpl.ARRAY;
 import static wci.intermediate.typeimpl.TypeFormImpl.ENUMERATION;
 import static wci.intermediate.typeimpl.TypeFormImpl.SCALAR;
 import static wci.intermediate.typeimpl.TypeKeyImpl.ENUMERATION_CONSTANTS;
@@ -30,9 +31,11 @@ public class Predefined
     public static TypeSpec booleanType;
     public static TypeSpec charType;
     public static TypeSpec voidType;
+    public static TypeSpec arrayType;
     public static TypeSpec undefinedType;
 
     // TODO: Predefined identifiers.
+    public static SymTabEntry arrayId;
     public static SymTabEntry integerId;
     public static SymTabEntry realId;
     public static SymTabEntry booleanId;
@@ -86,6 +89,13 @@ public class Predefined
         charType.setIdentifier(charId);
         charId.setDefinition(DefinitionImpl.TYPE);
         charId.setTypeSpec(charType);
+        
+        // Type array.
+        arrayId = symTabStack.enterLocal("array");
+        arrayType = TypeFactory.createType(ARRAY);
+        arrayType.setIdentifier(arrayId);
+        arrayId.setDefinition(DefinitionImpl.TYPE);
+        arrayId.setTypeSpec(arrayType);
 
         // Type void.
         voidId = symTabStack.enterLocal("void");

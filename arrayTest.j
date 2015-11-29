@@ -1,9 +1,9 @@
-.class public Fizzbuzz
+.class public ArrayTest
 .super java/lang/Object
 
 .field private static _runTimer LRunTimer;
 
-.field private static I I
+.field private static Arr I
 
 .method public <init>()V
 
@@ -20,27 +20,14 @@
     new	 RunTimer
     dup
     invokenonvirtual	RunTimer/<init>()V
-    putstatic	Fizzbuzz/_runTimer LRunTimer;
+    putstatic	ArrayTest/_runTimer LRunTimer;
 
-    ldc 5
-    putstatic Fizzbuzz/I I
-    getstatic Fizzbuzz/I I
-    i2f
-    ldc 5
-    i2f
-    fcmpg
-    ifne label1
-    ldc 6
-    putstatic label2/I I
-    goto label2
-label1:
-label2:
 
-    getstatic	Fizzbuzz/_runTimer LRunTimer;
+    getstatic	ArrayTest/_runTimer LRunTimer;
     invokevirtual	RunTimer.printElapsedTime()V
 
     return
 
-.limit locals 2
+.limit locals 1
 .limit stack  16
 .end method

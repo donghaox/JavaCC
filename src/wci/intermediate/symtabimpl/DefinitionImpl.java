@@ -16,7 +16,7 @@ public enum DefinitionImpl implements Definition
     TYPE, VARIABLE, FIELD("record field"),
     VALUE_PARAMETER("value parameter"), REFERENCE_PARAMETER("reference parameter"),
     PROGRAM_PARAMETER("program parameter"),
-    PACKAGE,
+    MODULE,
     PROGRAM, PROCEDURE, FUNCTION,
     UNDEFINED;
 

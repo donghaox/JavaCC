@@ -1,4 +1,5 @@
-package Main
+-module (Main).
 I int.
-Println(I).
-
+I = 5.
+if(I == 5) then
+{I = 6.}

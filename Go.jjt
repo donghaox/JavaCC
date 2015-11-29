@@ -104,13 +104,15 @@ SimpleNode start() #void :
 {
     try
     {
-        <MODULE> < IDENTIFIER >
+        <MINUS> <MODULE> <OPEN_PAREN> <IDENTIFIER> 
         {
             programId = symTabStack.enterLocal(token.image);
-            programId.setDefinition(DefinitionImpl.PACKAGE);
+            System.out.println(token.image);
+            programId.setDefinition(DefinitionImpl.MODULE);
             programId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
             symTabStack.setProgramId(programId);
         }
+        <CLOSE_PAREN><DOT>
         rootNode = statementList() < EOF >
         {
             programId.setAttribute(ROUTINE_LOCALS_COUNT, counter.get(0) + 1);
@@ -128,13 +130,13 @@ void statement() #void :
 {
     HashSet syncSet = new HashSet();
     syncSet.add(EOF);
-    syncSet.add(SEMICOLON);
+    syncSet.add(DOT);
 }
 {
     try
     {
           LOOKAHEAD(2) declarationStatement(syncSet)
-        | LOOKAHEAD(2) arrayDeclaration(syncSet) <DOT>
+        | LOOKAHEAD(4) arrayDeclaration(syncSet) <DOT>
         | LOOKAHEAD(2) assignmentStatement(syncSet) <DOT>
         | LOOKAHEAD(2) arrayAssignmentStatement(syncSet) <DOT>
         | LOOKAHEAD(2) increment(syncSet) <DOT>
@@ -173,6 +175,10 @@ void declarationStatement(HashSet syncSet) #void :
     }
 }
 
+/****************************************************************************************
+variableDeclaration - > Type Identifier
+****************************************************************************************/
+
 void variableDeclaration(HashSet syncSet) throws ParseException :
 {
     SimpleNode variableNode;
@@ -181,25 +187,22 @@ void variableDeclaration(HashSet syncSet) throws ParseException :
 }
 {
     try {
-       // Our implementation of Go's variable declaration will be either these forms:
-       // x int; OR x = 5 (provided that they also used the first form to declare the variable)
-
-        variableNode = identifier(syncSet, true) {
-            SymTabEntry variableId = (SymTabEntry) variableNode.getAttribute(ID);
-            variableNode.setAttribute(ID, variableId);
-            int count = counter.get(counter.size() - 1);
-            variableId.setIndex(count++);
-            counter.set(counter.size() - 1, count);
-        }
         (
             type()
             {
                 SymTabEntry typeId = symTabStack.lookup(token.image);
                 TypeSpec type = typeId.getTypeSpec();
-                variableId.setTypeSpec(type);
-                variableNode.setTypeSpec(type);
             }
         )
+         variableNode = identifier(syncSet, true) {
+            SymTabEntry variableId = (SymTabEntry) variableNode.getAttribute(ID);
+            variableNode.setAttribute(ID, variableId);
+            int count = counter.get(counter.size() - 1);
+            variableId.setIndex(count++);
+            counter.set(counter.size() - 1, count);
+            variableId.setTypeSpec(type);
+            variableNode.setTypeSpec(type);
+        }
     }
     catch (ParseException ex) {
         handleError(ex, syncSet, true);
@@ -211,12 +214,12 @@ void arrayDeclaration(HashSet syncSet) #array : {
     SymTabEntry arrayId;
 }
 {
-    <VAR>
+    <ARRAY> <OPEN_PAREN> <CLOSE_PAREN> 
     arrayNode = identifier(syncSet, true) {
         arrayId = (SymTabEntry) arrayNode.getAttribute(ID);
         arrayNode.setAttribute(ID, arrayId);
     }
-    <OPEN_BRACKET> <INTEGER_NUMBER> <CLOSE_BRACKET>
+    ":" <OPEN_BRACKET> <INTEGER_NUMBER> <CLOSE_BRACKET>
     type()
     {
         // TODO: Figure out how to set the type form of the array to 'array'
@@ -263,7 +266,7 @@ void functionDeclaration(HashSet syncSet):
             jjtThis.setTypeSpec(functionId.getTypeSpec());
             syncSet = new HashSet(); // New reference used only by the new function scope
             syncSet.add(EOF);
-            syncSet.add(SEMICOLON);
+            syncSet.add(DOT);
             counter.remove(counter.size() - 1);
         }
         block(syncSet) {
@@ -284,7 +287,7 @@ void parameter(HashSet syncSet) throws ParseException :
 {
     SimpleNode variableNode;
     syncSet.add(EOF);
-    syncSet.add(SEMICOLON);
+    syncSet.add(DOT);
 }
 {
     try {
@@ -367,7 +370,7 @@ void ifStatement(HashSet syncSet) : { syncSet.add(IF); }
 {
     try
     {
-        <IF> expression(syncSet) block(syncSet) (elseStatement(syncSet))?
+        <IF> expression(syncSet) <THEN> block(syncSet) (elseStatement(syncSet))?
     }
     catch (ParseException ex)
     {
@@ -426,7 +429,7 @@ void caseGroup() :
 {
     HashSet syncSet = new HashSet();
     syncSet.add(EOF);
-    syncSet.add(SEMICOLON);
+    syncSet.add(DOT);
     syncSet.add(CASE);
 }
 {
@@ -468,7 +471,7 @@ void forStatement(HashSet syncSet) : {}
 void forClause() : {
     HashSet syncSet = new HashSet();
     syncSet.add(EOF);
-    syncSet.add(SEMICOLON);
+    syncSet.add(DOT);
     syncSet.add(FOR);
 }
 {
@@ -538,7 +541,7 @@ void expressionList(HashSet syncSet) : {}
 
 void printStatement(HashSet syncSet) #printStatement : {}
 {
-    "Println" <OPEN_PAREN> expression(syncSet) <CLOSE_PAREN>
+    "io:fwrite" <OPEN_PAREN> expression(syncSet) <CLOSE_PAREN><DOT>
 }
 
 // Depending on whether we are declaring a new variable
@@ -642,7 +645,7 @@ SimpleNode returnType() : {}
     }
 }
 
-/********************s
+/********************ƒ
   -- Tokens --
  ********************/
 
@@ -666,6 +669,8 @@ TOKEN: {
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <IF: "if">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
+      | <THEN: "then">
+        { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <CONTINUE: "continue">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <FOR: "for">
@@ -684,6 +689,9 @@ TOKEN: {
         {debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <VOID: "void">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
+      | <ARRAY: "array">
+        { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
+        
 }
 
 // Misc tokens
@@ -770,7 +778,7 @@ TOKEN :
 {
       <INTEGER_NUMBER: ("-")? (<DIGIT>)+ >
         { debugStream.println("INTEGER_NUMBER token: " + matchedToken.image); }
-      | < REAL_NUMBER : < INTEGER_NUMBER > "." (< INTEGER_NUMBER >)? >
+      | < REAL_NUMBER : < INTEGER_NUMBER > ("." < INTEGER_NUMBER >)? >
         { debugStream.println("REAL_NUMBER token: " + matchedToken.image); }
       | < BOOL_CONSTANT : ( "true" | "false")>
         { debugStream.println("BOOL_CONSTANT token: " + matchedToken.image); }
@@ -787,7 +795,7 @@ TOKEN :
       |
       <#INTERPRETED_LITERAL_SYMBOL : "'" | "~" | "!" | "@" | "#" | "$" | "%" | "^" | "&"
       | "*" | "_" | "-" | "+" | "=" | "<" | ">" | "." | "/" | "?" | ","
-      | ";" | "(" | ")" | "[" | "]" | "{" | "}" | "|" | "`" | ":" >
+      | ";" | "(" | ")" | "[" | "]" | "{" | "}" | "|" | "`" | ":">
 }
 
 TOKEN: { /* Error token */
