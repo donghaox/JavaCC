@@ -1,0 +1,14 @@
+Inside function
+10
+15.5
+99.9
+5
+25.5
+100.123
+10
+Outside function
+5
+15.5
+100.123
+
+                0.00 seconds total execution time.

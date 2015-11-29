@@ -1,0 +1,1212 @@
+These make up a dollar
+Quarters: 0
+Dimes: 0
+Nickels: 0
+Pennies: 100
+These make up a dollar
+Quarters: 0
+Dimes: 0
+Nickels: 1
+Pennies: 95
+These make up a dollar
+Quarters: 0
+Dimes: 0
+Nickels: 2
+Pennies: 90
+These make up a dollar
+Quarters: 0
+Dimes: 0
+Nickels: 3
+Pennies: 85
+These make up a dollar
+Quarters: 0
+Dimes: 0
+Nickels: 4
+Pennies: 80
+These make up a dollar
+Quarters: 0
+Dimes: 0
+Nickels: 5
+Pennies: 75
+These make up a dollar
+Quarters: 0
+Dimes: 0
+Nickels: 6
+Pennies: 70
+These make up a dollar
+Quarters: 0
+Dimes: 0
+Nickels: 7
+Pennies: 65
+These make up a dollar
+Quarters: 0
+Dimes: 0
+Nickels: 8
+Pennies: 60
+These make up a dollar
+Quarters: 0
+Dimes: 0
+Nickels: 9
+Pennies: 55
+These make up a dollar
+Quarters: 0
+Dimes: 0
+Nickels: 10
+Pennies: 50
+These make up a dollar
+Quarters: 0
+Dimes: 0
+Nickels: 11
+Pennies: 45
+These make up a dollar
+Quarters: 0
+Dimes: 0
+Nickels: 12
+Pennies: 40
+These make up a dollar
+Quarters: 0
+Dimes: 0
+Nickels: 13
+Pennies: 35
+These make up a dollar
+Quarters: 0
+Dimes: 0
+Nickels: 14
+Pennies: 30
+These make up a dollar
+Quarters: 0
+Dimes: 0
+Nickels: 15
+Pennies: 25
+These make up a dollar
+Quarters: 0
+Dimes: 0
+Nickels: 16
+Pennies: 20
+These make up a dollar
+Quarters: 0
+Dimes: 0
+Nickels: 17
+Pennies: 15
+These make up a dollar
+Quarters: 0
+Dimes: 0
+Nickels: 18
+Pennies: 10
+These make up a dollar
+Quarters: 0
+Dimes: 0
+Nickels: 19
+Pennies: 5
+These make up a dollar
+Quarters: 0
+Dimes: 0
+Nickels: 20
+Pennies: 0
+These make up a dollar
+Quarters: 0
+Dimes: 1
+Nickels: 0
+Pennies: 90
+These make up a dollar
+Quarters: 0
+Dimes: 1
+Nickels: 1
+Pennies: 85
+These make up a dollar
+Quarters: 0
+Dimes: 1
+Nickels: 2
+Pennies: 80
+These make up a dollar
+Quarters: 0
+Dimes: 1
+Nickels: 3
+Pennies: 75
+These make up a dollar
+Quarters: 0
+Dimes: 1
+Nickels: 4
+Pennies: 70
+These make up a dollar
+Quarters: 0
+Dimes: 1
+Nickels: 5
+Pennies: 65
+These make up a dollar
+Quarters: 0
+Dimes: 1
+Nickels: 6
+Pennies: 60
+These make up a dollar
+Quarters: 0
+Dimes: 1
+Nickels: 7
+Pennies: 55
+These make up a dollar
+Quarters: 0
+Dimes: 1
+Nickels: 8
+Pennies: 50
+These make up a dollar
+Quarters: 0
+Dimes: 1
+Nickels: 9
+Pennies: 45
+These make up a dollar
+Quarters: 0
+Dimes: 1
+Nickels: 10
+Pennies: 40
+These make up a dollar
+Quarters: 0
+Dimes: 1
+Nickels: 11
+Pennies: 35
+These make up a dollar
+Quarters: 0
+Dimes: 1
+Nickels: 12
+Pennies: 30
+These make up a dollar
+Quarters: 0
+Dimes: 1
+Nickels: 13
+Pennies: 25
+These make up a dollar
+Quarters: 0
+Dimes: 1
+Nickels: 14
+Pennies: 20
+These make up a dollar
+Quarters: 0
+Dimes: 1
+Nickels: 15
+Pennies: 15
+These make up a dollar
+Quarters: 0
+Dimes: 1
+Nickels: 16
+Pennies: 10
+These make up a dollar
+Quarters: 0
+Dimes: 1
+Nickels: 17
+Pennies: 5
+These make up a dollar
+Quarters: 0
+Dimes: 1
+Nickels: 18
+Pennies: 0
+These make up a dollar
+Quarters: 0
+Dimes: 2
+Nickels: 0
+Pennies: 80
+These make up a dollar
+Quarters: 0
+Dimes: 2
+Nickels: 1
+Pennies: 75
+These make up a dollar
+Quarters: 0
+Dimes: 2
+Nickels: 2
+Pennies: 70
+These make up a dollar
+Quarters: 0
+Dimes: 2
+Nickels: 3
+Pennies: 65
+These make up a dollar
+Quarters: 0
+Dimes: 2
+Nickels: 4
+Pennies: 60
+These make up a dollar
+Quarters: 0
+Dimes: 2
+Nickels: 5
+Pennies: 55
+These make up a dollar
+Quarters: 0
+Dimes: 2
+Nickels: 6
+Pennies: 50
+These make up a dollar
+Quarters: 0
+Dimes: 2
+Nickels: 7
+Pennies: 45
+These make up a dollar
+Quarters: 0
+Dimes: 2
+Nickels: 8
+Pennies: 40
+These make up a dollar
+Quarters: 0
+Dimes: 2
+Nickels: 9
+Pennies: 35
+These make up a dollar
+Quarters: 0
+Dimes: 2
+Nickels: 10
+Pennies: 30
+These make up a dollar
+Quarters: 0
+Dimes: 2
+Nickels: 11
+Pennies: 25
+These make up a dollar
+Quarters: 0
+Dimes: 2
+Nickels: 12
+Pennies: 20
+These make up a dollar
+Quarters: 0
+Dimes: 2
+Nickels: 13
+Pennies: 15
+These make up a dollar
+Quarters: 0
+Dimes: 2
+Nickels: 14
+Pennies: 10
+These make up a dollar
+Quarters: 0
+Dimes: 2
+Nickels: 15
+Pennies: 5
+These make up a dollar
+Quarters: 0
+Dimes: 2
+Nickels: 16
+Pennies: 0
+These make up a dollar
+Quarters: 0
+Dimes: 3
+Nickels: 0
+Pennies: 70
+These make up a dollar
+Quarters: 0
+Dimes: 3
+Nickels: 1
+Pennies: 65
+These make up a dollar
+Quarters: 0
+Dimes: 3
+Nickels: 2
+Pennies: 60
+These make up a dollar
+Quarters: 0
+Dimes: 3
+Nickels: 3
+Pennies: 55
+These make up a dollar
+Quarters: 0
+Dimes: 3
+Nickels: 4
+Pennies: 50
+These make up a dollar
+Quarters: 0
+Dimes: 3
+Nickels: 5
+Pennies: 45
+These make up a dollar
+Quarters: 0
+Dimes: 3
+Nickels: 6
+Pennies: 40
+These make up a dollar
+Quarters: 0
+Dimes: 3
+Nickels: 7
+Pennies: 35
+These make up a dollar
+Quarters: 0
+Dimes: 3
+Nickels: 8
+Pennies: 30
+These make up a dollar
+Quarters: 0
+Dimes: 3
+Nickels: 9
+Pennies: 25
+These make up a dollar
+Quarters: 0
+Dimes: 3
+Nickels: 10
+Pennies: 20
+These make up a dollar
+Quarters: 0
+Dimes: 3
+Nickels: 11
+Pennies: 15
+These make up a dollar
+Quarters: 0
+Dimes: 3
+Nickels: 12
+Pennies: 10
+These make up a dollar
+Quarters: 0
+Dimes: 3
+Nickels: 13
+Pennies: 5
+These make up a dollar
+Quarters: 0
+Dimes: 3
+Nickels: 14
+Pennies: 0
+These make up a dollar
+Quarters: 0
+Dimes: 4
+Nickels: 0
+Pennies: 60
+These make up a dollar
+Quarters: 0
+Dimes: 4
+Nickels: 1
+Pennies: 55
+These make up a dollar
+Quarters: 0
+Dimes: 4
+Nickels: 2
+Pennies: 50
+These make up a dollar
+Quarters: 0
+Dimes: 4
+Nickels: 3
+Pennies: 45
+These make up a dollar
+Quarters: 0
+Dimes: 4
+Nickels: 4
+Pennies: 40
+These make up a dollar
+Quarters: 0
+Dimes: 4
+Nickels: 5
+Pennies: 35
+These make up a dollar
+Quarters: 0
+Dimes: 4
+Nickels: 6
+Pennies: 30
+These make up a dollar
+Quarters: 0
+Dimes: 4
+Nickels: 7
+Pennies: 25
+These make up a dollar
+Quarters: 0
+Dimes: 4
+Nickels: 8
+Pennies: 20
+These make up a dollar
+Quarters: 0
+Dimes: 4
+Nickels: 9
+Pennies: 15
+These make up a dollar
+Quarters: 0
+Dimes: 4
+Nickels: 10
+Pennies: 10
+These make up a dollar
+Quarters: 0
+Dimes: 4
+Nickels: 11
+Pennies: 5
+These make up a dollar
+Quarters: 0
+Dimes: 4
+Nickels: 12
+Pennies: 0
+These make up a dollar
+Quarters: 0
+Dimes: 5
+Nickels: 0
+Pennies: 50
+These make up a dollar
+Quarters: 0
+Dimes: 5
+Nickels: 1
+Pennies: 45
+These make up a dollar
+Quarters: 0
+Dimes: 5
+Nickels: 2
+Pennies: 40
+These make up a dollar
+Quarters: 0
+Dimes: 5
+Nickels: 3
+Pennies: 35
+These make up a dollar
+Quarters: 0
+Dimes: 5
+Nickels: 4
+Pennies: 30
+These make up a dollar
+Quarters: 0
+Dimes: 5
+Nickels: 5
+Pennies: 25
+These make up a dollar
+Quarters: 0
+Dimes: 5
+Nickels: 6
+Pennies: 20
+These make up a dollar
+Quarters: 0
+Dimes: 5
+Nickels: 7
+Pennies: 15
+These make up a dollar
+Quarters: 0
+Dimes: 5
+Nickels: 8
+Pennies: 10
+These make up a dollar
+Quarters: 0
+Dimes: 5
+Nickels: 9
+Pennies: 5
+These make up a dollar
+Quarters: 0
+Dimes: 5
+Nickels: 10
+Pennies: 0
+These make up a dollar
+Quarters: 0
+Dimes: 6
+Nickels: 0
+Pennies: 40
+These make up a dollar
+Quarters: 0
+Dimes: 6
+Nickels: 1
+Pennies: 35
+These make up a dollar
+Quarters: 0
+Dimes: 6
+Nickels: 2
+Pennies: 30
+These make up a dollar
+Quarters: 0
+Dimes: 6
+Nickels: 3
+Pennies: 25
+These make up a dollar
+Quarters: 0
+Dimes: 6
+Nickels: 4
+Pennies: 20
+These make up a dollar
+Quarters: 0
+Dimes: 6
+Nickels: 5
+Pennies: 15
+These make up a dollar
+Quarters: 0
+Dimes: 6
+Nickels: 6
+Pennies: 10
+These make up a dollar
+Quarters: 0
+Dimes: 6
+Nickels: 7
+Pennies: 5
+These make up a dollar
+Quarters: 0
+Dimes: 6
+Nickels: 8
+Pennies: 0
+These make up a dollar
+Quarters: 0
+Dimes: 7
+Nickels: 0
+Pennies: 30
+These make up a dollar
+Quarters: 0
+Dimes: 7
+Nickels: 1
+Pennies: 25
+These make up a dollar
+Quarters: 0
+Dimes: 7
+Nickels: 2
+Pennies: 20
+These make up a dollar
+Quarters: 0
+Dimes: 7
+Nickels: 3
+Pennies: 15
+These make up a dollar
+Quarters: 0
+Dimes: 7
+Nickels: 4
+Pennies: 10
+These make up a dollar
+Quarters: 0
+Dimes: 7
+Nickels: 5
+Pennies: 5
+These make up a dollar
+Quarters: 0
+Dimes: 7
+Nickels: 6
+Pennies: 0
+These make up a dollar
+Quarters: 0
+Dimes: 8
+Nickels: 0
+Pennies: 20
+These make up a dollar
+Quarters: 0
+Dimes: 8
+Nickels: 1
+Pennies: 15
+These make up a dollar
+Quarters: 0
+Dimes: 8
+Nickels: 2
+Pennies: 10
+These make up a dollar
+Quarters: 0
+Dimes: 8
+Nickels: 3
+Pennies: 5
+These make up a dollar
+Quarters: 0
+Dimes: 8
+Nickels: 4
+Pennies: 0
+These make up a dollar
+Quarters: 0
+Dimes: 9
+Nickels: 0
+Pennies: 10
+These make up a dollar
+Quarters: 0
+Dimes: 9
+Nickels: 1
+Pennies: 5
+These make up a dollar
+Quarters: 0
+Dimes: 9
+Nickels: 2
+Pennies: 0
+These make up a dollar
+Quarters: 0
+Dimes: 10
+Nickels: 0
+Pennies: 0
+These make up a dollar
+Quarters: 1
+Dimes: 0
+Nickels: 0
+Pennies: 75
+These make up a dollar
+Quarters: 1
+Dimes: 0
+Nickels: 1
+Pennies: 70
+These make up a dollar
+Quarters: 1
+Dimes: 0
+Nickels: 2
+Pennies: 65
+These make up a dollar
+Quarters: 1
+Dimes: 0
+Nickels: 3
+Pennies: 60
+These make up a dollar
+Quarters: 1
+Dimes: 0
+Nickels: 4
+Pennies: 55
+These make up a dollar
+Quarters: 1
+Dimes: 0
+Nickels: 5
+Pennies: 50
+These make up a dollar
+Quarters: 1
+Dimes: 0
+Nickels: 6
+Pennies: 45
+These make up a dollar
+Quarters: 1
+Dimes: 0
+Nickels: 7
+Pennies: 40
+These make up a dollar
+Quarters: 1
+Dimes: 0
+Nickels: 8
+Pennies: 35
+These make up a dollar
+Quarters: 1
+Dimes: 0
+Nickels: 9
+Pennies: 30
+These make up a dollar
+Quarters: 1
+Dimes: 0
+Nickels: 10
+Pennies: 25
+These make up a dollar
+Quarters: 1
+Dimes: 0
+Nickels: 11
+Pennies: 20
+These make up a dollar
+Quarters: 1
+Dimes: 0
+Nickels: 12
+Pennies: 15
+These make up a dollar
+Quarters: 1
+Dimes: 0
+Nickels: 13
+Pennies: 10
+These make up a dollar
+Quarters: 1
+Dimes: 0
+Nickels: 14
+Pennies: 5
+These make up a dollar
+Quarters: 1
+Dimes: 0
+Nickels: 15
+Pennies: 0
+These make up a dollar
+Quarters: 1
+Dimes: 1
+Nickels: 0
+Pennies: 65
+These make up a dollar
+Quarters: 1
+Dimes: 1
+Nickels: 1
+Pennies: 60
+These make up a dollar
+Quarters: 1
+Dimes: 1
+Nickels: 2
+Pennies: 55
+These make up a dollar
+Quarters: 1
+Dimes: 1
+Nickels: 3
+Pennies: 50
+These make up a dollar
+Quarters: 1
+Dimes: 1
+Nickels: 4
+Pennies: 45
+These make up a dollar
+Quarters: 1
+Dimes: 1
+Nickels: 5
+Pennies: 40
+These make up a dollar
+Quarters: 1
+Dimes: 1
+Nickels: 6
+Pennies: 35
+These make up a dollar
+Quarters: 1
+Dimes: 1
+Nickels: 7
+Pennies: 30
+These make up a dollar
+Quarters: 1
+Dimes: 1
+Nickels: 8
+Pennies: 25
+These make up a dollar
+Quarters: 1
+Dimes: 1
+Nickels: 9
+Pennies: 20
+These make up a dollar
+Quarters: 1
+Dimes: 1
+Nickels: 10
+Pennies: 15
+These make up a dollar
+Quarters: 1
+Dimes: 1
+Nickels: 11
+Pennies: 10
+These make up a dollar
+Quarters: 1
+Dimes: 1
+Nickels: 12
+Pennies: 5
+These make up a dollar
+Quarters: 1
+Dimes: 1
+Nickels: 13
+Pennies: 0
+These make up a dollar
+Quarters: 1
+Dimes: 2
+Nickels: 0
+Pennies: 55
+These make up a dollar
+Quarters: 1
+Dimes: 2
+Nickels: 1
+Pennies: 50
+These make up a dollar
+Quarters: 1
+Dimes: 2
+Nickels: 2
+Pennies: 45
+These make up a dollar
+Quarters: 1
+Dimes: 2
+Nickels: 3
+Pennies: 40
+These make up a dollar
+Quarters: 1
+Dimes: 2
+Nickels: 4
+Pennies: 35
+These make up a dollar
+Quarters: 1
+Dimes: 2
+Nickels: 5
+Pennies: 30
+These make up a dollar
+Quarters: 1
+Dimes: 2
+Nickels: 6
+Pennies: 25
+These make up a dollar
+Quarters: 1
+Dimes: 2
+Nickels: 7
+Pennies: 20
+These make up a dollar
+Quarters: 1
+Dimes: 2
+Nickels: 8
+Pennies: 15
+These make up a dollar
+Quarters: 1
+Dimes: 2
+Nickels: 9
+Pennies: 10
+These make up a dollar
+Quarters: 1
+Dimes: 2
+Nickels: 10
+Pennies: 5
+These make up a dollar
+Quarters: 1
+Dimes: 2
+Nickels: 11
+Pennies: 0
+These make up a dollar
+Quarters: 1
+Dimes: 3
+Nickels: 0
+Pennies: 45
+These make up a dollar
+Quarters: 1
+Dimes: 3
+Nickels: 1
+Pennies: 40
+These make up a dollar
+Quarters: 1
+Dimes: 3
+Nickels: 2
+Pennies: 35
+These make up a dollar
+Quarters: 1
+Dimes: 3
+Nickels: 3
+Pennies: 30
+These make up a dollar
+Quarters: 1
+Dimes: 3
+Nickels: 4
+Pennies: 25
+These make up a dollar
+Quarters: 1
+Dimes: 3
+Nickels: 5
+Pennies: 20
+These make up a dollar
+Quarters: 1
+Dimes: 3
+Nickels: 6
+Pennies: 15
+These make up a dollar
+Quarters: 1
+Dimes: 3
+Nickels: 7
+Pennies: 10
+These make up a dollar
+Quarters: 1
+Dimes: 3
+Nickels: 8
+Pennies: 5
+These make up a dollar
+Quarters: 1
+Dimes: 3
+Nickels: 9
+Pennies: 0
+These make up a dollar
+Quarters: 1
+Dimes: 4
+Nickels: 0
+Pennies: 35
+These make up a dollar
+Quarters: 1
+Dimes: 4
+Nickels: 1
+Pennies: 30
+These make up a dollar
+Quarters: 1
+Dimes: 4
+Nickels: 2
+Pennies: 25
+These make up a dollar
+Quarters: 1
+Dimes: 4
+Nickels: 3
+Pennies: 20
+These make up a dollar
+Quarters: 1
+Dimes: 4
+Nickels: 4
+Pennies: 15
+These make up a dollar
+Quarters: 1
+Dimes: 4
+Nickels: 5
+Pennies: 10
+These make up a dollar
+Quarters: 1
+Dimes: 4
+Nickels: 6
+Pennies: 5
+These make up a dollar
+Quarters: 1
+Dimes: 4
+Nickels: 7
+Pennies: 0
+These make up a dollar
+Quarters: 1
+Dimes: 5
+Nickels: 0
+Pennies: 25
+These make up a dollar
+Quarters: 1
+Dimes: 5
+Nickels: 1
+Pennies: 20
+These make up a dollar
+Quarters: 1
+Dimes: 5
+Nickels: 2
+Pennies: 15
+These make up a dollar
+Quarters: 1
+Dimes: 5
+Nickels: 3
+Pennies: 10
+These make up a dollar
+Quarters: 1
+Dimes: 5
+Nickels: 4
+Pennies: 5
+These make up a dollar
+Quarters: 1
+Dimes: 5
+Nickels: 5
+Pennies: 0
+These make up a dollar
+Quarters: 1
+Dimes: 6
+Nickels: 0
+Pennies: 15
+These make up a dollar
+Quarters: 1
+Dimes: 6
+Nickels: 1
+Pennies: 10
+These make up a dollar
+Quarters: 1
+Dimes: 6
+Nickels: 2
+Pennies: 5
+These make up a dollar
+Quarters: 1
+Dimes: 6
+Nickels: 3
+Pennies: 0
+These make up a dollar
+Quarters: 1
+Dimes: 7
+Nickels: 0
+Pennies: 5
+These make up a dollar
+Quarters: 1
+Dimes: 7
+Nickels: 1
+Pennies: 0
+These make up a dollar
+Quarters: 2
+Dimes: 0
+Nickels: 0
+Pennies: 50
+These make up a dollar
+Quarters: 2
+Dimes: 0
+Nickels: 1
+Pennies: 45
+These make up a dollar
+Quarters: 2
+Dimes: 0
+Nickels: 2
+Pennies: 40
+These make up a dollar
+Quarters: 2
+Dimes: 0
+Nickels: 3
+Pennies: 35
+These make up a dollar
+Quarters: 2
+Dimes: 0
+Nickels: 4
+Pennies: 30
+These make up a dollar
+Quarters: 2
+Dimes: 0
+Nickels: 5
+Pennies: 25
+These make up a dollar
+Quarters: 2
+Dimes: 0
+Nickels: 6
+Pennies: 20
+These make up a dollar
+Quarters: 2
+Dimes: 0
+Nickels: 7
+Pennies: 15
+These make up a dollar
+Quarters: 2
+Dimes: 0
+Nickels: 8
+Pennies: 10
+These make up a dollar
+Quarters: 2
+Dimes: 0
+Nickels: 9
+Pennies: 5
+These make up a dollar
+Quarters: 2
+Dimes: 0
+Nickels: 10
+Pennies: 0
+These make up a dollar
+Quarters: 2
+Dimes: 1
+Nickels: 0
+Pennies: 40
+These make up a dollar
+Quarters: 2
+Dimes: 1
+Nickels: 1
+Pennies: 35
+These make up a dollar
+Quarters: 2
+Dimes: 1
+Nickels: 2
+Pennies: 30
+These make up a dollar
+Quarters: 2
+Dimes: 1
+Nickels: 3
+Pennies: 25
+These make up a dollar
+Quarters: 2
+Dimes: 1
+Nickels: 4
+Pennies: 20
+These make up a dollar
+Quarters: 2
+Dimes: 1
+Nickels: 5
+Pennies: 15
+These make up a dollar
+Quarters: 2
+Dimes: 1
+Nickels: 6
+Pennies: 10
+These make up a dollar
+Quarters: 2
+Dimes: 1
+Nickels: 7
+Pennies: 5
+These make up a dollar
+Quarters: 2
+Dimes: 1
+Nickels: 8
+Pennies: 0
+These make up a dollar
+Quarters: 2
+Dimes: 2
+Nickels: 0
+Pennies: 30
+These make up a dollar
+Quarters: 2
+Dimes: 2
+Nickels: 1
+Pennies: 25
+These make up a dollar
+Quarters: 2
+Dimes: 2
+Nickels: 2
+Pennies: 20
+These make up a dollar
+Quarters: 2
+Dimes: 2
+Nickels: 3
+Pennies: 15
+These make up a dollar
+Quarters: 2
+Dimes: 2
+Nickels: 4
+Pennies: 10
+These make up a dollar
+Quarters: 2
+Dimes: 2
+Nickels: 5
+Pennies: 5
+These make up a dollar
+Quarters: 2
+Dimes: 2
+Nickels: 6
+Pennies: 0
+These make up a dollar
+Quarters: 2
+Dimes: 3
+Nickels: 0
+Pennies: 20
+These make up a dollar
+Quarters: 2
+Dimes: 3
+Nickels: 1
+Pennies: 15
+These make up a dollar
+Quarters: 2
+Dimes: 3
+Nickels: 2
+Pennies: 10
+These make up a dollar
+Quarters: 2
+Dimes: 3
+Nickels: 3
+Pennies: 5
+These make up a dollar
+Quarters: 2
+Dimes: 3
+Nickels: 4
+Pennies: 0
+These make up a dollar
+Quarters: 2
+Dimes: 4
+Nickels: 0
+Pennies: 10
+These make up a dollar
+Quarters: 2
+Dimes: 4
+Nickels: 1
+Pennies: 5
+These make up a dollar
+Quarters: 2
+Dimes: 4
+Nickels: 2
+Pennies: 0
+These make up a dollar
+Quarters: 2
+Dimes: 5
+Nickels: 0
+Pennies: 0
+These make up a dollar
+Quarters: 3
+Dimes: 0
+Nickels: 0
+Pennies: 25
+These make up a dollar
+Quarters: 3
+Dimes: 0
+Nickels: 1
+Pennies: 20
+These make up a dollar
+Quarters: 3
+Dimes: 0
+Nickels: 2
+Pennies: 15
+These make up a dollar
+Quarters: 3
+Dimes: 0
+Nickels: 3
+Pennies: 10
+These make up a dollar
+Quarters: 3
+Dimes: 0
+Nickels: 4
+Pennies: 5
+These make up a dollar
+Quarters: 3
+Dimes: 0
+Nickels: 5
+Pennies: 0
+These make up a dollar
+Quarters: 3
+Dimes: 1
+Nickels: 0
+Pennies: 15
+These make up a dollar
+Quarters: 3
+Dimes: 1
+Nickels: 1
+Pennies: 10
+These make up a dollar
+Quarters: 3
+Dimes: 1
+Nickels: 2
+Pennies: 5
+These make up a dollar
+Quarters: 3
+Dimes: 1
+Nickels: 3
+Pennies: 0
+These make up a dollar
+Quarters: 3
+Dimes: 2
+Nickels: 0
+Pennies: 5
+These make up a dollar
+Quarters: 3
+Dimes: 2
+Nickels: 1
+Pennies: 0
+These make up a dollar
+Quarters: 4
+Dimes: 0
+Nickels: 0
+Pennies: 0
+
+                0.04 seconds total execution time.

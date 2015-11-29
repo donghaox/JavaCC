@@ -1,0 +1,118 @@
+Call:   start
+RESERVED_WORD token: package
+  Consumed token: <"package" at line 1 column 1>
+IDENTIFIER token: main
+  Consumed token: <<IDENTIFIER>: "main" at line 1 column 9>
+  Call:   statementList
+RESERVED_WORD token: var
+    Call:   statement
+IDENTIFIER token: dsind
+      Call:   declarationStatement
+        Call:   variableDeclaration
+          Consumed token: <"var" at line 2 column 1>
+          Call:   identifier
+            Consumed token: <<IDENTIFIER>: "dsind" at line 2 column 5>
+          Return: identifier
+          Call:   type
+RESERVED_WORD token: int
+            Consumed token: <"int" at line 2 column 11>
+          Return: type
+RESERVED_WORD token: int
+        Return: variableDeclaration
+        Call:   handleError
+Encountered " "int" "int "" at line 2, column 15.
+Was expecting:
+    ";" ...
+    
+          Consumed token: <"int" at line 2 column 15> (in getNextToken)
+        Return: handleError
+      Return: declarationStatement
+    Return: statement
+    Call:   statement
+      Consumed token: <";" at line 2 column 18>
+    Return: statement
+RESERVED_WORD token: var
+    Call:   statement
+RESERVED_WORD token: int
+      Call:   handleError
+Encountered " "var" "var "" at line 3, column 1.
+Was expecting one of:
+    "switch" ...
+    "if" ...
+    "for" ...
+    ";" ...
+    
+        Consumed token: <"var" at line 3 column 1> (in getNextToken)
+        Consumed token: <"int" at line 3 column 5> (in getNextToken)
+IDENTIFIER token: abc
+        Consumed token: <<IDENTIFIER>: "abc" at line 3 column 9> (in getNextToken)
+      Return: handleError
+    Return: statement
+    Call:   statement
+      Consumed token: <";" at line 3 column 12>
+    Return: statement
+RESERVED_WORD token: var
+    Call:   statement
+RESERVED_WORD token: var
+      Call:   handleError
+Encountered " "var" "var "" at line 4, column 1.
+Was expecting one of:
+    "switch" ...
+    "if" ...
+    "for" ...
+    ";" ...
+    
+        Consumed token: <"var" at line 4 column 1> (in getNextToken)
+        Consumed token: <"var" at line 4 column 5> (in getNextToken)
+IDENTIFIER token: asjd12
+        Consumed token: <<IDENTIFIER>: "asjd12" at line 4 column 9> (in getNextToken)
+      Return: handleError
+    Return: statement
+    Call:   statement
+      Consumed token: <";" at line 4 column 15>
+    Return: statement
+RESERVED_WORD token: var
+    Call:   statement
+IDENTIFIER token: y
+      Call:   declarationStatement
+        Call:   variableDeclaration
+          Consumed token: <"var" at line 5 column 1>
+          Call:   identifier
+            Consumed token: <<IDENTIFIER>: "y" at line 5 column 5>
+          Return: identifier
+          Call:   type
+RESERVED_WORD token: int
+            Consumed token: <"int" at line 5 column 7>
+          Return: type
+          Consumed token: <";" at line 5 column 10>
+        Return: variableDeclaration
+      Return: declarationStatement
+    Return: statement
+  Return: statementList
+  Consumed token: <<EOF> at line 5 column 11>
+Return: start
+
+===== CROSS-REFERENCE TABLE =====
+
+*** PACKAGE main ***
+
+Identifier       Line numbers    Type specification
+----------       ------------    ------------------
+dsind            002
+                                 Defined as: variable
+                                 Scope nesting level: 1
+                                 Type form = scalar, Type id = int
+y                005
+                                 Defined as: variable
+                                 Scope nesting level: 1
+                                 Type form = scalar, Type id = int
+
+===== INTERMEDIATE CODE =====
+
+*** PACKAGE main ***
+
+<statementList>
+    <variableDeclaration>
+        <identifier id="y" level="1" index="0" type_id="int" />
+    </variableDeclaration>
+</statementList>

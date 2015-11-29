@@ -1,0 +1,305 @@
+options{
+    IGNORE_CASE=true;
+    JJTREE_OUTPUT_DIRECTORY="src/wci/frontend";
+    NODE_EXTENDS="wci.intermediate.icodeimpl.ICodeNodeImpl";
+    MULTI=true;
+    VISITOR=true;
+    //DEBUG_PARSER=true;
+}
+
+PARSER_BEGIN(PclParser)
+package wci.frontend;
+
+import java.util.ArrayList;
+import java.io.*;
+
+import wci.intermediate.*;
+import wci.intermediate.symtabimpl.*;
+import wci.backend.*;
+import wci.util.*;
+
+import static wci.intermediate.symtabimpl.SymTabKeyImpl.*;
+import static wci.intermediate.symtabimpl.DefinitionImpl.*;
+import static wci.intermediate.symtabimpl.RoutineCodeImpl.*;
+import static wci.intermediate.symtabimpl.SymTabKeyImpl.*;
+import static wci.intermediate.icodeimpl.ICodeKeyImpl.*;
+
+public class PclParser
+{
+    private static final String SOURCE_SUFFIX = ".pcl";
+    private static final String OUTPUT_SUFFIX = ".j";
+
+    private static SymTabStack symTabStack;
+    private static SymTabEntry programId;
+
+    public static void main(String[] args)
+        throws Exception
+    {
+    	// Create and initialize the symbol table stack.
+        symTabStack = SymTabFactory.createSymTabStack();
+        Predefined.initialize(symTabStack);
+
+        // Process the source file path which ends in .pcl
+        // and create the output file path which ends in .j
+        String sourceFilePath = args[0];
+        int truncatedLength = sourceFilePath.length() - SOURCE_SUFFIX.length();
+        int suffixIndex = sourceFilePath.lastIndexOf(SOURCE_SUFFIX);
+        String objectFilePath = (suffixIndex == truncatedLength)
+            ? sourceFilePath.substring(0, truncatedLength) + OUTPUT_SUFFIX
+            : sourceFilePath + OUTPUT_SUFFIX;
+
+        // Parse a Pcl program.
+        Reader    reader = new FileReader(sourceFilePath);
+        PclParser parser = new PclParser(reader);
+        SimpleNode rootNode = parser.program();
+
+        // Print the cross-reference table.
+        CrossReferencer crossReferencer = new CrossReferencer();
+        crossReferencer.print(symTabStack);
+
+        // Visit the parse tree nodes to decorate them with type information.
+        TypeSetterVisitor typeVisitor = new TypeSetterVisitor();
+        rootNode.jjtAccept(typeVisitor, null);
+
+        // Create and initialize the ICode wrapper for the parse tree.
+        ICode iCode = ICodeFactory.createICode();
+        iCode.setRoot(rootNode);
+        programId.setAttribute(ROUTINE_ICODE, iCode);
+        
+        // Print the parse tree.
+        ParseTreePrinter treePrinter = new ParseTreePrinter(System.out);
+        treePrinter.print(symTabStack);
+
+        // Create the compiler backend and generate code.
+        Backend backend = BackendFactory.createBackend("compile");
+        backend.process(iCode, symTabStack, objectFilePath);
+    }
+}
+PARSER_END(PclParser)
+
+SKIP: {
+    " " | "\r" | "\t" | "\n"
+  | <COMMENT : "{"(~["}"])*"}">
+}
+
+TOKEN: { /* Reserved words */
+    <BEGIN     : "BEGIN">
+  | <END       : "END">
+  | <PROGRAM   : "PROGRAM">
+  | <VAR       : "VAR">
+}
+
+TOKEN: /* Special symbols */
+{
+    <COLON        : ":">
+  | <COLON_EQUALS : ":=">
+  | <COMMA        : ",">
+  | <DOT          : ".">
+  | <SEMICOLON    : ";">
+  | <PLUS         : "+">
+  | <MINUS        : "-">
+  | <STAR         : "*">
+  | <SLASH        : "/">
+  | <QUOTE        : "'">
+}
+
+TOKEN: { /* Identifiers, strings, and numbers */
+    <IDENTIFIER : <LETTER>(<LETTER>|<DIGIT>)*>
+  | <STRING     : <QUOTE>(~["'"] | "''")*<QUOTE>>
+
+  | <INTEGER : <UNSIGNED_NUMBER>>
+  | <REAL    : <WHOLE><FRACTION><EXPONENT>
+             | <WHOLE><FRACTION>
+             | <WHOLE><EXPONENT>>
+
+  | <#LETTER : ["a"-"z", "A"-"Z"]>
+  | <#DIGIT  : ["0"-"9"]>
+  | <#SIGN   : ["+", "-"]>
+
+  | <#UNSIGNED_NUMBER : (<DIGIT>)+>
+  | <#WHOLE           : <UNSIGNED_NUMBER>>
+  | <#FRACTION        : "." <UNSIGNED_NUMBER>>
+  | <#EXPONENT        : "E"(<SIGN>)?<UNSIGNED_NUMBER>>
+}
+
+TOKEN: { /*	Error token */
+    <ERROR : ~["\r", "\n"]>
+}
+
+SimpleNode program() #void : {SimpleNode rootNode;}
+{
+    try {
+        programHeader()
+        rootNode = block()
+        <DOT>
+        <EOF> {
+            return rootNode;
+        }
+    }
+    catch (ParseException ex) {
+        handleError(ex);
+        return null;
+    }
+}
+
+void programHeader() #void : {}
+{
+    <PROGRAM>
+    <IDENTIFIER> {
+        programId = symTabStack.enterLocal(token.image);
+        programId.setDefinition(DefinitionImpl.PROGRAM);
+        programId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
+        symTabStack.setProgramId(programId);
+    }
+    <SEMICOLON>
+}
+
+SimpleNode block() #void : {SimpleNode rootNode;}
+{
+    variableDeclarations()
+    rootNode = compoundStatement() {
+        return rootNode;
+    }
+}
+
+void variableDeclarations() #void : {ArrayList<SymTabEntry> variableList;
+	                                 int index = 0;}
+{
+    <VAR>
+    (
+        <IDENTIFIER> {
+            variableList = new ArrayList<SymTabEntry>();
+            processVariableDecl(token, index++, variableList);
+        }
+        (
+            <COMMA>
+            <IDENTIFIER> {
+                processVariableDecl(token, index++, variableList);
+            }
+        )*
+        <COLON>
+        <IDENTIFIER> {
+            SymTabEntry typeId = symTabStack.lookup(token.image);
+            typeId.appendLineNumber(token.beginLine);
+            TypeSpec type = typeId.getTypeSpec();
+
+            for (SymTabEntry variableId : variableList) {
+                variableId.setTypeSpec(type);
+            }
+        }
+        <SEMICOLON>
+    )+ {
+        programId.setAttribute(ROUTINE_LOCALS_COUNT, index);
+    }
+}
+
+void statement() #void : {}
+{
+       assignmentStatement()
+    |  compoundStatement()
+}
+
+SimpleNode compoundStatement() : {}
+{
+    <BEGIN>
+    [
+        statement()
+        (
+            <SEMICOLON>
+            statement()
+        )*
+    ]
+    <END> {
+        return jjtThis;
+    }
+}
+
+void assignmentStatement() : {}
+{
+    variable() {
+        SymTabEntry variableId = symTabStack.lookup(token.image);
+        variableId.appendLineNumber(token.beginLine);
+    }
+    <COLON_EQUALS>
+    expression()
+}
+
+void expression() #void : {}
+{
+    term() (
+        "+" term() #add(2)
+      | "-" term() #subtract(2)
+    )*     
+}
+
+void term() #void : {}
+{
+    factor() (
+        "*" factor() #multiply(2)
+      | "/" factor() #divide(2)
+    )*     
+}
+
+void factor() #void : {}
+{
+    variable()
+  | integerConstant()
+  | realConstant()
+}
+
+void variable() : {}
+{
+    <IDENTIFIER> {
+        SymTabEntry variableId = symTabStack.lookup(token.image);
+        variableId.appendLineNumber(token.beginLine);
+        TypeSpec type = variableId.getTypeSpec();
+        jjtThis.setTypeSpec(type);
+        jjtThis.setAttribute(ID, variableId);
+    }
+}
+
+void integerConstant() : {}
+{
+    <INTEGER> {
+        jjtThis.setTypeSpec(Predefined.integerType);
+        jjtThis.setAttribute(VALUE, Integer.parseInt(token.image));
+    }
+}
+
+void realConstant() : {}
+{
+    <REAL> {
+        jjtThis.setTypeSpec(Predefined.realType);
+        jjtThis.setAttribute(VALUE, Float.parseFloat(token.image));
+    }
+}
+
+void Error() #void : {}
+{
+    <ERROR>
+}
+
+JAVACODE
+void processVariableDecl(Token token, int index,
+                         ArrayList<SymTabEntry> variableList) #void
+{
+    SymTabEntry variableId = symTabStack.enterLocal(token.image);
+    variableId.setIndex(index);
+    variableId.setDefinition(DefinitionImpl.VARIABLE);
+    variableId.appendLineNumber(token.beginLine);
+    variableList.add(variableId);
+}
+
+JAVACODE
+String handleError(ParseException ex) #void
+{
+    Token token = ex.currentToken;
+    System.out.println(ex.getMessage());
+
+    do {
+    	token = getNextToken();
+    } while (token.kind != SEMICOLON);
+
+	jjtree.popNode();
+    return token.image;
+}

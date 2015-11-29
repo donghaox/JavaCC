@@ -1,0 +1,660 @@
+Call:   start
+RESERVED_WORD token: package
+  Consumed token: <"package" at line 1 column 1>
+IDENTIFIER token: main
+  Consumed token: <<IDENTIFIER>: "main" at line 1 column 9>
+  Call:   statementList
+IDENTIFIER token: x
+    Call:   statement
+RESERVED_WORD token: int
+      Call:   declarationStatement
+        Call:   variableDeclaration
+          Call:   identifier
+            Consumed token: <<IDENTIFIER>: "x" at line 3 column 1>
+          Return: identifier
+          Call:   type
+            Consumed token: <"int" at line 3 column 3>
+          Return: type
+        Return: variableDeclaration
+        Consumed token: <";" at line 3 column 6>
+      Return: declarationStatement
+    Return: statement
+IDENTIFIER token: x
+    Call:   statement
+EQUALS token: =
+      Call:   assignmentStatement
+        Call:   identifier
+          Consumed token: <<IDENTIFIER>: "x" at line 4 column 1>
+        Return: identifier
+        Consumed token: <"=" at line 4 column 3>
+        Call:   expression
+          Call:   term
+            Call:   operand
+INTEGER_NUMBER token: 10
+              Call:   integerConstant
+                Consumed token: <<INTEGER_NUMBER>: "10" at line 4 column 5>
+              Return: integerConstant
+            Return: operand
+          Return: term
+        Return: expression
+      Return: assignmentStatement
+      Consumed token: <";" at line 4 column 7>
+    Return: statement
+IDENTIFIER token: y
+    Call:   statement
+RESERVED_WORD token: float
+      Call:   declarationStatement
+        Call:   variableDeclaration
+          Call:   identifier
+            Consumed token: <<IDENTIFIER>: "y" at line 5 column 1>
+          Return: identifier
+          Call:   type
+            Consumed token: <"float" at line 5 column 3>
+          Return: type
+        Return: variableDeclaration
+        Consumed token: <";" at line 5 column 8>
+      Return: declarationStatement
+    Return: statement
+IDENTIFIER token: y
+    Call:   statement
+EQUALS token: =
+      Call:   assignmentStatement
+        Call:   identifier
+          Consumed token: <<IDENTIFIER>: "y" at line 6 column 1>
+        Return: identifier
+        Consumed token: <"=" at line 6 column 3>
+        Call:   expression
+          Call:   term
+            Call:   operand
+REAL_NUMBER token: 15.5
+              Call:   realConstant
+                Consumed token: <<REAL_NUMBER>: "15.5" at line 6 column 5>
+              Return: realConstant
+            Return: operand
+          Return: term
+        Return: expression
+      Return: assignmentStatement
+      Consumed token: <";" at line 6 column 9>
+    Return: statement
+IDENTIFIER token: z
+    Call:   statement
+RESERVED_WORD token: float
+      Call:   declarationStatement
+        Call:   variableDeclaration
+          Call:   identifier
+            Consumed token: <<IDENTIFIER>: "z" at line 7 column 1>
+          Return: identifier
+          Call:   type
+            Consumed token: <"float" at line 7 column 3>
+          Return: type
+        Return: variableDeclaration
+        Consumed token: <";" at line 7 column 8>
+      Return: declarationStatement
+    Return: statement
+IDENTIFIER token: z
+    Call:   statement
+EQUALS token: =
+      Call:   assignmentStatement
+        Call:   identifier
+          Consumed token: <<IDENTIFIER>: "z" at line 8 column 1>
+        Return: identifier
+        Consumed token: <"=" at line 8 column 3>
+        Call:   expression
+          Call:   term
+            Call:   operand
+REAL_NUMBER token: 99.9
+              Call:   realConstant
+                Consumed token: <<REAL_NUMBER>: "99.9" at line 8 column 5>
+              Return: realConstant
+            Return: operand
+          Return: term
+        Return: expression
+      Return: assignmentStatement
+      Consumed token: <";" at line 8 column 9>
+    Return: statement
+RESERVED_WORD token: func
+    Call:   statement
+IDENTIFIER token: passByReference
+      Call:   declarationStatement
+        Call:   functionDeclaration
+          Consumed token: <"func" at line 11 column 1>
+          Call:   identifier
+            Consumed token: <<IDENTIFIER>: "passByReference" at line 11 column 6>
+          Return: identifier
+OPEN_PAREN token: (
+          Consumed token: <"(" at line 11 column 21>
+          Call:   parameterList
+IDENTIFIER token: a
+            Call:   parameter
+              Call:   identifier
+                Consumed token: <<IDENTIFIER>: "a" at line 11 column 22>
+              Return: identifier
+MULTIPLY token: *
+              Consumed token: <"*" at line 11 column 24>
+              Call:   type
+RESERVED_WORD token: int
+                Consumed token: <"int" at line 11 column 25>
+              Return: type
+            Return: parameter
+            Consumed token: <"," at line 11 column 28>
+            Call:   parameter
+              Call:   identifier
+IDENTIFIER token: b
+                Consumed token: <<IDENTIFIER>: "b" at line 11 column 30>
+              Return: identifier
+RESERVED_WORD token: float
+              Call:   type
+                Consumed token: <"float" at line 11 column 32>
+              Return: type
+            Return: parameter
+            Consumed token: <"," at line 11 column 37>
+            Call:   parameter
+              Call:   identifier
+IDENTIFIER token: c
+                Consumed token: <<IDENTIFIER>: "c" at line 11 column 39>
+              Return: identifier
+MULTIPLY token: *
+              Consumed token: <"*" at line 11 column 41>
+              Call:   type
+RESERVED_WORD token: float
+                Consumed token: <"float" at line 11 column 42>
+              Return: type
+            Return: parameter
+CLOSE_PAREN token: )
+          Return: parameterList
+          Consumed token: <")" at line 11 column 47>
+          Call:   returnType
+RESERVED_WORD token: void
+            Consumed token: <"void" at line 11 column 49>
+          Return: returnType
+          Call:   block
+OPEN_BRACE token: {
+            Consumed token: <"{" at line 11 column 54>
+            Call:   statementList
+              Call:   statement
+                Call:   printStatement
+                  Consumed token: <"Println" at line 12 column 5>
+OPEN_PAREN token: (
+                  Consumed token: <"(" at line 12 column 12>
+                  Call:   expression
+                    Call:   term
+                      Call:   operand
+INTERPRETED_STRING token: "Inside function"
+                        Call:   interpretedString
+                          Consumed token: <<INTERPRETED_STRING>: ""Inside function"" at line 12 column 13>
+                        Return: interpretedString
+                      Return: operand
+CLOSE_PAREN token: )
+                    Return: term
+                  Return: expression
+                  Consumed token: <")" at line 12 column 30>
+                Return: printStatement
+                Consumed token: <";" at line 12 column 31>
+              Return: statement
+              Call:   statement
+                Call:   printStatement
+                  Consumed token: <"Println" at line 13 column 5>
+OPEN_PAREN token: (
+                  Consumed token: <"(" at line 13 column 12>
+                  Call:   expression
+                    Call:   term
+                      Call:   operand
+IDENTIFIER token: a
+                        Call:   identifier
+                          Consumed token: <<IDENTIFIER>: "a" at line 13 column 13>
+                        Return: identifier
+                      Return: operand
+CLOSE_PAREN token: )
+                    Return: term
+                  Return: expression
+                  Consumed token: <")" at line 13 column 14>
+                Return: printStatement
+                Consumed token: <";" at line 13 column 15>
+              Return: statement
+              Call:   statement
+                Call:   printStatement
+                  Consumed token: <"Println" at line 14 column 5>
+OPEN_PAREN token: (
+                  Consumed token: <"(" at line 14 column 12>
+                  Call:   expression
+                    Call:   term
+                      Call:   operand
+IDENTIFIER token: b
+                        Call:   identifier
+                          Consumed token: <<IDENTIFIER>: "b" at line 14 column 13>
+                        Return: identifier
+                      Return: operand
+CLOSE_PAREN token: )
+                    Return: term
+                  Return: expression
+                  Consumed token: <")" at line 14 column 14>
+                Return: printStatement
+                Consumed token: <";" at line 14 column 15>
+              Return: statement
+              Call:   statement
+                Call:   printStatement
+                  Consumed token: <"Println" at line 15 column 5>
+OPEN_PAREN token: (
+                  Consumed token: <"(" at line 15 column 12>
+                  Call:   expression
+                    Call:   term
+                      Call:   operand
+IDENTIFIER token: c
+                        Call:   identifier
+                          Consumed token: <<IDENTIFIER>: "c" at line 15 column 13>
+                        Return: identifier
+                      Return: operand
+CLOSE_PAREN token: )
+                    Return: term
+                  Return: expression
+                  Consumed token: <")" at line 15 column 14>
+                Return: printStatement
+                Consumed token: <";" at line 15 column 15>
+              Return: statement
+IDENTIFIER token: a
+              Call:   statement
+EQUALS token: =
+                Call:   assignmentStatement
+                  Call:   identifier
+                    Consumed token: <<IDENTIFIER>: "a" at line 16 column 5>
+                  Return: identifier
+                  Consumed token: <"=" at line 16 column 7>
+                  Call:   expression
+                    Call:   term
+                      Call:   operand
+INTEGER_NUMBER token: 5
+                        Call:   integerConstant
+                          Consumed token: <<INTEGER_NUMBER>: "5" at line 16 column 9>
+                        Return: integerConstant
+                      Return: operand
+                    Return: term
+                  Return: expression
+                Return: assignmentStatement
+                Consumed token: <";" at line 16 column 10>
+              Return: statement
+IDENTIFIER token: b
+              Call:   statement
+EQUALS token: =
+                Call:   assignmentStatement
+                  Call:   identifier
+                    Consumed token: <<IDENTIFIER>: "b" at line 17 column 5>
+                  Return: identifier
+                  Consumed token: <"=" at line 17 column 7>
+                  Call:   expression
+                    Call:   term
+                      Call:   operand
+REAL_NUMBER token: 25.5
+                        Call:   realConstant
+                          Consumed token: <<REAL_NUMBER>: "25.5" at line 17 column 9>
+                        Return: realConstant
+                      Return: operand
+                    Return: term
+                  Return: expression
+                Return: assignmentStatement
+                Consumed token: <";" at line 17 column 13>
+              Return: statement
+IDENTIFIER token: c
+              Call:   statement
+EQUALS token: =
+                Call:   assignmentStatement
+                  Call:   identifier
+                    Consumed token: <<IDENTIFIER>: "c" at line 18 column 5>
+                  Return: identifier
+                  Consumed token: <"=" at line 18 column 7>
+                  Call:   expression
+                    Call:   term
+                      Call:   operand
+REAL_NUMBER token: 100.123
+                        Call:   realConstant
+                          Consumed token: <<REAL_NUMBER>: "100.123" at line 18 column 9>
+                        Return: realConstant
+                      Return: operand
+                    Return: term
+                  Return: expression
+                Return: assignmentStatement
+                Consumed token: <";" at line 18 column 16>
+              Return: statement
+              Call:   statement
+                Call:   printStatement
+                  Consumed token: <"Println" at line 19 column 5>
+OPEN_PAREN token: (
+                  Consumed token: <"(" at line 19 column 12>
+                  Call:   expression
+                    Call:   term
+                      Call:   operand
+IDENTIFIER token: a
+                        Call:   identifier
+                          Consumed token: <<IDENTIFIER>: "a" at line 19 column 13>
+                        Return: identifier
+                      Return: operand
+CLOSE_PAREN token: )
+                    Return: term
+                  Return: expression
+                  Consumed token: <")" at line 19 column 14>
+                Return: printStatement
+                Consumed token: <";" at line 19 column 15>
+              Return: statement
+              Call:   statement
+                Call:   printStatement
+                  Consumed token: <"Println" at line 20 column 5>
+OPEN_PAREN token: (
+                  Consumed token: <"(" at line 20 column 12>
+                  Call:   expression
+                    Call:   term
+                      Call:   operand
+IDENTIFIER token: b
+                        Call:   identifier
+                          Consumed token: <<IDENTIFIER>: "b" at line 20 column 13>
+                        Return: identifier
+                      Return: operand
+CLOSE_PAREN token: )
+                    Return: term
+                  Return: expression
+                  Consumed token: <")" at line 20 column 14>
+                Return: printStatement
+                Consumed token: <";" at line 20 column 15>
+              Return: statement
+              Call:   statement
+                Call:   printStatement
+                  Consumed token: <"Println" at line 21 column 5>
+OPEN_PAREN token: (
+                  Consumed token: <"(" at line 21 column 12>
+                  Call:   expression
+                    Call:   term
+                      Call:   operand
+IDENTIFIER token: c
+                        Call:   identifier
+                          Consumed token: <<IDENTIFIER>: "c" at line 21 column 13>
+                        Return: identifier
+                      Return: operand
+CLOSE_PAREN token: )
+                    Return: term
+                  Return: expression
+                  Consumed token: <")" at line 21 column 14>
+                Return: printStatement
+                Consumed token: <";" at line 21 column 15>
+              Return: statement
+              Call:   statement
+                Call:   printStatement
+                  Consumed token: <"Println" at line 22 column 5>
+OPEN_PAREN token: (
+                  Consumed token: <"(" at line 22 column 12>
+                  Call:   expression
+                    Call:   term
+                      Call:   operand
+IDENTIFIER token: x
+                        Call:   identifier
+                          Consumed token: <<IDENTIFIER>: "x" at line 22 column 13>
+                        Return: identifier
+                      Return: operand
+CLOSE_PAREN token: )
+                    Return: term
+                  Return: expression
+                  Consumed token: <")" at line 22 column 14>
+                Return: printStatement
+                Consumed token: <";" at line 22 column 15>
+              Return: statement
+              Call:   statement
+                Call:   printStatement
+                  Consumed token: <"Println" at line 24 column 5>
+OPEN_PAREN token: (
+                  Consumed token: <"(" at line 24 column 12>
+                  Call:   expression
+                    Call:   term
+                      Call:   operand
+INTERPRETED_STRING token: "Outside function"
+                        Call:   interpretedString
+                          Consumed token: <<INTERPRETED_STRING>: ""Outside function"" at line 24 column 13>
+                        Return: interpretedString
+                      Return: operand
+CLOSE_PAREN token: )
+                    Return: term
+                  Return: expression
+                  Consumed token: <")" at line 24 column 31>
+                Return: printStatement
+                Consumed token: <";" at line 24 column 32>
+              Return: statement
+CLOSE_BRACE token: }
+            Return: statementList
+            Consumed token: <"}" at line 25 column 1>
+          Return: block
+        Return: functionDeclaration
+      Return: declarationStatement
+    Return: statement
+IDENTIFIER token: passByReference
+    Call:   statement
+OPEN_PAREN token: (
+      Call:   functionCall
+        Call:   identifier
+          Consumed token: <<IDENTIFIER>: "passByReference" at line 28 column 1>
+        Return: identifier
+        Consumed token: <"(" at line 28 column 16>
+IDENTIFIER token: x
+        Call:   expression
+          Call:   term
+            Call:   operand
+              Call:   identifier
+                Consumed token: <<IDENTIFIER>: "x" at line 28 column 17>
+              Return: identifier
+            Return: operand
+          Return: term
+        Return: expression
+        Consumed token: <"," at line 28 column 18>
+        Call:   expression
+          Call:   term
+            Call:   operand
+IDENTIFIER token: y
+              Call:   identifier
+                Consumed token: <<IDENTIFIER>: "y" at line 28 column 20>
+              Return: identifier
+            Return: operand
+          Return: term
+        Return: expression
+        Consumed token: <"," at line 28 column 21>
+        Call:   expression
+          Call:   term
+            Call:   operand
+IDENTIFIER token: z
+              Call:   identifier
+                Consumed token: <<IDENTIFIER>: "z" at line 28 column 23>
+              Return: identifier
+            Return: operand
+CLOSE_PAREN token: )
+          Return: term
+        Return: expression
+        Consumed token: <")" at line 28 column 24>
+      Return: functionCall
+      Consumed token: <";" at line 28 column 25>
+    Return: statement
+    Call:   statement
+      Call:   printStatement
+        Consumed token: <"Println" at line 29 column 1>
+OPEN_PAREN token: (
+        Consumed token: <"(" at line 29 column 8>
+        Call:   expression
+          Call:   term
+            Call:   operand
+IDENTIFIER token: x
+              Call:   identifier
+                Consumed token: <<IDENTIFIER>: "x" at line 29 column 9>
+              Return: identifier
+            Return: operand
+CLOSE_PAREN token: )
+          Return: term
+        Return: expression
+        Consumed token: <")" at line 29 column 10>
+      Return: printStatement
+      Consumed token: <";" at line 29 column 11>
+    Return: statement
+    Call:   statement
+      Call:   printStatement
+        Consumed token: <"Println" at line 30 column 1>
+OPEN_PAREN token: (
+        Consumed token: <"(" at line 30 column 8>
+        Call:   expression
+          Call:   term
+            Call:   operand
+IDENTIFIER token: y
+              Call:   identifier
+                Consumed token: <<IDENTIFIER>: "y" at line 30 column 9>
+              Return: identifier
+            Return: operand
+CLOSE_PAREN token: )
+          Return: term
+        Return: expression
+        Consumed token: <")" at line 30 column 10>
+      Return: printStatement
+      Consumed token: <";" at line 30 column 11>
+    Return: statement
+    Call:   statement
+      Call:   printStatement
+        Consumed token: <"Println" at line 31 column 1>
+OPEN_PAREN token: (
+        Consumed token: <"(" at line 31 column 8>
+        Call:   expression
+          Call:   term
+            Call:   operand
+IDENTIFIER token: z
+              Call:   identifier
+                Consumed token: <<IDENTIFIER>: "z" at line 31 column 9>
+              Return: identifier
+            Return: operand
+CLOSE_PAREN token: )
+          Return: term
+        Return: expression
+        Consumed token: <")" at line 31 column 10>
+      Return: printStatement
+      Consumed token: <";" at line 31 column 11>
+    Return: statement
+  Return: statementList
+  Consumed token: <<EOF> at line 31 column 12>
+Return: start
+
+===== CROSS-REFERENCE TABLE =====
+
+*** PACKAGE main ***
+
+Identifier       Line numbers    Type specification
+----------       ------------    ------------------
+passByReference  011 028
+                                 Defined as: function
+                                 Scope nesting level: 1
+                                 Type form = scalar, Type id = void
+x                003 004 022 028 029
+                                 Defined as: variable
+                                 Scope nesting level: 1
+                                 Type form = scalar, Type id = int
+y                005 006 028 030
+                                 Defined as: variable
+                                 Scope nesting level: 1
+                                 Type form = scalar, Type id = float
+z                007 008 028 031
+                                 Defined as: variable
+                                 Scope nesting level: 1
+                                 Type form = scalar, Type id = float
+
+===== INTERMEDIATE CODE =====
+
+*** PACKAGE main ***
+
+<statementList>
+    <variableDeclaration>
+        <identifier id="x" level="1" index="0" type_id="int" />
+    </variableDeclaration>
+    <assignmentStatement type_id="int">
+        <identifier id="x" level="1" index="0" type_id="int" />
+        <integerConstant value="10" type_id="int" />
+    </assignmentStatement>
+    <variableDeclaration>
+        <identifier id="y" level="1" index="1" type_id="float" />
+    </variableDeclaration>
+    <assignmentStatement type_id="float">
+        <identifier id="y" level="1" index="1" type_id="float" />
+        <realConstant value="15.5" type_id="float" />
+    </assignmentStatement>
+    <variableDeclaration>
+        <identifier id="z" level="1" index="2" type_id="float" />
+    </variableDeclaration>
+    <assignmentStatement type_id="float">
+        <identifier id="z" level="1" index="2" type_id="float" />
+        <realConstant value="99.9" type_id="float" />
+    </assignmentStatement>
+    <functionDeclaration id="passByReference" level="1" index="0" type_id="void"
+    >
+        <identifier id="passByReference" level="1" index="0" />
+        <parameterList>
+            <parameter>
+                <identifier id="a" level="2" index="0" type_id="int" />
+            </parameter>
+            <parameter>
+                <identifier id="b" level="2" index="1" type_id="float" />
+            </parameter>
+            <parameter>
+                <identifier id="c" level="2" index="2" type_id="float" />
+            </parameter>
+        </parameterList>
+        <returnType type_id="void" />
+        <block>
+            <statementList>
+                <printStatement type_id="string">
+                    <interpretedString value=""Inside function"" 
+                        type_id="string" />
+                </printStatement>
+                <printStatement type_id="int">
+                    <identifier id="a" level="2" index="0" type_id="int" />
+                </printStatement>
+                <printStatement type_id="float">
+                    <identifier id="b" level="2" index="1" type_id="float" />
+                </printStatement>
+                <printStatement type_id="float">
+                    <identifier id="c" level="2" index="2" type_id="float" />
+                </printStatement>
+                <assignmentStatement type_id="int">
+                    <identifier id="a" level="2" index="0" type_id="int" />
+                    <integerConstant value="5" type_id="int" />
+                </assignmentStatement>
+                <assignmentStatement type_id="float">
+                    <identifier id="b" level="2" index="1" type_id="float" />
+                    <realConstant value="25.5" type_id="float" />
+                </assignmentStatement>
+                <assignmentStatement type_id="float">
+                    <identifier id="c" level="2" index="2" type_id="float" />
+                    <realConstant value="100.123" type_id="float" />
+                </assignmentStatement>
+                <printStatement type_id="int">
+                    <identifier id="a" level="2" index="0" type_id="int" />
+                </printStatement>
+                <printStatement type_id="float">
+                    <identifier id="b" level="2" index="1" type_id="float" />
+                </printStatement>
+                <printStatement type_id="float">
+                    <identifier id="c" level="2" index="2" type_id="float" />
+                </printStatement>
+                <printStatement type_id="int">
+                    <identifier id="x" level="1" index="0" type_id="int" />
+                </printStatement>
+                <printStatement type_id="string">
+                    <interpretedString value=""Outside function"" 
+                        type_id="string" />
+                </printStatement>
+            </statementList>
+        </block>
+    </functionDeclaration>
+    <functionCall id="passByReference" level="1" index="0" type_id="void">
+        <identifier id="passByReference" level="1" index="0" type_id="void" />
+        <identifier id="x" level="1" index="0" type_id="int" />
+        <identifier id="y" level="1" index="1" type_id="float" />
+        <identifier id="z" level="1" index="2" type_id="float" />
+    </functionCall>
+    <printStatement type_id="int">
+        <identifier id="x" level="1" index="0" type_id="int" />
+    </printStatement>
+    <printStatement type_id="float">
+        <identifier id="y" level="1" index="1" type_id="float" />
+    </printStatement>
+    <printStatement type_id="float">
+        <identifier id="z" level="1" index="2" type_id="float" />
+    </printStatement>
+</statementList>
+
+Process finished with exit code 0
