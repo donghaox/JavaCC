@@ -107,7 +107,6 @@ SimpleNode start() #void :
         <MINUS> <MODULE> <OPEN_PAREN> <IDENTIFIER> 
         {
             programId = symTabStack.enterLocal(token.image);
-            System.out.println(token.image);
             programId.setDefinition(DefinitionImpl.MODULE);
             programId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
             symTabStack.setProgramId(programId);
@@ -135,7 +134,7 @@ void statement() #void :
 {
     try
     {
-          LOOKAHEAD(2) declarationStatement(syncSet)
+          LOOKAHEAD(2) declarationStatement(syncSet) <DOT>
         | LOOKAHEAD(4) arrayDeclaration(syncSet) <DOT>
         | LOOKAHEAD(2) assignmentStatement(syncSet) <DOT>
         | LOOKAHEAD(2) arrayAssignmentStatement(syncSet) <DOT>
@@ -167,7 +166,7 @@ void declarationStatement(HashSet syncSet) #void :
 {
     try
     {
-        LOOKAHEAD(2) variableDeclaration(syncSet) <DOT> | functionDeclaration(syncSet)
+        LOOKAHEAD(2) variableDeclaration(syncSet) <DOT> | functionDeclaration(syncSet) <DOT>
     }
     catch (ParseException ex)
     {
