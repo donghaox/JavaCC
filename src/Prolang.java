@@ -1,11 +1,11 @@
-import wci.frontend.GoParser;
+import wci.frontend.ProlangParser;
 
-public class Go
+public class Prolang
 {
     public static void main(String[] args)
     {
         try {
-            GoParser.main(args);
+            ProlangParser.main(args);
         }
         catch (Exception ex) {
             ex.printStackTrace();

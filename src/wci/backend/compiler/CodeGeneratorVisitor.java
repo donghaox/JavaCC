@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import static wci.intermediate.icodeimpl.ICodeKeyImpl.*;
 
-public class CodeGeneratorVisitor extends GoParserVisitorAdapter implements GoParserTreeConstants
+public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements ProlangParserTreeConstants
 {
     private static String programName = null;
     private static int tagNumber = 0;
@@ -415,6 +415,35 @@ public class CodeGeneratorVisitor extends GoParserVisitorAdapter implements GoPa
         }
 
         CodeGenerator.objectFile.println("    invokevirtual java/io/PrintStream/println(" + typeCode + ")V");
+        CodeGenerator.objectFile.flush();
+
+        return data;
+    }
+    
+    public Object visit(ASTprint node, Object data)
+    {
+        CodeGenerator.objectFile.println("    getstatic java/lang/System/out Ljava/io/PrintStream;");
+        CodeGenerator.objectFile.flush();
+
+        SimpleNode printNode = (SimpleNode) node.jjtGetChild(0);
+        TypeSpec type = printNode.getTypeSpec();
+        String typeCode = null;
+        printNode.jjtAccept(this, data);
+
+        if (type == Predefined.integerType) {
+            typeCode = "I";
+        }
+        else if (type == Predefined.realType) {
+            typeCode = "F";
+        }
+        else if (type == Predefined.charType) {
+            typeCode = "Ljava/lang/String;";
+        }
+        else if (type == Predefined.booleanType) {
+            typeCode = "Z";
+        }
+
+        CodeGenerator.objectFile.println("    invokevirtual java/io/PrintStream/print(" + typeCode + ")V");
         CodeGenerator.objectFile.flush();
 
         return data;

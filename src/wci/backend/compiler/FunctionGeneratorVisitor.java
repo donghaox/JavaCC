@@ -6,7 +6,7 @@ import wci.intermediate.symtabimpl.*;
 
 import static wci.intermediate.icodeimpl.ICodeKeyImpl.ID;
 
-public class FunctionGeneratorVisitor extends GoParserVisitorAdapter
+public class FunctionGeneratorVisitor extends ProlangParserVisitorAdapter
 {
     public Object visit(ASTfunctionDeclaration node, Object data) {
         SymTabEntry functionId = (SymTabEntry) node.getAttribute(ID);
@@ -72,7 +72,7 @@ public class FunctionGeneratorVisitor extends GoParserVisitorAdapter
         CodeGenerator.objectFile.flush();
         CodeGenerator.objectFile.println(initBuffer.toString()); // Initialize local variables
 
-        GoParserVisitor codeGenerator = new CodeGeneratorVisitor();
+        ProlangParserVisitor codeGenerator = new CodeGeneratorVisitor();
         node.jjtGetChild(1).jjtAccept(codeGenerator, data); // Process parameter list
         node.jjtGetChild(3).jjtAccept(codeGenerator, data); // Process function body
 

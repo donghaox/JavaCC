@@ -4,7 +4,7 @@ import wci.frontend.*;
 import wci.intermediate.*;
 import wci.intermediate.symtabimpl.*;
 
-public class TypeSetterVisitor extends GoParserVisitorAdapter
+public class TypeSetterVisitor extends ProlangParserVisitorAdapter
 {
     private void setType(SimpleNode node)
     {

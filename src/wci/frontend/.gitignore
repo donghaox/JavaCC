@@ -53,3 +53,11 @@
 /SimpleNode.java
 /Token.java
 /TokenMgrError.java
+/ASTprint.java
+/Prolang.jj
+/JJTProlangParserState.java
+/ProlangParser.java
+/ProlangParserConstants.java
+/ProlangParserTokenManager.java
+/ProlangParserTreeConstants.java
+/ProlangParserVisitor.java

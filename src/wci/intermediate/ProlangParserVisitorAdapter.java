@@ -1,11 +1,9 @@
 package wci.intermediate;
 
-import wci.frontend.GoParserVisitor;
-import wci.frontend.SimpleNode;
 import wci.frontend.*;
 
 
-public class GoParserVisitorAdapter implements GoParserVisitor {
+public class ProlangParserVisitorAdapter implements ProlangParserVisitor {
     public Object visit(SimpleNode node, Object data) {
         return node.childrenAccept(this, data);
     }
@@ -182,4 +180,13 @@ public class GoParserVisitorAdapter implements GoParserVisitor {
     public Object visit(ASTfunctionCall node, Object data) {
         return node.childrenAccept(this, data);
     }
+
+	@Override
+	public Object visit(ASTprint node, Object data) {
+		// TODO Auto-generated method stub
+		return node.childrenAccept(this, data);
+	}
+    
+    
+    
 }

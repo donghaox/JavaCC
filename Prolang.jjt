@@ -8,7 +8,7 @@ options
     DEBUG_PARSER=true;
 }
 
-PARSER_BEGIN(GoParser)
+PARSER_BEGIN(ProlangParser)
     package wci.frontend;
     import java.util.ArrayList;
     import java.util.HashSet;
@@ -25,10 +25,10 @@ PARSER_BEGIN(GoParser)
     import static wci.intermediate.symtabimpl.SymTabKeyImpl.*;
     import static wci.intermediate.icodeimpl.ICodeKeyImpl.*;
 
-public class GoParser
+public class ProlangParser
 {
     private static ArrayList<Integer> counter = new ArrayList<Integer>();
-    private static final String SOURCE_SUFFIX = ".go";
+    private static final String SOURCE_SUFFIX = ".prolang";
     private static final String OUTPUT_SUFFIX = ".j";
     private static SymTabStack symTabStack;
     private static SymTabEntry programId;
@@ -39,7 +39,7 @@ public class GoParser
         symTabStack = SymTabFactory.createSymTabStack();
         Predefined.initialize(symTabStack);
         counter.add(0);
-        // Process the source file path which ends in .go
+        // Process the source file path which ends in .prolang
         // and create the output file path which ends in .j
         String sourceFilePath = args [0];
         int truncatedLength = sourceFilePath.length() - SOURCE_SUFFIX.length();
@@ -48,9 +48,9 @@ public class GoParser
             (suffixIndex == truncatedLength) ?
             sourceFilePath.substring(0, truncatedLength) + OUTPUT_SUFFIX :
             sourceFilePath + OUTPUT_SUFFIX;
-        // Parse a Go program.
+        // Parse a Prolang program.
         Reader reader = new FileReader(sourceFilePath);
-        GoParser parser = new GoParser(reader);
+        ProlangParser parser = new ProlangParser(reader);
         SimpleNode rootNode = parser.start();
         // Print the cross-reference table.
         CrossReferencer crossReferencer = new CrossReferencer();
@@ -71,7 +71,7 @@ public class GoParser
         backend.process(iCode, symTabStack, objectFilePath);
     }
 }
-PARSER_END(GoParser)
+PARSER_END(ProlangParser)
 
 SKIP:
 {
@@ -134,7 +134,7 @@ void statement() #void :
 {
     try
     {
-          LOOKAHEAD(2) declarationStatement(syncSet) <DOT>
+          LOOKAHEAD(2) declarationStatement(syncSet) 
         | LOOKAHEAD(4) arrayDeclaration(syncSet) <DOT>
         | LOOKAHEAD(2) assignmentStatement(syncSet) <DOT>
         | LOOKAHEAD(2) arrayAssignmentStatement(syncSet) <DOT>
@@ -144,6 +144,7 @@ void statement() #void :
         | ifStatement(syncSet)
         | forStatement(syncSet)
         | printStatement(syncSet)
+      	| print(syncSet)
         | LOOKAHEAD(2) functionCall(syncSet) <DOT>
     }
     catch (ParseException ex)
@@ -543,6 +544,10 @@ void printStatement(HashSet syncSet) #printStatement : {}
 {
     "io:fwrite" <OPEN_PAREN> expression(syncSet) <CLOSE_PAREN><DOT>
 }
+
+void print(HashSet syncSet) #print:{}
+{    "print" <OPEN_PAREN> expression(syncSet) <CLOSE_PAREN><DOT>
+}  
 
 // Depending on whether we are declaring a new variable
 // or searching for one, perform the expected behavior
