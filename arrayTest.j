@@ -15,31 +15,6 @@
 .limit stack 1
 .end method
 
-.method private static PassByReference(LIWrap;)V
-
-    .var 0 is A LIWrap;
-
-    getstatic java/lang/System/out Ljava/io/PrintStream;
-    aload 0
-    getfield IWrap/value I
-    invokevirtual java/io/PrintStream/println(I)V
-    aload 0
-    ldc 5
-    putfield IWrap/value I
-    getstatic java/lang/System/out Ljava/io/PrintStream;
-    aload 0
-    getfield IWrap/value I
-    invokevirtual java/io/PrintStream/println(I)V
-    getstatic java/lang/System/out Ljava/io/PrintStream;
-    getstatic ArrayTest/X I
-    invokevirtual java/io/PrintStream/println(I)V
-
-    return
-
-.limit locals 1
-.limit stack  16
-.end method
-
 .method public static main([Ljava/lang/String;)V
 
     new	 RunTimer
@@ -49,16 +24,15 @@
 
     ldc 10
     putstatic ArrayTest/X I
-    new IWrap 
-    dup
+    getstatic java/lang/System/out Ljava/io/PrintStream;
     getstatic ArrayTest/X I
-    invokenonvirtual IWrap/<init>(I)V
-    dup
-    astore 1
-    invokestatic  ArrayTest/PassByReference(LIWrap;)V
-    aload 1
-    getfield IWrap/value I
-    putstatic ArrayTest/X I
+    invokevirtual java/io/PrintStream/print(I)V
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    getstatic ArrayTest/X I
+    invokevirtual java/io/PrintStream/print(I)V
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    getstatic ArrayTest/X I
+    invokevirtual java/io/PrintStream/println(I)V
     getstatic java/lang/System/out Ljava/io/PrintStream;
     getstatic ArrayTest/X I
     invokevirtual java/io/PrintStream/println(I)V

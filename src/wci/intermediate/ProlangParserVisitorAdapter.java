@@ -141,9 +141,14 @@ public class ProlangParserVisitorAdapter implements ProlangParserVisitor {
         return node.childrenAccept(this, data);
     }
 
-    public Object visit(ASTprintStatement node, Object data) {
+    public Object visit(ASTprintln node, Object data) {
         return node.childrenAccept(this, data);
     }
+    
+	public Object visit(ASTprint node, Object data) {
+		// TODO Auto-generated method stub
+		return node.childrenAccept(this, data);
+	}
 
     public Object visit(ASTequalEqual node, Object data) {
         return node.childrenAccept(this, data);
@@ -179,14 +184,5 @@ public class ProlangParserVisitorAdapter implements ProlangParserVisitor {
 
     public Object visit(ASTfunctionCall node, Object data) {
         return node.childrenAccept(this, data);
-    }
-
-	@Override
-	public Object visit(ASTprint node, Object data) {
-		// TODO Auto-generated method stub
-		return node.childrenAccept(this, data);
-	}
-    
-    
-    
+    } 
 }

@@ -391,7 +391,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
         return data;
     }
 
-    public Object visit(ASTprintStatement node, Object data)
+    public Object visit(ASTprintln node, Object data)
     {
         CodeGenerator.objectFile.println("    getstatic java/lang/System/out Ljava/io/PrintStream;");
         CodeGenerator.objectFile.flush();
