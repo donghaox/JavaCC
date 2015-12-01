@@ -139,8 +139,8 @@ SimpleNode statementList() :
 
 /***********************************  statement  *************************************************
 statement ::= ( declarationStatement <DOT> | arrayDeclaration<DOT> | assignmentStatement<DOT> 
- 						| arrayAssignmentStatement<DOT> | switchStatement | ifStatement
- 						| forStatement | printStatement<DOT>| functionCall<DOT> )
+ 						| arrayAssignmentStatement<DOT> | switch_statement | if_statement
+ 						| for_statement | printStatement<DOT>| functionCall<DOT> )
 **************************************************************************************************/
 void statement() #void :
 {
@@ -155,9 +155,9 @@ void statement() #void :
         | LOOKAHEAD(4) arrayDeclaration(syncSet) <DOT>
         | LOOKAHEAD(2) assignmentStatement(syncSet) <DOT>
         | LOOKAHEAD(2) arrayAssignmentStatement(syncSet) <DOT>
-        | switchStatement(syncSet)
-        | ifStatement(syncSet)
-        | forStatement(syncSet)
+		| if_statement(syncSet)
+        | switch_statement(syncSet)
+        | for_statement(syncSet)
         | println(syncSet)
         | print(syncSet)
         | LOOKAHEAD(2) functionCall(syncSet) <DOT>
@@ -396,14 +396,14 @@ void block(HashSet syncSet) : {}
     }
 }
 
-/***********************************  ifStatement  ***********************************************
-ifStatement ::= <IF> expression <THEN> block (elseStatement)?
+/***********************************  if_statement  ***********************************************
+if_statement ::= <IF> expression <THEN> block (else_statement)?
 **************************************************************************************************/
-void ifStatement(HashSet syncSet) : { syncSet.add(IF); }
+void if_statement(HashSet syncSet) : { syncSet.add(IF); }
 {
     try
     {
-        <IF> expression(syncSet) <THEN> block(syncSet) (elseStatement(syncSet))?
+        <IF> expression(syncSet) <THEN> block(syncSet) (else_statement(syncSet))?
     }
     catch (ParseException ex)
     {
@@ -415,15 +415,15 @@ void ifStatement(HashSet syncSet) : { syncSet.add(IF); }
     }
 }
 
-/***********************************  elseStatement  *********************************************
-elseStatement ::= <ELSE> ifStatement | block 
+/***********************************  else_statement  *********************************************
+else_statement ::= <ELSE> if_statement | block 
 **************************************************************************************************/
-void elseStatement(HashSet syncSet) : { syncSet.add(ELSE); }
+void else_statement(HashSet syncSet) : { syncSet.add(ELSE); }
 {
     try
     {
         <ELSE> (
-            LOOKAHEAD(2) ifStatement(syncSet) | block(syncSet)
+            LOOKAHEAD(2) if_statement(syncSet) | block(syncSet)
         )
     }
     catch (ParseException ex)
@@ -436,10 +436,10 @@ void elseStatement(HashSet syncSet) : { syncSet.add(ELSE); }
     }
 }
 
-/***********************************  switchStatement  ********************************************
-elseStatement ::= <ELSE> ifStatement | block 
+/***********************************  switch_statement  ********************************************
+else_statement ::= <ELSE> if_statement | block 
 **************************************************************************************************/
-void switchStatement(HashSet syncSet) :
+void switch_statement(HashSet syncSet) :
 {
     syncSet.add(SWITCH);
     syncSet.add(CASE);
@@ -504,10 +504,10 @@ void assignmentStatement(HashSet syncSet) : { SimpleNode variableNode; }
     <EQUALS> expression(syncSet)
 }
 
-/***********************************  forStatement  **********************************************
-forStatement ::= <FOR> forClause block()
+/***********************************  for_statement  **********************************************
+for_statement ::= <FOR> forClause block()
 **************************************************************************************************/
-void forStatement(HashSet syncSet) : {}
+void for_statement(HashSet syncSet) : {}
 {
     <FOR> forClause() block(syncSet)
 }

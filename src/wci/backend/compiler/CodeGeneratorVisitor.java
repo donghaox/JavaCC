@@ -478,7 +478,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
         return data;
     }
 
-    public Object visit(ASTforStatement node, Object data)
+    public Object visit(ASTfor_statement node, Object data)
     {
         SimpleNode forClause = (SimpleNode) node.jjtGetChild(0);
         SimpleNode block = (SimpleNode) node.jjtGetChild(1);
@@ -528,7 +528,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
         return loopData;
     }
 
-    public Object visit(ASTifStatement node, Object data)
+    public Object visit(ASTif_statement node, Object data)
     {
         SimpleNode condition = (SimpleNode) node.jjtGetChild(0);
         SimpleNode block = (SimpleNode) node.jjtGetChild(1);
@@ -557,7 +557,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
     }
 
     // TODO: Figure out how to do this.
-    public Object visit(ASTswitchStatement node, Object data)
+    public Object visit(ASTswitch_statement node, Object data)
     {
         SimpleNode switchVar = (SimpleNode) node.jjtGetChild(0);
         SimpleNode block = (SimpleNode) node.jjtGetChild(1);
