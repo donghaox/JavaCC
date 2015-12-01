@@ -109,14 +109,6 @@ public class ProlangParserVisitorAdapter implements ProlangParserVisitor {
         return node.childrenAccept(this, data);
     }
 
-    public Object visit(ASTarray node, Object data) {
-        return node.childrenAccept(this, data);
-    }
-
-    public Object visit(ASTarrayAssignmentStatement node, Object data) {
-        return node.childrenAccept(this, data);
-    }
-
     public Object visit(ASTprintln node, Object data) {
         return node.childrenAccept(this, data);
     }

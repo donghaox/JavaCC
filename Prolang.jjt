@@ -138,8 +138,7 @@ SimpleNode statementList() :
 }
 
 /***********************************  statement  *************************************************
-statement ::= ( declarationStatement <DOT> | arrayDeclaration<DOT> | assignmentStatement<DOT> 
- 						| arrayAssignmentStatement<DOT> | if_statement
+statement ::= ( declarationStatement <DOT> | | assignmentStatement<DOT> | if_statement
  						| for_statement | printStatement<DOT>| functionCall<DOT> )
 **************************************************************************************************/
 void statement() #void :
@@ -152,9 +151,7 @@ void statement() #void :
     try
     {
           LOOKAHEAD(2) declarationStatement(syncSet) <DOT>
-        | LOOKAHEAD(4) arrayDeclaration(syncSet) <DOT>
         | LOOKAHEAD(2) assignmentStatement(syncSet) <DOT>
-        | LOOKAHEAD(2) arrayAssignmentStatement(syncSet) <DOT>
 		| if_statement(syncSet)
         | for_statement(syncSet)
         | println(syncSet)
@@ -214,47 +211,6 @@ void variableDeclaration(HashSet syncSet) throws ParseException :
     catch (ParseException ex) {
         handleError(ex, syncSet, true);
     }
-}
-
-/***********************************  arrayDeclaration  ******************************************
-arrayDeclaration ::= <ARRAY> <OPEN_PAREN> <CLOSE_PAREN> identifier  “:” <OPEN_BRACKET>
-						<INTEGER_NUMBER><CLOSE_BRACKET> type 
-**************************************************************************************************/
-void arrayDeclaration(HashSet syncSet) #array : {
-    SimpleNode arrayNode;
-    SymTabEntry arrayId;
-}
-{
-    <ARRAY> <OPEN_PAREN> <CLOSE_PAREN> 
-    arrayNode = identifier(syncSet, true) {
-        arrayId = (SymTabEntry) arrayNode.getAttribute(ID);
-        arrayNode.setAttribute(ID, arrayId);
-    }
-    ":" <OPEN_BRACKET> <INTEGER_NUMBER> <CLOSE_BRACKET>
-    type()
-    {
-        // TODO: Figure out how to set the type form of the array to 'array'
-        // TODO: instead of 'scalar'
-        processArrayElementType(arrayNode, arrayId);
-    }
-}
-
-/***********************************  arrayAssignmentStatement  **********************************
-arrayAssignmentStatement ::= identifier <OPEN_BRACKET>  <INTEGER_NUMBER><CLOSE_BRACKET>
-								<EQUAL> operand
-**************************************************************************************************/
-void arrayAssignmentStatement(HashSet syncSet) : { SimpleNode arrayNode; }
-{
-    arrayNode = identifier(syncSet, false)
-    {
-        SymTabEntry arrayId = symTabStack.lookup(token.image);
-        TypeSpec typeId = arrayId.getTypeSpec();
-        arrayNode.setAttribute(ID, arrayId);
-    }
-    <OPEN_BRACKET>
-    <INTEGER_NUMBER> // do something with ARRAY_ELEMENT_NUMBER
-    <CLOSE_BRACKET>
-    <EQUALS> operand(syncSet)
 }
 
 /***********************************  functionDeclaration  ***************************************
@@ -728,8 +684,6 @@ TOKEN: {
         {debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <VOID: "void">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
-      | <ARRAY: "array">
-        { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
         
 }
 
@@ -839,18 +793,6 @@ TOKEN :
 
 TOKEN: { /* Error token */
     <ERROR : ~["\r", "\n"]>
-}
-
-JAVACODE
-void processArrayElementType(SimpleNode arrayNode, SymTabEntry arrayId) #void
-{
-        SymTabEntry typeId = symTabStack.lookup(token.image);
-        TypeSpec arrayType = TypeFactory.createType(TypeFormImpl.ARRAY);
-        TypeSpec elementType = typeId.getTypeSpec();
-        // Set the element type of the array to ARRAY_ELEMENT_TYPE
-        elementType.setAttribute(ARRAY_ELEMENT_TYPE, arrayType);
-        arrayNode.setTypeSpec(elementType);
-        arrayId.setTypeSpec(elementType);
 }
 
 JAVACODE String handleError(ParseException ex, HashSet syncSet, boolean doPop) #void

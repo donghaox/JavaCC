@@ -325,14 +325,6 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		return data;
 	}
 
-	public Object visit(ASTarray node, Object data)
-	{
-		SimpleNode arrayNode = (SimpleNode) node.jjtGetChild(0);
-		TypeSpec type = arrayNode.getTypeSpec();
-
-		return data;
-	}
-
 	/*
 	 * generate jasmin for string
 	 */
@@ -427,20 +419,6 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 
 		// If the data is not the programName, that means I overwrote the data, so use it.
 		// The data is always the programName unless you choose to send a child something else.
-		if (data != programName) {
-			String label = (String) data;
-			CodeGenerator.objectFile.println("    goto " + label);
-			CodeGenerator.objectFile.flush();
-		}
-
-		return data;
-	}
-
-	public Object visit(ASTswitchBlock node, Object data)
-	{
-		// For now, a clone of the block visit method.
-		// Looking to see if it needs any change at all.
-		node.childrenAccept(this, programName);
 		if (data != programName) {
 			String label = (String) data;
 			CodeGenerator.objectFile.println("    goto " + label);
