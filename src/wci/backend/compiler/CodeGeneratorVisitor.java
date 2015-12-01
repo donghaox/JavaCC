@@ -27,69 +27,40 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		return node.childrenAccept(this, data);
 	}
 
+	/*
+	 * assignment statement
+	 */
 	public Object visit(ASTassignmentStatement node, Object data)
 	{
 		String programName        = (String) data;
-		SimpleNode variableNode   = (SimpleNode) node.jjtGetChild(0);
-		SimpleNode expressionNode = (SimpleNode) node.jjtGetChild(1);
-
+		SimpleNode variableNode   = get_child(node, 0);
+		SimpleNode expressionNode = get_child(node, 1);
 
 		SymTabEntry variableId = (SymTabEntry) variableNode.getAttribute(ID);
-		Definition variableDefinition = variableId.getDefinition();
-		String fieldName = variableId.getName();
-		TypeSpec variableType = variableId.getTypeSpec();
-		TypeSpec expressionType = expressionNode.getTypeSpec();
-		TypeSpec targetType = node.getTypeSpec();
-		String upperTypeCode = null;
-		String lowerTypeCode = null;
-		String wrapCode = null;
+		String data_type = get_datatype(variableNode);
+		String type_wrap = get_typewrap(variableNode);
+		String type_des = get_typedes(variableNode);
 
-		// Emit code for the expression.
-		if (variableDefinition != DefinitionImpl.REFERENCE_PARAMETER) {
+		int_to_float(node, expressionNode);
+		
+		//handle expression
+		if (variableId.getDefinition() != DefinitionImpl.REFERENCE_PARAMETER) {
 			expressionNode.jjtAccept(this, data);
 		}
-
-		// Convert an integer value to float if necessary.
-		if ((targetType == Predefined.realType) &&
-				(expressionType == Predefined.integerType))
-		{
-			CodeGenerator.objectFile.println("    i2f");
-			CodeGenerator.objectFile.flush();
+		
+		//get variable from program
+		if (variableId.getSymTab().getNestingLevel() == 1) {
+			CodeGenerator.objectFile.println("    putstatic " + programName +
+					"/" + variableId.getName() + " " + type_des);
 		}
-
-		if (variableType == Predefined.integerType) {
-			wrapCode = "I";
-			upperTypeCode = "I";
-			lowerTypeCode = "i";
-		}
-		else if (variableType == Predefined.realType) {
-			wrapCode = "R";
-			upperTypeCode = "F";
-			lowerTypeCode = "f";
-		}
-		else if (variableType == Predefined.charType) {
-			wrapCode = "Ljava/lang/String;";
-			upperTypeCode = "Ljava/lang/String;";
-			lowerTypeCode = "Ljava/lang/String;"; // TODO: How to load a local variable string?
-		}
-		else if (variableType == Predefined.booleanType) {
-			wrapCode = "B";
-			upperTypeCode = "Z";
-			lowerTypeCode = "z";
-		}
-
-		// Emit the appropriate store instruction.
-		if (variableDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
+		else if (variableId.getDefinition() == DefinitionImpl.REFERENCE_PARAMETER) {
 			CodeGenerator.objectFile.println("    aload " + variableId.getIndex());
 			expressionNode.jjtAccept(this, data);
-			CodeGenerator.objectFile.println("    putfield " + wrapCode + "Wrap/value " + upperTypeCode);
+			CodeGenerator.objectFile.println("    putfield " + type_wrap + "Wrap/value " + type_des);
 		}
-		else if (variableId.getSymTab().getNestingLevel() == 1) {
-			CodeGenerator.objectFile.println("    putstatic " + programName +
-					"/" + fieldName + " " + upperTypeCode);
-		}
+		//push variable
 		else {
-			CodeGenerator.objectFile.println("    " + lowerTypeCode + "store " + variableId.getIndex());
+			CodeGenerator.objectFile.println("    " + data_type + "store " + variableId.getIndex());
 		}
 
 		CodeGenerator.objectFile.flush();
@@ -355,22 +326,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 	public Object visit(ASTprintln node, Object data)
 	{
 		SimpleNode target = get_child(node, 0);
-		String type_descriptor = "";
-
-		//type checking to generate according type descriptor
-		target = (SimpleNode) node.jjtGetChild(0);
-		if (target.getTypeSpec() == Predefined.realType) {
-			type_descriptor = "F";
-		}
-		else if (target.getTypeSpec() == Predefined.integerType) {
-			type_descriptor = "I";
-		}
-		else if (target.getTypeSpec() == Predefined.charType) {
-			type_descriptor = "Ljava/lang/String;";
-		}
-		else if (target.getTypeSpec() == Predefined.booleanType) {
-			type_descriptor = "Z";
-		}
+		String type_descriptor = get_typedes(target);
 
 		CodeGenerator.objectFile.println("    getstatic java/lang/System/out Ljava/io/PrintStream;");
 		CodeGenerator.objectFile.flush();
@@ -387,22 +343,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 	public Object visit(ASTprint node, Object data)
 	{
 		SimpleNode target = get_child(node, 0);
-		String type_descriptor = "";
-
-		//type checking to generate according type descriptor
-		target = (SimpleNode) node.jjtGetChild(0);
-		if (target.getTypeSpec() == Predefined.realType) {
-			type_descriptor = "F";
-		}
-		else if (target.getTypeSpec() == Predefined.integerType) {
-			type_descriptor = "I";
-		}
-		else if (target.getTypeSpec() == Predefined.charType) {
-			type_descriptor = "Ljava/lang/String;";
-		}
-		else if (target.getTypeSpec() == Predefined.booleanType) {
-			type_descriptor = "Z";
-		}
+		String type_descriptor = get_typedes(target);
 
 		CodeGenerator.objectFile.println("    getstatic java/lang/System/out Ljava/io/PrintStream;");
 		CodeGenerator.objectFile.flush();
@@ -772,19 +713,10 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		SimpleNode node_0 = get_child(node, 0);
 		SimpleNode node_1 =  get_child(node, 1);
 
-		//load node0, convert it to float if necessary
 		node_0.jjtAccept(this, data);
-		if (node_0.getTypeSpec() == Predefined.integerType) {
-			CodeGenerator.objectFile.println("    i2f");
-			CodeGenerator.objectFile.flush();
-		}
-
-		//load node1, convert it to float if necessary
+		int_to_float(node, node_0);
 		node_1.jjtAccept(this, data);
-		if (node_1.getTypeSpec() == Predefined.integerType) {
-			CodeGenerator.objectFile.println("    i2f");
-			CodeGenerator.objectFile.flush();
-		}
+		int_to_float(node, node_1);
 
 		CodeGenerator.objectFile.println("    fcmpg");
 	}
