@@ -437,7 +437,7 @@ void else_statement(HashSet syncSet) : { syncSet.add(ELSE); }
 }
 
 /***********************************  switch_statement  ********************************************
-else_statement ::= <ELSE> if_statement | block 
+switch_statement ::= <SWITCH> expression switch_block 
 **************************************************************************************************/
 void switch_statement(HashSet syncSet) :
 {
@@ -746,7 +746,6 @@ SimpleNode returnType() : {}
   -- Tokens --
  ********************/
 
-// Reserved words token
 TOKEN: {
       <BREAK: "break">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }

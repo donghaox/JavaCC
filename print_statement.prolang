@@ -1,0 +1,6 @@
+-module (Main).
+
+io:fwrite("write").
+io:fwrite("write").
+io:fwriteln("writeln").
+io:fwriteln("writeln").

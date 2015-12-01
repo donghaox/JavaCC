@@ -53,6 +53,8 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
         String programName        = (String) data;
         SimpleNode variableNode   = (SimpleNode) node.jjtGetChild(0);
         SimpleNode expressionNode = (SimpleNode) node.jjtGetChild(1);
+        
+        
         SymTabEntry variableId = (SymTabEntry) variableNode.getAttribute(ID);
         Definition variableDefinition = variableId.getDefinition();
         String fieldName = variableId.getName();
@@ -391,61 +393,73 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
         return data;
     }
 
+    /* 
+     * Generate jasmin for println
+     */
     public Object visit(ASTprintln node, Object data)
     {
+    	
+    	SimpleNode target;
+    	TypeSpec target_type;
+    	String type_descriptor = "";
+    	
+    	//type checking to generate according type descriptor
+    	target = (SimpleNode) node.jjtGetChild(0);
+    	target_type = target.getTypeSpec();
+    	if (target_type == Predefined.realType) {
+        	type_descriptor = "F";
+        }
+    	else if (target_type == Predefined.integerType) {
+        	type_descriptor = "I";
+        }
+        else if (target_type == Predefined.charType) {
+        	type_descriptor = "Ljava/lang/String;";
+        }
+        else if (target_type == Predefined.booleanType) {
+        	type_descriptor = "Z";
+        }
+    	
         CodeGenerator.objectFile.println("    getstatic java/lang/System/out Ljava/io/PrintStream;");
         CodeGenerator.objectFile.flush();
-
-        SimpleNode printNode = (SimpleNode) node.jjtGetChild(0);
-        TypeSpec type = printNode.getTypeSpec();
-        String typeCode = null;
-        printNode.jjtAccept(this, data);
-
-        if (type == Predefined.integerType) {
-            typeCode = "I";
-        }
-        else if (type == Predefined.realType) {
-            typeCode = "F";
-        }
-        else if (type == Predefined.charType) {
-            typeCode = "Ljava/lang/String;";
-        }
-        else if (type == Predefined.booleanType) {
-            typeCode = "Z";
-        }
-
-        CodeGenerator.objectFile.println("    invokevirtual java/io/PrintStream/println(" + typeCode + ")V");
+        target.jjtAccept(this, data);
+        CodeGenerator.objectFile.println("    invokevirtual java/io/PrintStream/println(" + type_descriptor + ")V");
         CodeGenerator.objectFile.flush();
-
+        
         return data;
     }
     
+    /* 
+     * Generate jasmin for print
+     */
     public Object visit(ASTprint node, Object data)
     {
+    	
+    	SimpleNode target;
+    	TypeSpec target_type;
+    	String type_descriptor = "";
+    	
+    	//type checking to generate according type descriptor
+    	target = (SimpleNode) node.jjtGetChild(0);
+    	target_type = target.getTypeSpec();
+    	if (target_type == Predefined.realType) {
+        	type_descriptor = "F";
+        }
+    	else if (target_type == Predefined.integerType) {
+        	type_descriptor = "I";
+        }
+        else if (target_type == Predefined.charType) {
+        	type_descriptor = "Ljava/lang/String;";
+        }
+        else if (target_type == Predefined.booleanType) {
+        	type_descriptor = "Z";
+        }
+    	
         CodeGenerator.objectFile.println("    getstatic java/lang/System/out Ljava/io/PrintStream;");
         CodeGenerator.objectFile.flush();
-
-        SimpleNode printNode = (SimpleNode) node.jjtGetChild(0);
-        TypeSpec type = printNode.getTypeSpec();
-        String typeCode = null;
-        printNode.jjtAccept(this, data);
-
-        if (type == Predefined.integerType) {
-            typeCode = "I";
-        }
-        else if (type == Predefined.realType) {
-            typeCode = "F";
-        }
-        else if (type == Predefined.charType) {
-            typeCode = "Ljava/lang/String;";
-        }
-        else if (type == Predefined.booleanType) {
-            typeCode = "Z";
-        }
-
-        CodeGenerator.objectFile.println("    invokevirtual java/io/PrintStream/print(" + typeCode + ")V");
+        target.jjtAccept(this, data);
+        CodeGenerator.objectFile.println("    invokevirtual java/io/PrintStream/print(" + type_descriptor + ")V");
         CodeGenerator.objectFile.flush();
-
+        
         return data;
     }
 
