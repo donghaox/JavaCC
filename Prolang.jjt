@@ -406,17 +406,17 @@ void assignmentStatement(HashSet syncSet) : { SimpleNode variableNode; }
 }
 
 /***********************************  for_statement  **********************************************
-for_statement ::= <FOR> for_clause block()
+for_statement ::= <FOR> for_header block()
 **************************************************************************************************/
 void for_statement(HashSet syncSet) : {}
 {
-    <FOR> for_clause() block(syncSet)
+    <FOR> for_header() block(syncSet)
 }
 
 /***********************************  for_clause  *************************************************
 for_clause ::= assignmentStatement <DOT> expression <DOT> assignmentStatement <DOT>
 **************************************************************************************************/
-void for_clause() : {
+void for_header() : {
     HashSet syncSet = new HashSet();
     syncSet.add(EOF);
     syncSet.add(DOT);

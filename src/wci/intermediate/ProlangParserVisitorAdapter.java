@@ -157,7 +157,7 @@ public class ProlangParserVisitorAdapter implements ProlangParserVisitor {
 	}
 
 	@Override
-	public Object visit(ASTfor_clause node, Object data) {
+	public Object visit(ASTfor_header node, Object data) {
 		   return node.childrenAccept(this, data);
 	} 
 }

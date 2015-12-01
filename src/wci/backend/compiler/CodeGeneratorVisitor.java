@@ -430,52 +430,49 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 
 	public Object visit(ASTfor_statement node, Object data)
 	{
-		SimpleNode forClause = (SimpleNode) node.jjtGetChild(0);
-		SimpleNode block = (SimpleNode) node.jjtGetChild(1);
+		//node_0 = for loop header, node_1 = blockcode
+		SimpleNode node_0 = get_child(node, 0);
+		SimpleNode node_1 = get_child(node, 1);
 
-		// If the for clause has 1 child, it is a while loop, so create a label
-		if (forClause.jjtGetNumChildren() == 1) {
-			String beginLabel = getNextLabel();
-			CodeGenerator.objectFile.println(beginLabel + ":"); // Jump back here after each iteration
-			CodeGenerator.objectFile.flush();
-			String endLabel = (String) forClause.jjtAccept(this, data); // Jump to returned label when loop ends
-			block.jjtAccept(this, data);
-			CodeGenerator.objectFile.println("    goto " + beginLabel); // Restart loop
-			CodeGenerator.objectFile.println(endLabel + ":"); // Jump here when the loop is done
-		}
-		else {
-			ArrayList<Object> loopData = (ArrayList<Object>) forClause.jjtAccept(this, data);
-			block.jjtAccept(this, data);
-			((Node) loopData.get(0)).jjtAccept(this, data); // Incrementing after running the body
-			CodeGenerator.objectFile.println("    goto " + loopData.get(1));
-			CodeGenerator.objectFile.println(loopData.get(2) + ":");
-		}
+		ArrayList<Object> for_clause = (ArrayList<Object>) node_0.jjtAccept(this, data);
+		SimpleNode for_clause_data_0 = (SimpleNode) for_clause.get(0);
+		String start_location =  (String) for_clause.get(1);
+		String end_location = (String) for_clause.get(2);
+		
+		//execute body and increment/decrement
+		node_1.jjtAccept(this, data);
+		for_clause_data_0.jjtAccept(this, data); 
+		
+		//afterthought
+		CodeGenerator.objectFile.println("    goto " + start_location);
+		CodeGenerator.objectFile.println(end_location + ":");
 
 		CodeGenerator.objectFile.flush();
 
 		return data;
 	}
 
-	public Object visit(ASTfor_clause node, Object data) {
-		ArrayList<Object> loopData = new ArrayList<Object>();
+	public Object visit(ASTfor_header node, Object data) {
+		ArrayList<Object> for_loop = new ArrayList<Object>();
 
-		// If it has 1 child, it is a while loop
-		if (node.jjtGetNumChildren() == 1) {
-			return node.jjtGetChild(0).jjtAccept(this, data); // This returns a string label it will be jumping to
-		}
-
-		node.jjtGetChild(0).jjtAccept(this, data); // Perform the assignment, but don't include it as part of loop
-
-		String beginLabel = getNextLabel(); // Prepare label for looping after the assignment has been done
-		CodeGenerator.objectFile.println(beginLabel + ":");
+		SimpleNode node_0 = get_child(node, 0);
+		SimpleNode node_1 = get_child(node, 1);
+		SimpleNode node_2 = get_child(node, 2);
+		
+		//initialization, get start location
+		String start_location = getNextLabel();
+		node_0.jjtAccept(this, data);
+		
+		//afterthought
+		CodeGenerator.objectFile.println(start_location + ":");
 		CodeGenerator.objectFile.flush();
-		String endLabel = (String) node.jjtGetChild(1).jjtAccept(this, data); // Get label it will be jumping to in condition
+		String end_location = (String) node_1.jjtAccept(this, data); 
 
-		loopData.add(node.jjtGetChild(2)); // Delay incrementing until after the loop
-		loopData.add(beginLabel);
-		loopData.add(endLabel);
+		for_loop.add(node_2);
+		for_loop.add(start_location);
+		for_loop.add(end_location);
 
-		return loopData;
+		return for_loop;
 	}
 
 	/*
@@ -494,7 +491,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		node_1.jjtAccept(this, if_true); 
 		CodeGenerator.objectFile.println(if_true + ":");
 		CodeGenerator.objectFile.flush();
-	    //else
+		//else
 		CodeGenerator.objectFile.println(true_false + ":"); 
 		CodeGenerator.objectFile.flush();
 		//executing else block if exists
@@ -603,8 +600,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 			CodeGenerator.objectFile.println("    " + typePrefix + "add");
 			CodeGenerator.objectFile.flush();
 		}
-
-
+		
 		return data;
 	}
 
@@ -684,7 +680,6 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		int_to_float(node, node_0);
 		node_1.jjtAccept(this, data);
 		int_to_float(node, node_1);
-
 
 		CodeGenerator.objectFile.println("    " + type + "sub");
 		CodeGenerator.objectFile.flush();
@@ -808,7 +803,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 			return null;
 		}
 	}
-	
+
 	/*
 	 * Helper method get type descriptor
 	 */
@@ -850,7 +845,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 			return null;
 		}
 	}
-	
+
 	/*
 	 * Helper method convert integer to float
 	 */
