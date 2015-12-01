@@ -506,7 +506,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
         return data;
     }
 
-    public Object visit(ASTforClause node, Object data) {
+    public Object visit(ASTfor_clause node, Object data) {
         ArrayList<Object> loopData = new ArrayList<Object>();
 
         // If it has 1 child, it is a while loop
