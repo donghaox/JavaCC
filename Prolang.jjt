@@ -139,7 +139,7 @@ SimpleNode statementList() :
 
 /***********************************  statement  *************************************************
 statement ::= ( declarationStatement <DOT> | | assignmentStatement<DOT> | if_statement
- 						| for_statement | printStatement<DOT>| functionCall<DOT> )
+ 						| for_statement | printStatement<DOT>| function_call<DOT> )
 **************************************************************************************************/
 void statement() #void :
 {
@@ -156,7 +156,7 @@ void statement() #void :
         | for_statement(syncSet)
         | println(syncSet)
         | print(syncSet)
-        | LOOKAHEAD(2) functionCall(syncSet) <DOT>
+        | LOOKAHEAD(2) function_call(syncSet) <DOT>
     }
     catch (ParseException ex)
     {
@@ -214,13 +214,14 @@ void variableDeclaration(HashSet syncSet) throws ParseException :
 }
 
 /***********************************  functionDeclaration  ***************************************
- functionDeclaration ::= <FUNC> identifier <MINUS> <GREATER_THAN> <parameterList returnType block
+ functionDeclaration ::= <FUNC> identifier <MINUS> <GREATER_THAN> <parameterList >
+ 							return code_block
 **************************************************************************************************/
 void functionDeclaration(HashSet syncSet):
 {
     SimpleNode variableNode;
     SimpleNode returnTypeNode;
-    syncSet.add(FUNC); // skip to next function declaration
+    syncSet.add(FUNC); 
 }
 {
     try {
@@ -239,7 +240,7 @@ void functionDeclaration(HashSet syncSet):
         <OPEN_PAREN> parameterList(syncSet) <CLOSE_PAREN> returnTypeNode = returnType() {
             functionId.setTypeSpec(returnTypeNode.getTypeSpec());
             jjtThis.setTypeSpec(functionId.getTypeSpec());
-            syncSet = new HashSet(); // New reference used only by the new function scope
+            syncSet = new HashSet(); 
             syncSet.add(EOF);
             syncSet.add(DOT);
             counter.remove(counter.size() - 1);
@@ -262,64 +263,68 @@ void parameterList(HashSet syncSet) : {}
 }
 
 /***********************************  parameter  *************************************************
- parameter ::= identifier ( <MULTIPLY>)? ( type ) 
+ parameter ::= type ( <MULTIPLY>)? identifier
 **************************************************************************************************/
 void parameter(HashSet syncSet) throws ParseException :
 {
     SimpleNode variableNode;
     syncSet.add(EOF);
     syncSet.add(DOT);
+    int ref = 0;
 }
 {
     try {
-
-        variableNode = identifier(syncSet, true) {
-            SymTabEntry variableId = (SymTabEntry) variableNode.getAttribute(ID);
-            variableId.setDefinition(DefinitionImpl.VALUE_PARAMETER); // Default definition
-            variableNode.setAttribute(ID, variableId);
-            int count = counter.get(counter.size() - 1);
-            variableId.setIndex(count++);
-            counter.set(counter.size() - 1, count);
-        }
-        (
-            < MULTIPLY > {
-                // If star seen, make it a reference
-                variableId.setDefinition(DefinitionImpl.REFERENCE_PARAMETER);
-            }
-        )?
-        (
+         (
             type()
             {
                 SymTabEntry typeId = symTabStack.lookup(token.image);
                 TypeSpec type = typeId.getTypeSpec();
-                variableId.setTypeSpec(type);
-                variableNode.setTypeSpec(type);
             }
         )
+                (
+            <MULTIPLY> {
+              ref = 1;
+        
+            }
+        )?
+        variableNode = identifier(syncSet, true) {
+            SymTabEntry variableId = (SymTabEntry) variableNode.getAttribute(ID);
+            variableId.setTypeSpec(type);
+            variableNode.setAttribute(ID, variableId);
+            variableNode.setTypeSpec(type);
+            int count = counter.get(counter.size() - 1);
+            variableId.setIndex(count++);
+            counter.set(counter.size() - 1, count);
+			//set reference
+            if(ref == 1)            {
+              variableId.setDefinition(DefinitionImpl.REFERENCE_PARAMETER);			}
+			else			{
+			  variableId.setDefinition(DefinitionImpl.VALUE_PARAMETER); 			}      
+        }
     }
     catch (ParseException ex) {
         handleError(ex, syncSet, true);
     }
 }
 
-/***********************************  functionCall  **********************************************
-functionCall ::=
+/***********************************  function_call  **********************************************
+function_call ::= IDENTIFIER <OPEN_PAREN> expression <CLOSE_PAREN>
 **************************************************************************************************/
-void functionCall(HashSet syncSet) :
+void function_call(HashSet syncSet) :
 {
-    SimpleNode functionNode;
+    SimpleNode function_node;
+    SymTabEntry function_name;
 }
 {
     try {
-        functionNode = identifier(syncSet, false) {
-            SymTabEntry functionId = (SymTabEntry) functionNode.getAttribute(ID);
-            jjtThis.setTypeSpec(functionNode.getTypeSpec());
+        function_node = identifier(syncSet, false) {
+            function_name = (SymTabEntry) function_node.getAttribute(ID);
+            jjtThis.setTypeSpec(function_node.getTypeSpec());
 
-            if (functionId != null) {
-                jjtThis.setAttribute(ID, functionId);
+            if (function_name != null) {
+                jjtThis.setAttribute(ID, function_name);
             }
             else {
-                // Function not declared yet.
                 throw new ParseException("ERROR: Function not declared in scope.");
             }
         }
@@ -652,7 +657,7 @@ TOKEN: {
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <DEFAULT_TOKEN: "default">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
-      | <FUNC: "func">
+      | <FUNC: "function">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <CASE: "case">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }

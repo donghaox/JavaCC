@@ -72,29 +72,12 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		return data;
 	}
 
-	public Object visit(ASTfunctionCall node, Object data) {
+	public Object visit(ASTfunction_call node, Object data) {
 		SymTabEntryImpl functionId = (SymTabEntryImpl) node.getAttribute(ID);
 		SymTabImpl scope = (SymTabImpl) functionId.getAttribute(SymTabKeyImpl.ROUTINE_SYMTAB);
-		TypeSpec returnType = node.getTypeSpec();
 		ArrayList<SimpleNode> unwrapReferences = new ArrayList<SimpleNode>();
-		String returnTypeCode = null;
+		String returnTypeCode = get_typedes(node);
 		StringBuilder parameters = new StringBuilder();
-
-		if (returnType == Predefined.integerType) {
-			returnTypeCode = "I";
-		}
-		else if (returnType == Predefined.realType) {
-			returnTypeCode = "F";
-		}
-		else if (returnType == Predefined.charType) {
-			returnTypeCode = "Ljava/lang/String;"; // TODO: How to load a local variable string?
-		}
-		else if (returnType == Predefined.booleanType) {
-			returnTypeCode = "Z";
-		}
-		else if (returnType == Predefined.voidType) {
-			returnTypeCode = "V";
-		}
 
 		for (SymTabEntry parameter : scope.values()) {
 			Definition parameterDefinition = parameter.getDefinition();
@@ -105,16 +88,13 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 				TypeSpec parameterType = parameterNode.getTypeSpec();
 				SymTabEntry parameterEntry = (SymTabEntry) parameterNode.getAttribute(ID);
 
-				String upperTypeCode = null;
-				String lowerTypeCode = null;
-				String wrapTypeCode = null;
+				String upperTypeCode = get_typedes((SimpleNode) node.jjtGetChild(index + 1));
+				String lowerTypeCode = get_datatype((SimpleNode) node.jjtGetChild(index + 1));
+				String wrapTypeCode = get_typewrap((SimpleNode) node.jjtGetChild(index + 1));
 
 				if (parameterType == Predefined.integerType) {
-					upperTypeCode = "I";
-					lowerTypeCode = "i";
 
 					if (parameterDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
-						wrapTypeCode = "I";
 						parameters.append("LIWrap;");
 					}
 					else {
@@ -122,11 +102,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 					}
 				}
 				else if (parameterType == Predefined.realType) {
-					upperTypeCode = "F";
-					lowerTypeCode = "f";
-
 					if (parameterDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
-						wrapTypeCode = "R";
 						parameters.append("LRWrap;");
 					}
 					else {
@@ -134,17 +110,10 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 					}
 				}
 				else if (parameterType == Predefined.charType) {
-					wrapTypeCode = "Ljava/lang/String;";
-					parameters.append("Ljava/lang/String;"); // TODO: How to load a local variable string?
-					upperTypeCode = "Ljava/lang/String;";
-					lowerTypeCode = "Ljava/lang/String;";
+					parameters.append("Ljava/lang/String;"); 
 				}
 				else if (parameterType == Predefined.booleanType) {
-					upperTypeCode = "Z";
-					lowerTypeCode = "z";
-
 					if (parameterDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
-						wrapTypeCode = "B";
 						parameters.append("LBWrap;");
 					}
 					else {
@@ -194,33 +163,12 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 				+ functionId.getName() + "(" + parameters.toString() + ")" + returnTypeCode);
 
 		for (SimpleNode unwrappingNode : unwrapReferences) {
-			TypeSpec parameterType = unwrappingNode.getTypeSpec();
 			SymTabEntry parameterEntry = (SymTabEntry) unwrappingNode.getAttribute(ID);
 
-			String upperTypeCode = null;
-			String lowerTypeCode = null;
-			String wrapTypeCode = null;
-
-			if (parameterType == Predefined.integerType) {
-				wrapTypeCode = "I";
-				upperTypeCode = "I";
-				lowerTypeCode = "i";
-			}
-			else if (parameterType == Predefined.realType) {
-				wrapTypeCode = "R";
-				upperTypeCode = "F";
-				lowerTypeCode = "f";
-			}
-			else if (parameterType == Predefined.charType) {
-				wrapTypeCode = "Ljava/lang/String;";
-				upperTypeCode = "Ljava/lang/String;";
-				lowerTypeCode = "Ljava/lang/String;";
-			}
-			else if (parameterType == Predefined.booleanType) {
-				wrapTypeCode = "B";
-				upperTypeCode = "Z";
-				lowerTypeCode = "z";
-			}
+			
+			String upperTypeCode = get_typedes(unwrappingNode);
+			String lowerTypeCode = get_datatype(unwrappingNode);
+			String wrapTypeCode = get_typewrap(unwrappingNode);
 
 			int slot = parameterEntry.getIndex();
 			if (parameterEntry.getSymTab().getNestingLevel() == 1) {
@@ -757,6 +705,9 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		}
 		else if(node.getTypeSpec() == Predefined.booleanType){
 			return "Z";
+		}
+		else if (node.getTypeSpec() == Predefined.voidType) {
+			return "V";
 		}
 		else{
 			return null;
