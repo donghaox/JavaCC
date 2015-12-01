@@ -283,47 +283,47 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		return data;
 	}
 
+	/*
+	 * load up identifier
+	 */
 	public Object visit(ASTidentifier node, Object data)
 	{
-		SymTabEntry id = (SymTabEntry) node.getAttribute(ID);
-		String fieldName = id.getName();
-		TypeSpec type = id.getTypeSpec();
-		String upperTypeCode = null;
-		String lowerTypeCode = null;
-		String wrapTypeCode = null;
+		SymTabEntry entry = (SymTabEntry) node.getAttribute(ID);
+		String upperTypeCode = "";
+		String lowerTypeCode = "";
+		String wrapTypeCode = "";
 
-		if (type == Predefined.integerType) {
+		if (entry.getTypeSpec() == Predefined.integerType) {
 			wrapTypeCode = "I";
 			upperTypeCode = "I";
 			lowerTypeCode = "i";
 		}
-		else if (type == Predefined.realType) {
+		else if (entry.getTypeSpec() == Predefined.realType) {
 			wrapTypeCode = "R";
 			upperTypeCode = "F";
 			lowerTypeCode = "f";
 		}
-		else if (type == Predefined.charType) {
+		else if (entry.getTypeSpec() == Predefined.charType) {
 			wrapTypeCode = "Ljava/lang/String;";
 			upperTypeCode = "Ljava/lang/String;";
 			lowerTypeCode = "Ljava/lang/String;"; // TODO: How to load a local variable string?
 		}
-		else if (type == Predefined.booleanType) {
+		else if (entry.getTypeSpec() == Predefined.booleanType) {
 			wrapTypeCode = "B";
 			upperTypeCode = "Z";
 			lowerTypeCode = "z";
 		}
 
-		// Emit the appropriate load instruction.
-		if (id.getDefinition() == DefinitionImpl.REFERENCE_PARAMETER) {
-			CodeGenerator.objectFile.println("    aload " + id.getIndex());
+		if (entry.getDefinition() == DefinitionImpl.REFERENCE_PARAMETER) {
+			CodeGenerator.objectFile.println("    aload " + entry.getIndex());
 			CodeGenerator.objectFile.println("    getfield " + wrapTypeCode + "Wrap/value " + upperTypeCode);
 		}
-		else if (id.getSymTab().getNestingLevel() == 1) {
+		else if (entry.getSymTab().getNestingLevel() == 1) {
 			CodeGenerator.objectFile.println("    getstatic " + programName +
-					"/" + fieldName + " " + upperTypeCode);
+					"/" + entry.getName() + " " + upperTypeCode);
 		}
 		else {
-			CodeGenerator.objectFile.println("    " + lowerTypeCode + "load " + id.getIndex());
+			CodeGenerator.objectFile.println("    " + lowerTypeCode + "load " + entry.getIndex());
 		}
 
 		CodeGenerator.objectFile.flush();
