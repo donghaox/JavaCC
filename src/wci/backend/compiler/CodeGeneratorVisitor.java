@@ -331,12 +331,13 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		return data;
 	}
 
+	/*
+	 * generate jasmin for integer
+	 */
 	public Object visit(ASTintegerConstant node, Object data)
 	{
-		int value = (Integer) node.getAttribute(VALUE);
-
-		// Emit a load constant instruction.
-		CodeGenerator.objectFile.println("    ldc " + value);
+		int _integer = (Integer) node.getAttribute(VALUE);
+		CodeGenerator.objectFile.println("    ldc " + _integer);
 		CodeGenerator.objectFile.flush();
 
 		return data;
@@ -350,23 +351,25 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		return data;
 	}
 
+	/*
+	 * generate jasmin for string
+	 */
 	public Object visit(ASTinterpretedString node, Object data)
 	{
-		String value = (String) node.getAttribute(VALUE);
-
-		// Emit a load constant instruction.
-		CodeGenerator.objectFile.println("    ldc " + value);
+		String _string = (String) node.getAttribute(VALUE);
+		CodeGenerator.objectFile.println("    ldc " + _string);
 		CodeGenerator.objectFile.flush();
 
 		return data;
 	}
 
+	/*
+	 * generate jasmin for decimal number
+	 */
 	public Object visit(ASTrealConstant node, Object data)
 	{
-		float value = (Float) node.getAttribute(VALUE);
-
-		// Emit a load constant instruction.
-		CodeGenerator.objectFile.println("    ldc " + value);
+		float _float = (Float) node.getAttribute(VALUE);
+		CodeGenerator.objectFile.println("    ldc " + _float);
 		CodeGenerator.objectFile.flush();
 
 		return data;
