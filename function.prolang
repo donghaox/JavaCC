@@ -1,0 +1,13 @@
+-module (Main).
+
+int A.
+A = 5.
+
+function Add_five -> (int *A) void
+{
+A = A + 5.
+ io:fwriteln(A).
+}.
+
+Add_five(A).
+io:fwrite(A).

@@ -84,13 +84,13 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 
 			if (parameterDefinition != DefinitionImpl.FUNCTION) {
 				int index = parameter.getIndex();
-				SimpleNode parameterNode = (SimpleNode) node.jjtGetChild(index + 1);
-				TypeSpec parameterType = parameterNode.getTypeSpec();
-				SymTabEntry parameterEntry = (SymTabEntry) parameterNode.getAttribute(ID);
+				SimpleNode param = (SimpleNode) node.jjtGetChild(index + 1);
+				TypeSpec parameterType = param.getTypeSpec();
+				SymTabEntry parameterEntry = (SymTabEntry) param.getAttribute(ID);
 
-				String upperTypeCode = get_typedes((SimpleNode) node.jjtGetChild(index + 1));
-				String lowerTypeCode = get_datatype((SimpleNode) node.jjtGetChild(index + 1));
-				String wrapTypeCode = get_typewrap((SimpleNode) node.jjtGetChild(index + 1));
+				String type_des = get_typedes(param);
+				String data_type = get_datatype(param);
+				String type_wrap = get_typewrap(param);
 
 				if (parameterType == Predefined.integerType) {
 
@@ -122,17 +122,17 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 				}
 
 				if (parameterDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
-					CodeGenerator.objectFile.println("    new " + wrapTypeCode + "Wrap ");
+					CodeGenerator.objectFile.println("    new " + type_wrap + "Wrap ");
 					CodeGenerator.objectFile.println("    dup");
 					CodeGenerator.objectFile.flush();
 				}
 
 				if (parameterEntry == null) {
-					parameterNode.jjtAccept(this, data);
+					param.jjtAccept(this, data);
 				}
 				else if (functionId.getSymTab().getNestingLevel() == 1) {
 					CodeGenerator.objectFile.println("    getstatic " + programName +
-							"/" + parameterEntry.getName() + " " + upperTypeCode);
+							"/" + parameterEntry.getName() + " " + type_des);
 					CodeGenerator.objectFile.flush();
 				}
 				else {
@@ -140,13 +140,13 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 					if (parameterEntry.getSymTab().getNestingLevel() == 1) {
 						slot++;
 					}
-					CodeGenerator.objectFile.println("    " + lowerTypeCode + "load " + slot);
+					CodeGenerator.objectFile.println("    " + data_type + "load " + slot);
 					CodeGenerator.objectFile.flush();
 				}
 
 				if (parameterDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
-					CodeGenerator.objectFile.println("    invokenonvirtual " + wrapTypeCode
-							+ "Wrap/<init>(" + upperTypeCode + ")" + returnTypeCode);
+					CodeGenerator.objectFile.println("    invokenonvirtual " + type_wrap
+							+ "Wrap/<init>(" + type_des + ")" + returnTypeCode);
 					CodeGenerator.objectFile.println("    dup");
 					int slot = parameterEntry.getIndex();
 					if (parameterEntry.getSymTab().getNestingLevel() == 1) {
@@ -154,7 +154,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 					}
 					CodeGenerator.objectFile.println("    astore " + slot);
 					CodeGenerator.objectFile.flush();
-					unwrapReferences.add(parameterNode);
+					unwrapReferences.add(param);
 				}
 			}
 		}
@@ -165,10 +165,9 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		for (SimpleNode unwrappingNode : unwrapReferences) {
 			SymTabEntry parameterEntry = (SymTabEntry) unwrappingNode.getAttribute(ID);
 
-			
-			String upperTypeCode = get_typedes(unwrappingNode);
-			String lowerTypeCode = get_datatype(unwrappingNode);
-			String wrapTypeCode = get_typewrap(unwrappingNode);
+			String type_des = get_typedes(unwrappingNode);
+			String data_type = get_datatype(unwrappingNode);
+			String type_wrap = get_typewrap(unwrappingNode);
 
 			int slot = parameterEntry.getIndex();
 			if (parameterEntry.getSymTab().getNestingLevel() == 1) {
@@ -176,14 +175,14 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 			}
 
 			CodeGenerator.objectFile.println("    aload " + slot);
-			CodeGenerator.objectFile.println("    getfield " + wrapTypeCode + "Wrap/value " + upperTypeCode);
+			CodeGenerator.objectFile.println("    getfield " + type_wrap + "Wrap/value " + type_des);
 
 			if (parameterEntry.getSymTab().getNestingLevel() == 1) {
 				CodeGenerator.objectFile.println("    putstatic " + programName + "/"
-						+ parameterEntry.getName() + " " + upperTypeCode);
+						+ parameterEntry.getName() + " " + type_des);
 			}
 			else {
-				CodeGenerator.objectFile.println("    " + lowerTypeCode + "load " + slot);
+				CodeGenerator.objectFile.println("    " + data_type + "load " + slot);
 			}
 		}
 
