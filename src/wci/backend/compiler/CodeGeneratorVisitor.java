@@ -844,40 +844,49 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
         return data;
     }
 
+    /*
+	 * generate jasmin for multiply
+     */
     public Object visit(ASTmultiply node, Object data)
     {
-        SimpleNode addend0Node = (SimpleNode) node.jjtGetChild(0);
-        SimpleNode addend1Node = (SimpleNode) node.jjtGetChild(1);
+    	SimpleNode node_0;
+    	SimpleNode node_1;
+    	TypeSpec node_0_type;
+    	TypeSpec node_1_type;
+    	String type = "";
+    	
+    	node_0 = (SimpleNode) node.jjtGetChild(0);
+    	node_1 = (SimpleNode) node.jjtGetChild(1);
+        TypeSpec type0 = node_0.getTypeSpec();
+        TypeSpec type1 = node_1.getTypeSpec();
 
-        TypeSpec type0 = addend0Node.getTypeSpec();
-        TypeSpec type1 = addend1Node.getTypeSpec();
-
-        // Get the addition type.
-        TypeSpec type = node.getTypeSpec();
-        String typePrefix = (type == Predefined.integerType) ? "i" : "f";
-
-        // Emit code for the first expression
-        // with type conversion if necessary.
-        addend0Node.jjtAccept(this, data);
-        if ((type == Predefined.realType) &&
+        TypeSpec node_type = node.getTypeSpec();
+        if(node_type == Predefined.integerType){
+        	type = "i";
+        }
+        else{
+        	type = "f";
+        }
+        
+        //load node0, convert it to float if necessary
+        node_0.jjtAccept(this, data);
+        if ((node_type == Predefined.realType) &&
                 (type0 == Predefined.integerType))
         {
             CodeGenerator.objectFile.println("    i2f");
             CodeGenerator.objectFile.flush();
         }
 
-        // Emit code for the second expression
-        // with type conversion if necessary.
-        addend1Node.jjtAccept(this, data);
-        if ((type == Predefined.realType) &&
+        //load node1, convert it to float if necessary
+        node_1.jjtAccept(this, data);
+        if ((node_type == Predefined.realType) &&
                 (type1 == Predefined.integerType))
         {
             CodeGenerator.objectFile.println("    i2f");
             CodeGenerator.objectFile.flush();
         }
-
-        // Emit the appropriate add instruction.
-        CodeGenerator.objectFile.println("    " + typePrefix + "mul");
+        
+        CodeGenerator.objectFile.println("    " + type + "mul");
         CodeGenerator.objectFile.flush();
 
         return data;

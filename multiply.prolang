@@ -1,0 +1,6 @@
+-module (Main).
+
+int A.
+A = 5.
+A = A * 5.
+io:fwrite(A).
