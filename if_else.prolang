@@ -1,0 +1,11 @@
+-module (Main).
+int X.
+X = 10.
+
+if X == 1 then
+{ io:fwrite("1FALSE").}
+else 
+{ io:fwrite("1TRUE").}
+
+if X == 10 then 
+{ io:fwrite("2TRUE").}
