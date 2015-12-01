@@ -2,7 +2,8 @@
 int X.
 X = 10.
 
-for X = 1. X <= 10. X = X + 1
+for X = 1. X <= 10. X = X + 1.
 {
  io:fwrite(X).
 }
+

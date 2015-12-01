@@ -12,579 +12,579 @@ import static wci.intermediate.icodeimpl.ICodeKeyImpl.*;
 
 public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements ProlangParserTreeConstants
 {
-    private static String programName = null;
-    private static int tagNumber = 0;
-
-    public String getCurrentLabel() { return "label" + tagNumber; }
-    public String getNextLabel() { return "label" + ++tagNumber; }
-
-    public void emitComparisonCode(SimpleNode node, Object data) {
-        SimpleNode lhs = (SimpleNode) node.jjtGetChild(0);
-        SimpleNode rhs = (SimpleNode) node.jjtGetChild(1);
-
-        TypeSpec lhsType = lhs.getTypeSpec();
-        TypeSpec rhsType = rhs.getTypeSpec();
-
-        lhs.jjtAccept(this, data);
-        if (lhsType == Predefined.integerType) {
-            CodeGenerator.objectFile.println("    i2f");
-            CodeGenerator.objectFile.flush();
-        }
-
-        rhs.jjtAccept(this, data);
-        if (rhsType == Predefined.integerType) {
-            CodeGenerator.objectFile.println("    i2f");
-            CodeGenerator.objectFile.flush();
-        }
-
-        CodeGenerator.objectFile.println("    fcmpg");
-    }
-
-    public Object visit(ASTstatementList node, Object data) {
-        if (this.programName == null) {
-            this.programName = (String) data;
-        }
-
-        return node.childrenAccept(this, data);
-    }
-
-    public Object visit(ASTassignmentStatement node, Object data)
-    {
-        String programName        = (String) data;
-        SimpleNode variableNode   = (SimpleNode) node.jjtGetChild(0);
-        SimpleNode expressionNode = (SimpleNode) node.jjtGetChild(1);
-        
-        
-        SymTabEntry variableId = (SymTabEntry) variableNode.getAttribute(ID);
-        Definition variableDefinition = variableId.getDefinition();
-        String fieldName = variableId.getName();
-        TypeSpec variableType = variableId.getTypeSpec();
-        TypeSpec expressionType = expressionNode.getTypeSpec();
-        TypeSpec targetType = node.getTypeSpec();
-        String upperTypeCode = null;
-        String lowerTypeCode = null;
-        String wrapCode = null;
-
-        // Emit code for the expression.
-        if (variableDefinition != DefinitionImpl.REFERENCE_PARAMETER) {
-            expressionNode.jjtAccept(this, data);
-        }
-
-        // Convert an integer value to float if necessary.
-        if ((targetType == Predefined.realType) &&
-                (expressionType == Predefined.integerType))
-        {
-            CodeGenerator.objectFile.println("    i2f");
-            CodeGenerator.objectFile.flush();
-        }
-
-        if (variableType == Predefined.integerType) {
-            wrapCode = "I";
-            upperTypeCode = "I";
-            lowerTypeCode = "i";
-        }
-        else if (variableType == Predefined.realType) {
-            wrapCode = "R";
-            upperTypeCode = "F";
-            lowerTypeCode = "f";
-        }
-        else if (variableType == Predefined.charType) {
-            wrapCode = "Ljava/lang/String;";
-            upperTypeCode = "Ljava/lang/String;";
-            lowerTypeCode = "Ljava/lang/String;"; // TODO: How to load a local variable string?
-        }
-        else if (variableType == Predefined.booleanType) {
-            wrapCode = "B";
-            upperTypeCode = "Z";
-            lowerTypeCode = "z";
-        }
-
-        // Emit the appropriate store instruction.
-        if (variableDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
-            CodeGenerator.objectFile.println("    aload " + variableId.getIndex());
-            expressionNode.jjtAccept(this, data);
-            CodeGenerator.objectFile.println("    putfield " + wrapCode + "Wrap/value " + upperTypeCode);
-        }
-        else if (variableId.getSymTab().getNestingLevel() == 1) {
-            CodeGenerator.objectFile.println("    putstatic " + programName +
-                    "/" + fieldName + " " + upperTypeCode);
-        }
-        else {
-            CodeGenerator.objectFile.println("    " + lowerTypeCode + "store " + variableId.getIndex());
-        }
-
-        CodeGenerator.objectFile.flush();
-
-        return data;
-    }
-
-    public Object visit(ASTfunctionDeclaration node, Object data) {
-        return data;
-    }
-
-    public Object visit(ASTfunctionCall node, Object data) {
-        SymTabEntryImpl functionId = (SymTabEntryImpl) node.getAttribute(ID);
-        SymTabImpl scope = (SymTabImpl) functionId.getAttribute(SymTabKeyImpl.ROUTINE_SYMTAB);
-        TypeSpec returnType = node.getTypeSpec();
-        ArrayList<SimpleNode> unwrapReferences = new ArrayList<SimpleNode>();
-        String returnTypeCode = null;
-        StringBuilder parameters = new StringBuilder();
-
-        if (returnType == Predefined.integerType) {
-            returnTypeCode = "I";
-        }
-        else if (returnType == Predefined.realType) {
-            returnTypeCode = "F";
-        }
-        else if (returnType == Predefined.charType) {
-            returnTypeCode = "Ljava/lang/String;"; // TODO: How to load a local variable string?
-        }
-        else if (returnType == Predefined.booleanType) {
-            returnTypeCode = "Z";
-        }
-        else if (returnType == Predefined.voidType) {
-            returnTypeCode = "V";
-        }
-
-        for (SymTabEntry parameter : scope.values()) {
-            Definition parameterDefinition = parameter.getDefinition();
-
-            if (parameterDefinition != DefinitionImpl.FUNCTION) {
-                int index = parameter.getIndex();
-                SimpleNode parameterNode = (SimpleNode) node.jjtGetChild(index + 1);
-                TypeSpec parameterType = parameterNode.getTypeSpec();
-                SymTabEntry parameterEntry = (SymTabEntry) parameterNode.getAttribute(ID);
-
-                String upperTypeCode = null;
-                String lowerTypeCode = null;
-                String wrapTypeCode = null;
-
-                if (parameterType == Predefined.integerType) {
-                    upperTypeCode = "I";
-                    lowerTypeCode = "i";
-
-                    if (parameterDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
-                        wrapTypeCode = "I";
-                        parameters.append("LIWrap;");
-                    }
-                    else {
-                        parameters.append("I");
-                    }
-                }
-                else if (parameterType == Predefined.realType) {
-                    upperTypeCode = "F";
-                    lowerTypeCode = "f";
-
-                    if (parameterDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
-                        wrapTypeCode = "R";
-                        parameters.append("LRWrap;");
-                    }
-                    else {
-                        parameters.append("F");
-                    }
-                }
-                else if (parameterType == Predefined.charType) {
-                    wrapTypeCode = "Ljava/lang/String;";
-                    parameters.append("Ljava/lang/String;"); // TODO: How to load a local variable string?
-                    upperTypeCode = "Ljava/lang/String;";
-                    lowerTypeCode = "Ljava/lang/String;";
-                }
-                else if (parameterType == Predefined.booleanType) {
-                    upperTypeCode = "Z";
-                    lowerTypeCode = "z";
-
-                    if (parameterDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
-                        wrapTypeCode = "B";
-                        parameters.append("LBWrap;");
-                    }
-                    else {
-                        parameters.append("Z");
-                    }
-                }
-
-                if (parameterDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
-                    CodeGenerator.objectFile.println("    new " + wrapTypeCode + "Wrap ");
-                    CodeGenerator.objectFile.println("    dup");
-                    CodeGenerator.objectFile.flush();
-                }
-
-                if (parameterEntry == null) {
-                    parameterNode.jjtAccept(this, data);
-                }
-                else if (functionId.getSymTab().getNestingLevel() == 1) {
-                    CodeGenerator.objectFile.println("    getstatic " + programName +
-                            "/" + parameterEntry.getName() + " " + upperTypeCode);
-                    CodeGenerator.objectFile.flush();
-                }
-                else {
-                    int slot = parameterEntry.getIndex();
-                    if (parameterEntry.getSymTab().getNestingLevel() == 1) {
-                        slot++;
-                    }
-                    CodeGenerator.objectFile.println("    " + lowerTypeCode + "load " + slot);
-                    CodeGenerator.objectFile.flush();
-                }
-
-                if (parameterDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
-                    CodeGenerator.objectFile.println("    invokenonvirtual " + wrapTypeCode
-                            + "Wrap/<init>(" + upperTypeCode + ")" + returnTypeCode);
-                    CodeGenerator.objectFile.println("    dup");
-                    int slot = parameterEntry.getIndex();
-                    if (parameterEntry.getSymTab().getNestingLevel() == 1) {
-                        slot++;
-                    }
-                    CodeGenerator.objectFile.println("    astore " + slot);
-                    CodeGenerator.objectFile.flush();
-                    unwrapReferences.add(parameterNode);
-                }
-            }
-        }
-
-        CodeGenerator.objectFile.println("    invokestatic  " + programName + "/"
-                + functionId.getName() + "(" + parameters.toString() + ")" + returnTypeCode);
-
-        for (SimpleNode unwrappingNode : unwrapReferences) {
-            TypeSpec parameterType = unwrappingNode.getTypeSpec();
-            SymTabEntry parameterEntry = (SymTabEntry) unwrappingNode.getAttribute(ID);
-
-            String upperTypeCode = null;
-            String lowerTypeCode = null;
-            String wrapTypeCode = null;
-
-            if (parameterType == Predefined.integerType) {
-                wrapTypeCode = "I";
-                upperTypeCode = "I";
-                lowerTypeCode = "i";
-            }
-            else if (parameterType == Predefined.realType) {
-                wrapTypeCode = "R";
-                upperTypeCode = "F";
-                lowerTypeCode = "f";
-            }
-            else if (parameterType == Predefined.charType) {
-                wrapTypeCode = "Ljava/lang/String;";
-                upperTypeCode = "Ljava/lang/String;";
-                lowerTypeCode = "Ljava/lang/String;";
-            }
-            else if (parameterType == Predefined.booleanType) {
-                wrapTypeCode = "B";
-                upperTypeCode = "Z";
-                lowerTypeCode = "z";
-            }
-
-            int slot = parameterEntry.getIndex();
-            if (parameterEntry.getSymTab().getNestingLevel() == 1) {
-                slot++;
-            }
-
-            CodeGenerator.objectFile.println("    aload " + slot);
-            CodeGenerator.objectFile.println("    getfield " + wrapTypeCode + "Wrap/value " + upperTypeCode);
-
-            if (parameterEntry.getSymTab().getNestingLevel() == 1) {
-                CodeGenerator.objectFile.println("    putstatic " + programName + "/"
-                        + parameterEntry.getName() + " " + upperTypeCode);
-            }
-            else {
-                CodeGenerator.objectFile.println("    " + lowerTypeCode + "load " + slot);
-            }
-        }
-
-        CodeGenerator.objectFile.flush();
-
-        return data;
-    }
-
-    public Object visit(ASTvariableDeclaration node, Object data)
-    {
-        return data;
-    }
-
-    public Object visit(ASTparameter node, Object data)
-    {
-        return data;
-    }
-
-    public Object visit(ASTidentifier node, Object data)
-    {
-        SymTabEntry id = (SymTabEntry) node.getAttribute(ID);
-        String fieldName = id.getName();
-        TypeSpec type = id.getTypeSpec();
-        String upperTypeCode = null;
-        String lowerTypeCode = null;
-        String wrapTypeCode = null;
-
-        if (type == Predefined.integerType) {
-            wrapTypeCode = "I";
-            upperTypeCode = "I";
-            lowerTypeCode = "i";
-        }
-        else if (type == Predefined.realType) {
-            wrapTypeCode = "R";
-            upperTypeCode = "F";
-            lowerTypeCode = "f";
-        }
-        else if (type == Predefined.charType) {
-            wrapTypeCode = "Ljava/lang/String;";
-            upperTypeCode = "Ljava/lang/String;";
-            lowerTypeCode = "Ljava/lang/String;"; // TODO: How to load a local variable string?
-        }
-        else if (type == Predefined.booleanType) {
-            wrapTypeCode = "B";
-            upperTypeCode = "Z";
-            lowerTypeCode = "z";
-        }
-
-        // Emit the appropriate load instruction.
-        if (id.getDefinition() == DefinitionImpl.REFERENCE_PARAMETER) {
-            CodeGenerator.objectFile.println("    aload " + id.getIndex());
-            CodeGenerator.objectFile.println("    getfield " + wrapTypeCode + "Wrap/value " + upperTypeCode);
-        }
-        else if (id.getSymTab().getNestingLevel() == 1) {
-            CodeGenerator.objectFile.println("    getstatic " + programName +
-                    "/" + fieldName + " " + upperTypeCode);
-        }
-        else {
-            CodeGenerator.objectFile.println("    " + lowerTypeCode + "load " + id.getIndex());
-        }
-
-        CodeGenerator.objectFile.flush();
-
-        return data;
-    }
-
-    public Object visit(ASTintegerConstant node, Object data)
-    {
-        int value = (Integer) node.getAttribute(VALUE);
-
-        // Emit a load constant instruction.
-        CodeGenerator.objectFile.println("    ldc " + value);
-        CodeGenerator.objectFile.flush();
-
-        return data;
-    }
-
-    public Object visit(ASTarray node, Object data)
-    {
-        SimpleNode arrayNode = (SimpleNode) node.jjtGetChild(0);
-        TypeSpec type = arrayNode.getTypeSpec();
-
-        return data;
-    }
-
-    public Object visit(ASTinterpretedString node, Object data)
-    {
-        String value = (String) node.getAttribute(VALUE);
-
-        // Emit a load constant instruction.
-        CodeGenerator.objectFile.println("    ldc " + value);
-        CodeGenerator.objectFile.flush();
-
-        return data;
-    }
-
-    public Object visit(ASTrealConstant node, Object data)
-    {
-        float value = (Float) node.getAttribute(VALUE);
-
-        // Emit a load constant instruction.
-        CodeGenerator.objectFile.println("    ldc " + value);
-        CodeGenerator.objectFile.flush();
-
-        return data;
-    }
-
-    /* 
-     * Generate jasmin for println
-     */
-    public Object visit(ASTprintln node, Object data)
-    {
-    	
-    	SimpleNode target;
-    	TypeSpec target_type;
-    	String type_descriptor = "";
-    	
-    	//type checking to generate according type descriptor
-    	target = (SimpleNode) node.jjtGetChild(0);
-    	target_type = target.getTypeSpec();
-    	if (target_type == Predefined.realType) {
-        	type_descriptor = "F";
-        }
-    	else if (target_type == Predefined.integerType) {
-        	type_descriptor = "I";
-        }
-        else if (target_type == Predefined.charType) {
-        	type_descriptor = "Ljava/lang/String;";
-        }
-        else if (target_type == Predefined.booleanType) {
-        	type_descriptor = "Z";
-        }
-    	
-        CodeGenerator.objectFile.println("    getstatic java/lang/System/out Ljava/io/PrintStream;");
-        CodeGenerator.objectFile.flush();
-        target.jjtAccept(this, data);
-        CodeGenerator.objectFile.println("    invokevirtual java/io/PrintStream/println(" + type_descriptor + ")V");
-        CodeGenerator.objectFile.flush();
-        
-        return data;
-    }
-    
-    /* 
-     * Generate jasmin for print
-     */
-    public Object visit(ASTprint node, Object data)
-    {
-    	
-    	SimpleNode target;
-    	TypeSpec target_type;
-    	String type_descriptor = "";
-    	
-    	//type checking to generate according type descriptor
-    	target = (SimpleNode) node.jjtGetChild(0);
-    	target_type = target.getTypeSpec();
-    	if (target_type == Predefined.realType) {
-        	type_descriptor = "F";
-        }
-    	else if (target_type == Predefined.integerType) {
-        	type_descriptor = "I";
-        }
-        else if (target_type == Predefined.charType) {
-        	type_descriptor = "Ljava/lang/String;";
-        }
-        else if (target_type == Predefined.booleanType) {
-        	type_descriptor = "Z";
-        }
-    	
-        CodeGenerator.objectFile.println("    getstatic java/lang/System/out Ljava/io/PrintStream;");
-        CodeGenerator.objectFile.flush();
-        target.jjtAccept(this, data);
-        CodeGenerator.objectFile.println("    invokevirtual java/io/PrintStream/print(" + type_descriptor + ")V");
-        CodeGenerator.objectFile.flush();
-        
-        return data;
-    }
-
-    public Object visit(ASTblock node, Object data)
-    {
-        node.childrenAccept(this, data);
-
-        // If the data is not the programName, that means I overwrote the data, so use it.
-        // The data is always the programName unless you choose to send a child something else.
-        if (data != programName) {
-            String label = (String) data;
-            CodeGenerator.objectFile.println("    goto " + label);
-            CodeGenerator.objectFile.flush();
-        }
-
-        return data;
-    }
-
-    public Object visit(ASTswitchBlock node, Object data)
-    {
-        // For now, a clone of the block visit method.
-        // Looking to see if it needs any change at all.
-        node.childrenAccept(this, programName);
-        if (data != programName) {
-            String label = (String) data;
-            CodeGenerator.objectFile.println("    goto " + label);
-            CodeGenerator.objectFile.flush();
-        }
-
-        return data;
-    }
-
-    public Object visit(ASTfor_statement node, Object data)
-    {
-        SimpleNode forClause = (SimpleNode) node.jjtGetChild(0);
-        SimpleNode block = (SimpleNode) node.jjtGetChild(1);
-
-        // If the for clause has 1 child, it is a while loop, so create a label
-        if (forClause.jjtGetNumChildren() == 1) {
-            String beginLabel = getNextLabel();
-            CodeGenerator.objectFile.println(beginLabel + ":"); // Jump back here after each iteration
-            CodeGenerator.objectFile.flush();
-            String endLabel = (String) forClause.jjtAccept(this, data); // Jump to returned label when loop ends
-            block.jjtAccept(this, data);
-            CodeGenerator.objectFile.println("    goto " + beginLabel); // Restart loop
-            CodeGenerator.objectFile.println(endLabel + ":"); // Jump here when the loop is done
-        }
-        else {
-            ArrayList<Object> loopData = (ArrayList<Object>) forClause.jjtAccept(this, data);
-            block.jjtAccept(this, data);
-            ((Node) loopData.get(0)).jjtAccept(this, data); // Incrementing after running the body
-            CodeGenerator.objectFile.println("    goto " + loopData.get(1));
-            CodeGenerator.objectFile.println(loopData.get(2) + ":");
-        }
-
-        CodeGenerator.objectFile.flush();
-
-        return data;
-    }
-
-    public Object visit(ASTfor_clause node, Object data) {
-        ArrayList<Object> loopData = new ArrayList<Object>();
-
-        // If it has 1 child, it is a while loop
-        if (node.jjtGetNumChildren() == 1) {
-            return node.jjtGetChild(0).jjtAccept(this, data); // This returns a string label it will be jumping to
-        }
-
-        node.jjtGetChild(0).jjtAccept(this, data); // Perform the assignment, but don't include it as part of loop
-
-        String beginLabel = getNextLabel(); // Prepare label for looping after the assignment has been done
-        CodeGenerator.objectFile.println(beginLabel + ":");
-        CodeGenerator.objectFile.flush();
-        String endLabel = (String) node.jjtGetChild(1).jjtAccept(this, data); // Get label it will be jumping to in condition
-
-        loopData.add(node.jjtGetChild(2)); // Delay incrementing until after the loop
-        loopData.add(beginLabel);
-        loopData.add(endLabel);
-
-        return loopData;
-    }
-
-    public Object visit(ASTif_statement node, Object data)
-    {
-        SimpleNode condition = (SimpleNode) node.jjtGetChild(0);
-        SimpleNode block = (SimpleNode) node.jjtGetChild(1);
-        SimpleNode elseStatement = null;
-
-        // Check if an else block exists
-        if (node.jjtGetNumChildren() == 3) {
-            elseStatement = (SimpleNode) node.jjtGetChild(2);
-        }
-
-        // When going into the condition, it will emit a conditional jump to the returned label
-        String label = (String) condition.jjtAccept(this, data);
-        String label2 = getNextLabel(); // If condition is true and there exist an else statement, jump to this label
-        block.jjtAccept(this, label2); // Going in here will emit all the code in the body
-        CodeGenerator.objectFile.println(label + ":"); // The label to jump to when the condition is false
-        CodeGenerator.objectFile.flush();
-
-        if (elseStatement != null) {
-            elseStatement.jjtAccept(this, data);
-        }
-
-        CodeGenerator.objectFile.println(label2 + ":"); // Jump to this label if condition is true and there is an else
-        CodeGenerator.objectFile.flush();
-
-        return data;
-    }
-
-    // TODO: Figure out how to do this.
-    public Object visit(ASTswitch_statement node, Object data)
-    {
-        SimpleNode switchVar = (SimpleNode) node.jjtGetChild(0);
-        SimpleNode block = (SimpleNode) node.jjtGetChild(1);
-        SimpleNode caseGroup = (SimpleNode) block.jjtGetChild(0);
-        String defaultLabel = "defaultCaseLabel" + getNextLabel();
-
-        ArrayList<SimpleNode> nodes = new ArrayList<SimpleNode>();
-
-        for (int i = 0; i < node.jjtGetNumChildren(); ++i) {
-            nodes.add((SimpleNode) node.jjtGetChild(i));
-        }
-
-        /*
+	private static String programName = null;
+	private static int tagNumber = 0;
+
+	public String getCurrentLabel() { return "label" + tagNumber; }
+	public String getNextLabel() { return "label" + ++tagNumber; }
+
+	public void emitComparisonCode(SimpleNode node, Object data) {
+		SimpleNode lhs = (SimpleNode) node.jjtGetChild(0);
+		SimpleNode rhs = (SimpleNode) node.jjtGetChild(1);
+
+		TypeSpec lhsType = lhs.getTypeSpec();
+		TypeSpec rhsType = rhs.getTypeSpec();
+
+		lhs.jjtAccept(this, data);
+		if (lhsType == Predefined.integerType) {
+			CodeGenerator.objectFile.println("    i2f");
+			CodeGenerator.objectFile.flush();
+		}
+
+		rhs.jjtAccept(this, data);
+		if (rhsType == Predefined.integerType) {
+			CodeGenerator.objectFile.println("    i2f");
+			CodeGenerator.objectFile.flush();
+		}
+
+		CodeGenerator.objectFile.println("    fcmpg");
+	}
+
+	public Object visit(ASTstatementList node, Object data) {
+		if (this.programName == null) {
+			this.programName = (String) data;
+		}
+
+		return node.childrenAccept(this, data);
+	}
+
+	public Object visit(ASTassignmentStatement node, Object data)
+	{
+		String programName        = (String) data;
+		SimpleNode variableNode   = (SimpleNode) node.jjtGetChild(0);
+		SimpleNode expressionNode = (SimpleNode) node.jjtGetChild(1);
+
+
+		SymTabEntry variableId = (SymTabEntry) variableNode.getAttribute(ID);
+		Definition variableDefinition = variableId.getDefinition();
+		String fieldName = variableId.getName();
+		TypeSpec variableType = variableId.getTypeSpec();
+		TypeSpec expressionType = expressionNode.getTypeSpec();
+		TypeSpec targetType = node.getTypeSpec();
+		String upperTypeCode = null;
+		String lowerTypeCode = null;
+		String wrapCode = null;
+
+		// Emit code for the expression.
+		if (variableDefinition != DefinitionImpl.REFERENCE_PARAMETER) {
+			expressionNode.jjtAccept(this, data);
+		}
+
+		// Convert an integer value to float if necessary.
+		if ((targetType == Predefined.realType) &&
+				(expressionType == Predefined.integerType))
+		{
+			CodeGenerator.objectFile.println("    i2f");
+			CodeGenerator.objectFile.flush();
+		}
+
+		if (variableType == Predefined.integerType) {
+			wrapCode = "I";
+			upperTypeCode = "I";
+			lowerTypeCode = "i";
+		}
+		else if (variableType == Predefined.realType) {
+			wrapCode = "R";
+			upperTypeCode = "F";
+			lowerTypeCode = "f";
+		}
+		else if (variableType == Predefined.charType) {
+			wrapCode = "Ljava/lang/String;";
+			upperTypeCode = "Ljava/lang/String;";
+			lowerTypeCode = "Ljava/lang/String;"; // TODO: How to load a local variable string?
+		}
+		else if (variableType == Predefined.booleanType) {
+			wrapCode = "B";
+			upperTypeCode = "Z";
+			lowerTypeCode = "z";
+		}
+
+		// Emit the appropriate store instruction.
+		if (variableDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
+			CodeGenerator.objectFile.println("    aload " + variableId.getIndex());
+			expressionNode.jjtAccept(this, data);
+			CodeGenerator.objectFile.println("    putfield " + wrapCode + "Wrap/value " + upperTypeCode);
+		}
+		else if (variableId.getSymTab().getNestingLevel() == 1) {
+			CodeGenerator.objectFile.println("    putstatic " + programName +
+					"/" + fieldName + " " + upperTypeCode);
+		}
+		else {
+			CodeGenerator.objectFile.println("    " + lowerTypeCode + "store " + variableId.getIndex());
+		}
+
+		CodeGenerator.objectFile.flush();
+
+		return data;
+	}
+
+	public Object visit(ASTfunctionDeclaration node, Object data) {
+		return data;
+	}
+
+	public Object visit(ASTfunctionCall node, Object data) {
+		SymTabEntryImpl functionId = (SymTabEntryImpl) node.getAttribute(ID);
+		SymTabImpl scope = (SymTabImpl) functionId.getAttribute(SymTabKeyImpl.ROUTINE_SYMTAB);
+		TypeSpec returnType = node.getTypeSpec();
+		ArrayList<SimpleNode> unwrapReferences = new ArrayList<SimpleNode>();
+		String returnTypeCode = null;
+		StringBuilder parameters = new StringBuilder();
+
+		if (returnType == Predefined.integerType) {
+			returnTypeCode = "I";
+		}
+		else if (returnType == Predefined.realType) {
+			returnTypeCode = "F";
+		}
+		else if (returnType == Predefined.charType) {
+			returnTypeCode = "Ljava/lang/String;"; // TODO: How to load a local variable string?
+		}
+		else if (returnType == Predefined.booleanType) {
+			returnTypeCode = "Z";
+		}
+		else if (returnType == Predefined.voidType) {
+			returnTypeCode = "V";
+		}
+
+		for (SymTabEntry parameter : scope.values()) {
+			Definition parameterDefinition = parameter.getDefinition();
+
+			if (parameterDefinition != DefinitionImpl.FUNCTION) {
+				int index = parameter.getIndex();
+				SimpleNode parameterNode = (SimpleNode) node.jjtGetChild(index + 1);
+				TypeSpec parameterType = parameterNode.getTypeSpec();
+				SymTabEntry parameterEntry = (SymTabEntry) parameterNode.getAttribute(ID);
+
+				String upperTypeCode = null;
+				String lowerTypeCode = null;
+				String wrapTypeCode = null;
+
+				if (parameterType == Predefined.integerType) {
+					upperTypeCode = "I";
+					lowerTypeCode = "i";
+
+					if (parameterDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
+						wrapTypeCode = "I";
+						parameters.append("LIWrap;");
+					}
+					else {
+						parameters.append("I");
+					}
+				}
+				else if (parameterType == Predefined.realType) {
+					upperTypeCode = "F";
+					lowerTypeCode = "f";
+
+					if (parameterDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
+						wrapTypeCode = "R";
+						parameters.append("LRWrap;");
+					}
+					else {
+						parameters.append("F");
+					}
+				}
+				else if (parameterType == Predefined.charType) {
+					wrapTypeCode = "Ljava/lang/String;";
+					parameters.append("Ljava/lang/String;"); // TODO: How to load a local variable string?
+					upperTypeCode = "Ljava/lang/String;";
+					lowerTypeCode = "Ljava/lang/String;";
+				}
+				else if (parameterType == Predefined.booleanType) {
+					upperTypeCode = "Z";
+					lowerTypeCode = "z";
+
+					if (parameterDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
+						wrapTypeCode = "B";
+						parameters.append("LBWrap;");
+					}
+					else {
+						parameters.append("Z");
+					}
+				}
+
+				if (parameterDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
+					CodeGenerator.objectFile.println("    new " + wrapTypeCode + "Wrap ");
+					CodeGenerator.objectFile.println("    dup");
+					CodeGenerator.objectFile.flush();
+				}
+
+				if (parameterEntry == null) {
+					parameterNode.jjtAccept(this, data);
+				}
+				else if (functionId.getSymTab().getNestingLevel() == 1) {
+					CodeGenerator.objectFile.println("    getstatic " + programName +
+							"/" + parameterEntry.getName() + " " + upperTypeCode);
+					CodeGenerator.objectFile.flush();
+				}
+				else {
+					int slot = parameterEntry.getIndex();
+					if (parameterEntry.getSymTab().getNestingLevel() == 1) {
+						slot++;
+					}
+					CodeGenerator.objectFile.println("    " + lowerTypeCode + "load " + slot);
+					CodeGenerator.objectFile.flush();
+				}
+
+				if (parameterDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
+					CodeGenerator.objectFile.println("    invokenonvirtual " + wrapTypeCode
+							+ "Wrap/<init>(" + upperTypeCode + ")" + returnTypeCode);
+					CodeGenerator.objectFile.println("    dup");
+					int slot = parameterEntry.getIndex();
+					if (parameterEntry.getSymTab().getNestingLevel() == 1) {
+						slot++;
+					}
+					CodeGenerator.objectFile.println("    astore " + slot);
+					CodeGenerator.objectFile.flush();
+					unwrapReferences.add(parameterNode);
+				}
+			}
+		}
+
+		CodeGenerator.objectFile.println("    invokestatic  " + programName + "/"
+				+ functionId.getName() + "(" + parameters.toString() + ")" + returnTypeCode);
+
+		for (SimpleNode unwrappingNode : unwrapReferences) {
+			TypeSpec parameterType = unwrappingNode.getTypeSpec();
+			SymTabEntry parameterEntry = (SymTabEntry) unwrappingNode.getAttribute(ID);
+
+			String upperTypeCode = null;
+			String lowerTypeCode = null;
+			String wrapTypeCode = null;
+
+			if (parameterType == Predefined.integerType) {
+				wrapTypeCode = "I";
+				upperTypeCode = "I";
+				lowerTypeCode = "i";
+			}
+			else if (parameterType == Predefined.realType) {
+				wrapTypeCode = "R";
+				upperTypeCode = "F";
+				lowerTypeCode = "f";
+			}
+			else if (parameterType == Predefined.charType) {
+				wrapTypeCode = "Ljava/lang/String;";
+				upperTypeCode = "Ljava/lang/String;";
+				lowerTypeCode = "Ljava/lang/String;";
+			}
+			else if (parameterType == Predefined.booleanType) {
+				wrapTypeCode = "B";
+				upperTypeCode = "Z";
+				lowerTypeCode = "z";
+			}
+
+			int slot = parameterEntry.getIndex();
+			if (parameterEntry.getSymTab().getNestingLevel() == 1) {
+				slot++;
+			}
+
+			CodeGenerator.objectFile.println("    aload " + slot);
+			CodeGenerator.objectFile.println("    getfield " + wrapTypeCode + "Wrap/value " + upperTypeCode);
+
+			if (parameterEntry.getSymTab().getNestingLevel() == 1) {
+				CodeGenerator.objectFile.println("    putstatic " + programName + "/"
+						+ parameterEntry.getName() + " " + upperTypeCode);
+			}
+			else {
+				CodeGenerator.objectFile.println("    " + lowerTypeCode + "load " + slot);
+			}
+		}
+
+		CodeGenerator.objectFile.flush();
+
+		return data;
+	}
+
+	public Object visit(ASTvariableDeclaration node, Object data)
+	{
+		return data;
+	}
+
+	public Object visit(ASTparameter node, Object data)
+	{
+		return data;
+	}
+
+	public Object visit(ASTidentifier node, Object data)
+	{
+		SymTabEntry id = (SymTabEntry) node.getAttribute(ID);
+		String fieldName = id.getName();
+		TypeSpec type = id.getTypeSpec();
+		String upperTypeCode = null;
+		String lowerTypeCode = null;
+		String wrapTypeCode = null;
+
+		if (type == Predefined.integerType) {
+			wrapTypeCode = "I";
+			upperTypeCode = "I";
+			lowerTypeCode = "i";
+		}
+		else if (type == Predefined.realType) {
+			wrapTypeCode = "R";
+			upperTypeCode = "F";
+			lowerTypeCode = "f";
+		}
+		else if (type == Predefined.charType) {
+			wrapTypeCode = "Ljava/lang/String;";
+			upperTypeCode = "Ljava/lang/String;";
+			lowerTypeCode = "Ljava/lang/String;"; // TODO: How to load a local variable string?
+		}
+		else if (type == Predefined.booleanType) {
+			wrapTypeCode = "B";
+			upperTypeCode = "Z";
+			lowerTypeCode = "z";
+		}
+
+		// Emit the appropriate load instruction.
+		if (id.getDefinition() == DefinitionImpl.REFERENCE_PARAMETER) {
+			CodeGenerator.objectFile.println("    aload " + id.getIndex());
+			CodeGenerator.objectFile.println("    getfield " + wrapTypeCode + "Wrap/value " + upperTypeCode);
+		}
+		else if (id.getSymTab().getNestingLevel() == 1) {
+			CodeGenerator.objectFile.println("    getstatic " + programName +
+					"/" + fieldName + " " + upperTypeCode);
+		}
+		else {
+			CodeGenerator.objectFile.println("    " + lowerTypeCode + "load " + id.getIndex());
+		}
+
+		CodeGenerator.objectFile.flush();
+
+		return data;
+	}
+
+	public Object visit(ASTintegerConstant node, Object data)
+	{
+		int value = (Integer) node.getAttribute(VALUE);
+
+		// Emit a load constant instruction.
+		CodeGenerator.objectFile.println("    ldc " + value);
+		CodeGenerator.objectFile.flush();
+
+		return data;
+	}
+
+	public Object visit(ASTarray node, Object data)
+	{
+		SimpleNode arrayNode = (SimpleNode) node.jjtGetChild(0);
+		TypeSpec type = arrayNode.getTypeSpec();
+
+		return data;
+	}
+
+	public Object visit(ASTinterpretedString node, Object data)
+	{
+		String value = (String) node.getAttribute(VALUE);
+
+		// Emit a load constant instruction.
+		CodeGenerator.objectFile.println("    ldc " + value);
+		CodeGenerator.objectFile.flush();
+
+		return data;
+	}
+
+	public Object visit(ASTrealConstant node, Object data)
+	{
+		float value = (Float) node.getAttribute(VALUE);
+
+		// Emit a load constant instruction.
+		CodeGenerator.objectFile.println("    ldc " + value);
+		CodeGenerator.objectFile.flush();
+
+		return data;
+	}
+
+	/* 
+	 * Generate jasmin for println
+	 */
+	public Object visit(ASTprintln node, Object data)
+	{
+
+		SimpleNode target;
+		TypeSpec target_type;
+		String type_descriptor = "";
+
+		//type checking to generate according type descriptor
+		target = (SimpleNode) node.jjtGetChild(0);
+		target_type = target.getTypeSpec();
+		if (target_type == Predefined.realType) {
+			type_descriptor = "F";
+		}
+		else if (target_type == Predefined.integerType) {
+			type_descriptor = "I";
+		}
+		else if (target_type == Predefined.charType) {
+			type_descriptor = "Ljava/lang/String;";
+		}
+		else if (target_type == Predefined.booleanType) {
+			type_descriptor = "Z";
+		}
+
+		CodeGenerator.objectFile.println("    getstatic java/lang/System/out Ljava/io/PrintStream;");
+		CodeGenerator.objectFile.flush();
+		target.jjtAccept(this, data);
+		CodeGenerator.objectFile.println("    invokevirtual java/io/PrintStream/println(" + type_descriptor + ")V");
+		CodeGenerator.objectFile.flush();
+
+		return data;
+	}
+
+	/* 
+	 * Generate jasmin for print
+	 */
+	public Object visit(ASTprint node, Object data)
+	{
+
+		SimpleNode target;
+		TypeSpec target_type;
+		String type_descriptor = "";
+
+		//type checking to generate according type descriptor
+		target = (SimpleNode) node.jjtGetChild(0);
+		target_type = target.getTypeSpec();
+		if (target_type == Predefined.realType) {
+			type_descriptor = "F";
+		}
+		else if (target_type == Predefined.integerType) {
+			type_descriptor = "I";
+		}
+		else if (target_type == Predefined.charType) {
+			type_descriptor = "Ljava/lang/String;";
+		}
+		else if (target_type == Predefined.booleanType) {
+			type_descriptor = "Z";
+		}
+
+		CodeGenerator.objectFile.println("    getstatic java/lang/System/out Ljava/io/PrintStream;");
+		CodeGenerator.objectFile.flush();
+		target.jjtAccept(this, data);
+		CodeGenerator.objectFile.println("    invokevirtual java/io/PrintStream/print(" + type_descriptor + ")V");
+		CodeGenerator.objectFile.flush();
+
+		return data;
+	}
+
+	public Object visit(ASTblock node, Object data)
+	{
+		node.childrenAccept(this, data);
+
+		// If the data is not the programName, that means I overwrote the data, so use it.
+		// The data is always the programName unless you choose to send a child something else.
+		if (data != programName) {
+			String label = (String) data;
+			CodeGenerator.objectFile.println("    goto " + label);
+			CodeGenerator.objectFile.flush();
+		}
+
+		return data;
+	}
+
+	public Object visit(ASTswitchBlock node, Object data)
+	{
+		// For now, a clone of the block visit method.
+		// Looking to see if it needs any change at all.
+		node.childrenAccept(this, programName);
+		if (data != programName) {
+			String label = (String) data;
+			CodeGenerator.objectFile.println("    goto " + label);
+			CodeGenerator.objectFile.flush();
+		}
+
+		return data;
+	}
+
+	public Object visit(ASTfor_statement node, Object data)
+	{
+		SimpleNode forClause = (SimpleNode) node.jjtGetChild(0);
+		SimpleNode block = (SimpleNode) node.jjtGetChild(1);
+
+		// If the for clause has 1 child, it is a while loop, so create a label
+		if (forClause.jjtGetNumChildren() == 1) {
+			String beginLabel = getNextLabel();
+			CodeGenerator.objectFile.println(beginLabel + ":"); // Jump back here after each iteration
+			CodeGenerator.objectFile.flush();
+			String endLabel = (String) forClause.jjtAccept(this, data); // Jump to returned label when loop ends
+			block.jjtAccept(this, data);
+			CodeGenerator.objectFile.println("    goto " + beginLabel); // Restart loop
+			CodeGenerator.objectFile.println(endLabel + ":"); // Jump here when the loop is done
+		}
+		else {
+			ArrayList<Object> loopData = (ArrayList<Object>) forClause.jjtAccept(this, data);
+			block.jjtAccept(this, data);
+			((Node) loopData.get(0)).jjtAccept(this, data); // Incrementing after running the body
+			CodeGenerator.objectFile.println("    goto " + loopData.get(1));
+			CodeGenerator.objectFile.println(loopData.get(2) + ":");
+		}
+
+		CodeGenerator.objectFile.flush();
+
+		return data;
+	}
+
+	public Object visit(ASTfor_clause node, Object data) {
+		ArrayList<Object> loopData = new ArrayList<Object>();
+
+		// If it has 1 child, it is a while loop
+		if (node.jjtGetNumChildren() == 1) {
+			return node.jjtGetChild(0).jjtAccept(this, data); // This returns a string label it will be jumping to
+		}
+
+		node.jjtGetChild(0).jjtAccept(this, data); // Perform the assignment, but don't include it as part of loop
+
+		String beginLabel = getNextLabel(); // Prepare label for looping after the assignment has been done
+		CodeGenerator.objectFile.println(beginLabel + ":");
+		CodeGenerator.objectFile.flush();
+		String endLabel = (String) node.jjtGetChild(1).jjtAccept(this, data); // Get label it will be jumping to in condition
+
+		loopData.add(node.jjtGetChild(2)); // Delay incrementing until after the loop
+		loopData.add(beginLabel);
+		loopData.add(endLabel);
+
+		return loopData;
+	}
+
+	public Object visit(ASTif_statement node, Object data)
+	{
+		SimpleNode condition = (SimpleNode) node.jjtGetChild(0);
+		SimpleNode block = (SimpleNode) node.jjtGetChild(1);
+		SimpleNode elseStatement = null;
+
+		// Check if an else block exists
+		if (node.jjtGetNumChildren() == 3) {
+			elseStatement = (SimpleNode) node.jjtGetChild(2);
+		}
+
+		// When going into the condition, it will emit a conditional jump to the returned label
+		String label = (String) condition.jjtAccept(this, data);
+		String label2 = getNextLabel(); // If condition is true and there exist an else statement, jump to this label
+		block.jjtAccept(this, label2); // Going in here will emit all the code in the body
+		CodeGenerator.objectFile.println(label + ":"); // The label to jump to when the condition is false
+		CodeGenerator.objectFile.flush();
+
+		if (elseStatement != null) {
+			elseStatement.jjtAccept(this, data);
+		}
+
+		CodeGenerator.objectFile.println(label2 + ":"); // Jump to this label if condition is true and there is an else
+		CodeGenerator.objectFile.flush();
+
+		return data;
+	}
+
+	// TODO: Figure out how to do this.
+	public Object visit(ASTswitch_statement node, Object data)
+	{
+		SimpleNode switchVar = (SimpleNode) node.jjtGetChild(0);
+		SimpleNode block = (SimpleNode) node.jjtGetChild(1);
+		SimpleNode caseGroup = (SimpleNode) block.jjtGetChild(0);
+		String defaultLabel = "defaultCaseLabel" + getNextLabel();
+
+		ArrayList<SimpleNode> nodes = new ArrayList<SimpleNode>();
+
+		for (int i = 0; i < node.jjtGetNumChildren(); ++i) {
+			nodes.add((SimpleNode) node.jjtGetChild(i));
+		}
+
+		/*
 
         ArrayList<ASTcaseGroup> cases = new ArrayList<ASTcaseGroup>();
         ASTdefaultCase defaultCase = null;
@@ -600,373 +600,391 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
             }
         }
 
-        */
+		 */
 
-        return data;
-    }
+		return data;
+	}
 
-    public Object visit(ASTequalEqual node, Object data)
-    {
-        String label = getNextLabel();
-        emitComparisonCode(node, data);
-        CodeGenerator.objectFile.println("    ifne " + label);
-        CodeGenerator.objectFile.flush();
+	public Object visit(ASTequalEqual node, Object data)
+	{
+		String label = getNextLabel();
+		emitComparisonCode(node, data);
+		CodeGenerator.objectFile.println("    ifne " + label);
+		CodeGenerator.objectFile.flush();
 
-        return label;
-    }
+		return label;
+	}
 
-    public Object visit(ASTlessThan node, Object data)
-    {
-        String label = getNextLabel();
-        emitComparisonCode(node, data);
-        CodeGenerator.objectFile.println("    ifge " + label);
-        CodeGenerator.objectFile.flush();
+	public Object visit(ASTlessThan node, Object data)
+	{
+		String label = getNextLabel();
+		emitComparisonCode(node, data);
+		CodeGenerator.objectFile.println("    ifge " + label);
+		CodeGenerator.objectFile.flush();
 
-        return label;
-    }
+		return label;
+	}
 
-    public Object visit(ASTgreaterThan node, Object data)
-    {
-        String label = getNextLabel();
-        emitComparisonCode(node, data);
-        CodeGenerator.objectFile.println("    ifle " + label);
-        CodeGenerator.objectFile.flush();
+	public Object visit(ASTgreaterThan node, Object data)
+	{
+		String label = getNextLabel();
+		emitComparisonCode(node, data);
+		CodeGenerator.objectFile.println("    ifle " + label);
+		CodeGenerator.objectFile.flush();
 
-        return label;
-    }
+		return label;
+	}
 
-    public Object visit(ASTnotEqual node, Object data)
-    {
-        String label = getNextLabel();
-        emitComparisonCode(node, data);
-        CodeGenerator.objectFile.println("    ifeq " + label);
-        CodeGenerator.objectFile.flush();
+	public Object visit(ASTnotEqual node, Object data)
+	{
+		String label = getNextLabel();
+		emitComparisonCode(node, data);
+		CodeGenerator.objectFile.println("    ifeq " + label);
+		CodeGenerator.objectFile.flush();
 
-        return label;
-    }
+		return label;
+	}
 
-    public Object visit(ASTlessEqual node, Object data)
-    {
-        String label = getNextLabel();
-        emitComparisonCode(node, data);
-        CodeGenerator.objectFile.println("    ifgt " + label);
-        CodeGenerator.objectFile.flush();
+	public Object visit(ASTlessEqual node, Object data)
+	{
+		String label = getNextLabel();
+		emitComparisonCode(node, data);
+		CodeGenerator.objectFile.println("    ifgt " + label);
+		CodeGenerator.objectFile.flush();
 
-        return label;
-    }
+		return label;
+	}
 
-    public Object visit(ASTgreaterEqual node, Object data)
-    {
-        String label = getNextLabel();
-        emitComparisonCode(node, data);
-        CodeGenerator.objectFile.println("    iflt " + label);
-        CodeGenerator.objectFile.flush();
+	public Object visit(ASTgreaterEqual node, Object data)
+	{
+		String label = getNextLabel();
+		emitComparisonCode(node, data);
+		CodeGenerator.objectFile.println("    iflt " + label);
+		CodeGenerator.objectFile.flush();
 
-        return label;
-    }
+		return label;
+	}
 
-    public Object visit(ASTadd node, Object data)
-    {
-        SimpleNode addend0Node = (SimpleNode) node.jjtGetChild(0);
-        SimpleNode addend1Node = (SimpleNode) node.jjtGetChild(1);
+	public Object visit(ASTadd node, Object data)
+	{
+		SimpleNode addend0Node = (SimpleNode) node.jjtGetChild(0);
+		SimpleNode addend1Node = (SimpleNode) node.jjtGetChild(1);
 
-        TypeSpec type0 = addend0Node.getTypeSpec();
-        TypeSpec type1 = addend1Node.getTypeSpec();
+		TypeSpec type0 = addend0Node.getTypeSpec();
+		TypeSpec type1 = addend1Node.getTypeSpec();
 
-        // Get the addition type.
-        TypeSpec type = node.getTypeSpec();
-        String typePrefix = (type == Predefined.integerType) ? "i" : "f";
+		// Get the addition type.
+		TypeSpec type = node.getTypeSpec();
+		String typePrefix = (type == Predefined.integerType) ? "i" : "f";
 
-        if (type != Predefined.charType) {
-            // Emit code for the first expression
-            // with type conversion if necessary.
-            addend0Node.jjtAccept(this, data);
-            if ((type == Predefined.realType) &&
-                    (type0 == Predefined.integerType))
-            {
-                CodeGenerator.objectFile.println("    i2f");
-                CodeGenerator.objectFile.flush();
-            }
+		if (type != Predefined.charType) {
+			// Emit code for the first expression
+			// with type conversion if necessary.
+			addend0Node.jjtAccept(this, data);
+			if ((type == Predefined.realType) &&
+					(type0 == Predefined.integerType))
+			{
+				CodeGenerator.objectFile.println("    i2f");
+				CodeGenerator.objectFile.flush();
+			}
 
-            // Emit code for the second expression
-            // with type conversion if necessary.
-            addend1Node.jjtAccept(this, data);
-            if ((type == Predefined.realType) &&
-                    (type1 == Predefined.integerType))
-            {
-                CodeGenerator.objectFile.println("    i2f");
-                CodeGenerator.objectFile.flush();
-            }
+			// Emit code for the second expression
+			// with type conversion if necessary.
+			addend1Node.jjtAccept(this, data);
+			if ((type == Predefined.realType) &&
+					(type1 == Predefined.integerType))
+			{
+				CodeGenerator.objectFile.println("    i2f");
+				CodeGenerator.objectFile.flush();
+			}
 
-            // Emit the appropriate add instruction.
-            CodeGenerator.objectFile.println("    " + typePrefix + "add");
-            CodeGenerator.objectFile.flush();
-        }
-        else {
-            String lhsType = null;
-            String rhsType = null;
+			// Emit the appropriate add instruction.
+			CodeGenerator.objectFile.println("    " + typePrefix + "add");
+			CodeGenerator.objectFile.flush();
+		}
+		else {
+			String lhsType = null;
+			String rhsType = null;
 
-            if (type0 == Predefined.integerType) {
-                lhsType = "I";
-            }
-            else if (type0 == Predefined.realType) {
-                lhsType = "F";
-            }
-            else if (type0 == Predefined.charType) {
-                lhsType = "Ljava/lang/String;";
-            }
+			if (type0 == Predefined.integerType) {
+				lhsType = "I";
+			}
+			else if (type0 == Predefined.realType) {
+				lhsType = "F";
+			}
+			else if (type0 == Predefined.charType) {
+				lhsType = "Ljava/lang/String;";
+			}
 
-            if (type1 == Predefined.integerType) {
-                rhsType = "I";
-            }
-            else if (type1 == Predefined.realType) {
-                rhsType = "F";
-            }
-            else if (type1 == Predefined.charType) {
-                rhsType = "Ljava/lang/String;";
-            }
+			if (type1 == Predefined.integerType) {
+				rhsType = "I";
+			}
+			else if (type1 == Predefined.realType) {
+				rhsType = "F";
+			}
+			else if (type1 == Predefined.charType) {
+				rhsType = "Ljava/lang/String;";
+			}
 
-            CodeGenerator.objectFile.println("    new       java/lang/StringBuilder");
-            CodeGenerator.objectFile.println("    dup");
-            CodeGenerator.objectFile.println("    invokenonvirtual java/lang/StringBuilder/<init>()V");
-            addend0Node.jjtAccept(this, data);
-            CodeGenerator.objectFile.println("    invokevirtual java/lang/StringBuilder/append("
-                    + lhsType + ")Ljava/lang/StringBuilder;");
-            addend1Node.jjtAccept(this, data);
-            CodeGenerator.objectFile.println("    invokevirtual java/lang/StringBuilder/append("
-                    + rhsType + ")Ljava/lang/StringBuilder;");
-            CodeGenerator.objectFile.println("    invokevirtual java/lang/StringBuilder/toString()Ljava/lang/String;");
-            CodeGenerator.objectFile.flush();
-        }
+			CodeGenerator.objectFile.println("    new       java/lang/StringBuilder");
+			CodeGenerator.objectFile.println("    dup");
+			CodeGenerator.objectFile.println("    invokenonvirtual java/lang/StringBuilder/<init>()V");
+			addend0Node.jjtAccept(this, data);
+			CodeGenerator.objectFile.println("    invokevirtual java/lang/StringBuilder/append("
+					+ lhsType + ")Ljava/lang/StringBuilder;");
+			addend1Node.jjtAccept(this, data);
+			CodeGenerator.objectFile.println("    invokevirtual java/lang/StringBuilder/append("
+					+ rhsType + ")Ljava/lang/StringBuilder;");
+			CodeGenerator.objectFile.println("    invokevirtual java/lang/StringBuilder/toString()Ljava/lang/String;");
+			CodeGenerator.objectFile.flush();
+		}
 
-        return data;
-    }
+		return data;
+	}
 
-    public Object visit(ASTbitwiseAnd node, Object data)
-    {
-        SimpleNode addend0Node = (SimpleNode) node.jjtGetChild(0);
-        SimpleNode addend1Node = (SimpleNode) node.jjtGetChild(1);
+	public Object visit(ASTbitwiseAnd node, Object data)
+	{
+		SimpleNode addend0Node = (SimpleNode) node.jjtGetChild(0);
+		SimpleNode addend1Node = (SimpleNode) node.jjtGetChild(1);
 
-        TypeSpec type0 = addend0Node.getTypeSpec();
-        TypeSpec type1 = addend1Node.getTypeSpec();
+		TypeSpec type0 = addend0Node.getTypeSpec();
+		TypeSpec type1 = addend1Node.getTypeSpec();
 
-        addend0Node.jjtAccept(this, data);
-        addend1Node.jjtAccept(this, data);
+		addend0Node.jjtAccept(this, data);
+		addend1Node.jjtAccept(this, data);
 
-        // Can only use bitwise operations on integers. What do we do when they're not integers? hmm...
-        if (type0 == Predefined.integerType && type1 == Predefined.integerType) {
-            // Emit the appropriate and instruction.
-            CodeGenerator.objectFile.println("    " + "iand");
-            CodeGenerator.objectFile.flush();
-        }
+		// Can only use bitwise operations on integers. What do we do when they're not integers? hmm...
+		if (type0 == Predefined.integerType && type1 == Predefined.integerType) {
+			// Emit the appropriate and instruction.
+			CodeGenerator.objectFile.println("    " + "iand");
+			CodeGenerator.objectFile.flush();
+		}
 
-        return data;
-    }
+		return data;
+	}
 
-    public Object visit(ASTbitwiseOr node, Object data)
-    {
-        SimpleNode addend0Node = (SimpleNode) node.jjtGetChild(0);
-        SimpleNode addend1Node = (SimpleNode) node.jjtGetChild(1);
+	public Object visit(ASTbitwiseOr node, Object data)
+	{
+		SimpleNode addend0Node = (SimpleNode) node.jjtGetChild(0);
+		SimpleNode addend1Node = (SimpleNode) node.jjtGetChild(1);
 
-        TypeSpec type0 = addend0Node.getTypeSpec();
-        TypeSpec type1 = addend1Node.getTypeSpec();
+		TypeSpec type0 = addend0Node.getTypeSpec();
+		TypeSpec type1 = addend1Node.getTypeSpec();
 
-        addend0Node.jjtAccept(this, data);
-        addend1Node.jjtAccept(this, data);
+		addend0Node.jjtAccept(this, data);
+		addend1Node.jjtAccept(this, data);
 
-        // Can only use bitwise operations on integers. What do we do when they're not integers? hmm...
-        if (type0 == Predefined.integerType && type1 == Predefined.integerType) {
-            // Emit the appropriate and instruction.
-            CodeGenerator.objectFile.println("    " + "ior");
-            CodeGenerator.objectFile.flush();
-        }
+		// Can only use bitwise operations on integers. What do we do when they're not integers? hmm...
+		if (type0 == Predefined.integerType && type1 == Predefined.integerType) {
+			// Emit the appropriate and instruction.
+			CodeGenerator.objectFile.println("    " + "ior");
+			CodeGenerator.objectFile.flush();
+		}
 
-        return data;
-    }
+		return data;
+	}
 
-    public Object visit(ASTxor node, Object data)
-    {
-        SimpleNode addend0Node = (SimpleNode) node.jjtGetChild(0);
-        SimpleNode addend1Node = (SimpleNode) node.jjtGetChild(1);
+	public Object visit(ASTxor node, Object data)
+	{
+		SimpleNode addend0Node = (SimpleNode) node.jjtGetChild(0);
+		SimpleNode addend1Node = (SimpleNode) node.jjtGetChild(1);
 
-        TypeSpec type0 = addend0Node.getTypeSpec();
-        TypeSpec type1 = addend1Node.getTypeSpec();
+		TypeSpec type0 = addend0Node.getTypeSpec();
+		TypeSpec type1 = addend1Node.getTypeSpec();
 
-        addend0Node.jjtAccept(this, data);
-        addend1Node.jjtAccept(this, data);
+		addend0Node.jjtAccept(this, data);
+		addend1Node.jjtAccept(this, data);
 
-        // Can only use bitwise operations on integers. What do we do when they're not integers? hmm...
-        if (type0 == Predefined.integerType && type1 == Predefined.integerType) {
-            // Emit the appropriate and instruction.
-            CodeGenerator.objectFile.println("    " + "ixor");
-            CodeGenerator.objectFile.flush();
-        }
+		// Can only use bitwise operations on integers. What do we do when they're not integers? hmm...
+		if (type0 == Predefined.integerType && type1 == Predefined.integerType) {
+			// Emit the appropriate and instruction.
+			CodeGenerator.objectFile.println("    " + "ixor");
+			CodeGenerator.objectFile.flush();
+		}
 
-        return data;
-    }
+		return data;
+	}
 
-    public Object visit(ASTsubtract node, Object data)
-    {
-        SimpleNode addend0Node = (SimpleNode) node.jjtGetChild(0);
-        SimpleNode addend1Node = (SimpleNode) node.jjtGetChild(1);
+	public Object visit(ASTsubtract node, Object data)
+	{
+		SimpleNode addend0Node = (SimpleNode) node.jjtGetChild(0);
+		SimpleNode addend1Node = (SimpleNode) node.jjtGetChild(1);
 
-        TypeSpec type0 = addend0Node.getTypeSpec();
-        TypeSpec type1 = addend1Node.getTypeSpec();
+		TypeSpec type0 = addend0Node.getTypeSpec();
+		TypeSpec type1 = addend1Node.getTypeSpec();
 
-        // Get the addition type.
-        TypeSpec type = node.getTypeSpec();
-        String typePrefix = (type == Predefined.integerType) ? "i" : "f";
+		// Get the addition type.
+		TypeSpec type = node.getTypeSpec();
+		String typePrefix = (type == Predefined.integerType) ? "i" : "f";
 
-        // Emit code for the first expression
-        // with type conversion if necessary.
-        addend0Node.jjtAccept(this, data);
-        if ((type == Predefined.realType) &&
-                (type0 == Predefined.integerType))
-        {
-            CodeGenerator.objectFile.println("    i2f");
-            CodeGenerator.objectFile.flush();
-        }
+		// Emit code for the first expression
+		// with type conversion if necessary.
+		addend0Node.jjtAccept(this, data);
+		if ((type == Predefined.realType) &&
+				(type0 == Predefined.integerType))
+		{
+			CodeGenerator.objectFile.println("    i2f");
+			CodeGenerator.objectFile.flush();
+		}
 
-        // Emit code for the second expression
-        // with type conversion if necessary.
-        addend1Node.jjtAccept(this, data);
-        if ((type == Predefined.realType) &&
-                (type1 == Predefined.integerType))
-        {
-            CodeGenerator.objectFile.println("    i2f");
-            CodeGenerator.objectFile.flush();
-        }
+		// Emit code for the second expression
+		// with type conversion if necessary.
+		addend1Node.jjtAccept(this, data);
+		if ((type == Predefined.realType) &&
+				(type1 == Predefined.integerType))
+		{
+			CodeGenerator.objectFile.println("    i2f");
+			CodeGenerator.objectFile.flush();
+		}
 
-        // Emit the appropriate add instruction.
-        CodeGenerator.objectFile.println("    " + typePrefix + "sub");
-        CodeGenerator.objectFile.flush();
+		// Emit the appropriate add instruction.
+		CodeGenerator.objectFile.println("    " + typePrefix + "sub");
+		CodeGenerator.objectFile.flush();
 
-        return data;
-    }
+		return data;
+	}
 
-    /*
-	 * generate jasmin for multiply
-     */
-    public Object visit(ASTmultiply node, Object data)
-    {
-    	SimpleNode node_0;
-    	SimpleNode node_1;
-    	TypeSpec node_0_type;
-    	TypeSpec node_1_type;
-    	String type = "";
-    	
-    	node_0 = (SimpleNode) node.jjtGetChild(0);
-    	node_1 = (SimpleNode) node.jjtGetChild(1);
-        TypeSpec type0 = node_0.getTypeSpec();
-        TypeSpec type1 = node_1.getTypeSpec();
+	/*
+	 * generate jasmin for multiplication
+	 */
+	public Object visit(ASTmultiply node, Object data)
+	{
+		SimpleNode node_0;
+		SimpleNode node_1;
+		TypeSpec node_0_type;
+		TypeSpec node_1_type;
+		String type = "";
 
-        TypeSpec node_type = node.getTypeSpec();
-        if(node_type == Predefined.integerType){
-        	type = "i";
-        }
-        else{
-        	type = "f";
-        }
-        
-        //load node0, convert it to float if necessary
-        node_0.jjtAccept(this, data);
-        if ((node_type == Predefined.realType) &&
-                (type0 == Predefined.integerType))
-        {
-            CodeGenerator.objectFile.println("    i2f");
-            CodeGenerator.objectFile.flush();
-        }
+		node_0 = (SimpleNode) node.jjtGetChild(0);
+		node_1 = (SimpleNode) node.jjtGetChild(1);
+		node_0_type = node_0.getTypeSpec();
+		node_1_type = node_1.getTypeSpec();
 
-        //load node1, convert it to float if necessary
-        node_1.jjtAccept(this, data);
-        if ((node_type == Predefined.realType) &&
-                (type1 == Predefined.integerType))
-        {
-            CodeGenerator.objectFile.println("    i2f");
-            CodeGenerator.objectFile.flush();
-        }
-        
-        CodeGenerator.objectFile.println("    " + type + "mul");
-        CodeGenerator.objectFile.flush();
+		TypeSpec node_type = node.getTypeSpec();
+		if(node_type == Predefined.integerType){
+			type = "i";
+		}
+		else{
+			type = "f";
+		}
 
-        return data;
-    }
+		//load node0, convert it to float if necessary
+		node_0.jjtAccept(this, data);
+		if ((node_type == Predefined.realType) &&
+				(node_0_type == Predefined.integerType))
+		{
+			CodeGenerator.objectFile.println("    i2f");
+			CodeGenerator.objectFile.flush();
+		}
 
-    public Object visit(ASTdivide node, Object data)
-    {
-        SimpleNode addend0Node = (SimpleNode) node.jjtGetChild(0);
-        SimpleNode addend1Node = (SimpleNode) node.jjtGetChild(1);
+		//load node1, convert it to float if necessary
+		node_1.jjtAccept(this, data);
+		if ((node_type == Predefined.realType) &&
+				(node_1_type == Predefined.integerType))
+		{
+			CodeGenerator.objectFile.println("    i2f");
+			CodeGenerator.objectFile.flush();
+		}
 
-        TypeSpec type0 = addend0Node.getTypeSpec();
-        TypeSpec type1 = addend1Node.getTypeSpec();
+		CodeGenerator.objectFile.println("    " + type + "mul");
+		CodeGenerator.objectFile.flush();
 
-        // Get the addition type.
-        TypeSpec type = node.getTypeSpec();
-        String typePrefix = (type == Predefined.integerType) ? "i" : "f";
+		return data;
+	}
 
-        // Emit code for the first expression
-        // with type conversion if necessary.
-        addend0Node.jjtAccept(this, data);
-        if ((type == Predefined.realType) &&
-                (type0 == Predefined.integerType))
-        {
-            CodeGenerator.objectFile.println("    i2f");
-            CodeGenerator.objectFile.flush();
-        }
+	/*
+	 * generate jasmin for mod
+	 */
+	public Object visit(ASTmodulo node, Object data)
+	{
+		SimpleNode node_0;
+		SimpleNode node_1;
+		TypeSpec node_0_type;
+		TypeSpec node_1_type;
+		String type = "";
 
-        // Emit code for the second expression
-        // with type conversion if necessary.
-        addend1Node.jjtAccept(this, data);
-        if ((type == Predefined.realType) &&
-                (type1 == Predefined.integerType))
-        {
-            CodeGenerator.objectFile.println("    i2f");
-            CodeGenerator.objectFile.flush();
-        }
+		node_0 = (SimpleNode) node.jjtGetChild(0);
+		node_1 = (SimpleNode) node.jjtGetChild(1);
+		node_0_type = node_0.getTypeSpec();
+		node_1_type = node_1.getTypeSpec();
 
-        // Emit the appropriate add instruction.
-        CodeGenerator.objectFile.println("    " + typePrefix + "div");
-        CodeGenerator.objectFile.flush();
+		TypeSpec node_type = node.getTypeSpec();
+		if(node_type == Predefined.integerType){
+			type = "i";
+		}
+		else{
+			type = "f";
+		}
 
-        return data;
-    }
+		//load node0, convert it to float if necessary
+		node_0.jjtAccept(this, data);
+		if ((node_type == Predefined.realType) &&
+				(node_0_type == Predefined.integerType))
+		{
+			CodeGenerator.objectFile.println("    i2f");
+			CodeGenerator.objectFile.flush();
+		}
 
-    public Object visit(ASTmodulo node, Object data)
-    {
-        SimpleNode addend0Node = (SimpleNode) node.jjtGetChild(0);
-        SimpleNode addend1Node = (SimpleNode) node.jjtGetChild(1);
+		//load node1, convert it to float if necessary
+		node_1.jjtAccept(this, data);
+		if ((node_type == Predefined.realType) &&
+				(node_1_type == Predefined.integerType))
+		{
+			CodeGenerator.objectFile.println("    i2f");
+			CodeGenerator.objectFile.flush();
+		}
 
-        TypeSpec type0 = addend0Node.getTypeSpec();
-        TypeSpec type1 = addend1Node.getTypeSpec();
+		CodeGenerator.objectFile.println("    " + type + "rem");
+		CodeGenerator.objectFile.flush();
 
-        // Get the addition type.
-        TypeSpec type = node.getTypeSpec();
-        String typePrefix = (type == Predefined.integerType) ? "i" : "f";
+		return data;
+	}
 
-        // Emit code for the first expression
-        // with type conversion if necessary.
-        addend0Node.jjtAccept(this, data);
-        if ((type == Predefined.realType) &&
-                (type0 == Predefined.integerType))
-        {
-            CodeGenerator.objectFile.println("    i2f");
-            CodeGenerator.objectFile.flush();
-        }
+	/*
+	 * generate jasmin for division
+	 */
+	public Object visit(ASTdivide node, Object data)
+	{
+		SimpleNode node_0;
+		SimpleNode node_1;
+		TypeSpec node_0_type;
+		TypeSpec node_1_type;
+		String type = "";
 
-        // Emit code for the second expression
-        // with type conversion if necessary.
-        addend1Node.jjtAccept(this, data);
-        if ((type == Predefined.realType) &&
-                (type1 == Predefined.integerType))
-        {
-            CodeGenerator.objectFile.println("    i2f");
-            CodeGenerator.objectFile.flush();
-        }
+		node_0 = (SimpleNode) node.jjtGetChild(0);
+		node_1 = (SimpleNode) node.jjtGetChild(1);
+		node_0_type = node_0.getTypeSpec();
+		node_1_type = node_1.getTypeSpec();
 
-        // Emit the appropriate add instruction.
-        CodeGenerator.objectFile.println("    " + typePrefix + "rem");
-        CodeGenerator.objectFile.flush();
+		TypeSpec node_type = node.getTypeSpec();
+		if(node_type == Predefined.integerType){
+			type = "i";
+		}
+		else{
+			type = "f";
+		}
 
-        return data;
-    }
+		//load node0, convert it to float if necessary
+		node_0.jjtAccept(this, data);
+		if ((node_type == Predefined.realType) &&
+				(node_0_type == Predefined.integerType))
+		{
+			CodeGenerator.objectFile.println("    i2f");
+			CodeGenerator.objectFile.flush();
+		}
+
+		//load node1, convert it to float if necessary
+		node_1.jjtAccept(this, data);
+		if ((node_type == Predefined.realType) &&
+				(node_1_type == Predefined.integerType))
+		{
+			CodeGenerator.objectFile.println("    i2f");
+			CodeGenerator.objectFile.flush();
+		}
+
+		CodeGenerator.objectFile.println("    " + type + "div");
+		CodeGenerator.objectFile.flush();
+
+		return data;
+	}
 }
