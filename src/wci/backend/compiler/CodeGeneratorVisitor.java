@@ -428,6 +428,9 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		return data;
 	}
 
+	/*
+	 * generate jasmin for for statement
+	 */
 	public Object visit(ASTfor_statement node, Object data)
 	{
 		//node_0 = for loop header, node_1 = blockcode
@@ -452,6 +455,9 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		return data;
 	}
 
+	/*
+	 * generate jasmin for for_header
+	 */
 	public Object visit(ASTfor_header node, Object data) {
 		ArrayList<Object> for_loop = new ArrayList<Object>();
 
