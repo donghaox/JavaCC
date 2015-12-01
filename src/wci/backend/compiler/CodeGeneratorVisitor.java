@@ -289,41 +289,44 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 	public Object visit(ASTidentifier node, Object data)
 	{
 		SymTabEntry entry = (SymTabEntry) node.getAttribute(ID);
-		String upperTypeCode = "";
-		String lowerTypeCode = "";
-		String wrapTypeCode = "";
+		String type_des = "";
+		String data_type = "";
+		String type_wrap = "";
 
 		if (entry.getTypeSpec() == Predefined.integerType) {
-			wrapTypeCode = "I";
-			upperTypeCode = "I";
-			lowerTypeCode = "i";
+			type_wrap = "I";
+			type_des = "I";
+			data_type = "i";
 		}
 		else if (entry.getTypeSpec() == Predefined.realType) {
-			wrapTypeCode = "R";
-			upperTypeCode = "F";
-			lowerTypeCode = "f";
+			type_wrap = "R";
+			type_des = "F";
+			data_type = "f";
 		}
 		else if (entry.getTypeSpec() == Predefined.charType) {
-			wrapTypeCode = "Ljava/lang/String;";
-			upperTypeCode = "Ljava/lang/String;";
-			lowerTypeCode = "Ljava/lang/String;"; // TODO: How to load a local variable string?
+			type_wrap = "Ljava/lang/String;";
+			type_des = "Ljava/lang/String;";
+			data_type = "Ljava/lang/String;"; 
 		}
 		else if (entry.getTypeSpec() == Predefined.booleanType) {
-			wrapTypeCode = "B";
-			upperTypeCode = "Z";
-			lowerTypeCode = "z";
+			type_wrap = "B";
+			type_des = "Z";
+			data_type = "z";
 		}
 
-		if (entry.getDefinition() == DefinitionImpl.REFERENCE_PARAMETER) {
-			CodeGenerator.objectFile.println("    aload " + entry.getIndex());
-			CodeGenerator.objectFile.println("    getfield " + wrapTypeCode + "Wrap/value " + upperTypeCode);
-		}
-		else if (entry.getSymTab().getNestingLevel() == 1) {
+		//push program variable to stack for declared variable
+		if (entry.getSymTab().getNestingLevel() == 1) {
 			CodeGenerator.objectFile.println("    getstatic " + programName +
-					"/" + entry.getName() + " " + upperTypeCode);
+					"/" + entry.getName() + " " + type_des);
 		}
+		//handle passing by reference using BWrap, IWrap, RWrap, CWrap
+		else if(entry.getDefinition() == DefinitionImpl.REFERENCE_PARAMETER) {
+			CodeGenerator.objectFile.println("    aload " + entry.getIndex());
+			CodeGenerator.objectFile.println("    getfield " + type_wrap + "Wrap/value " + type_des);
+		}
+		//use index to load according variable to stack, first time declare
 		else {
-			CodeGenerator.objectFile.println("    " + lowerTypeCode + "load " + entry.getIndex());
+			CodeGenerator.objectFile.println("    " + data_type + "load " + entry.getIndex());
 		}
 
 		CodeGenerator.objectFile.flush();
@@ -380,24 +383,21 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 	 */
 	public Object visit(ASTprintln node, Object data)
 	{
-
-		SimpleNode target;
-		TypeSpec target_type;
+		SimpleNode target = get_child(node, 0);
 		String type_descriptor = "";
 
 		//type checking to generate according type descriptor
 		target = (SimpleNode) node.jjtGetChild(0);
-		target_type = target.getTypeSpec();
-		if (target_type == Predefined.realType) {
+		if (target.getTypeSpec() == Predefined.realType) {
 			type_descriptor = "F";
 		}
-		else if (target_type == Predefined.integerType) {
+		else if (target.getTypeSpec() == Predefined.integerType) {
 			type_descriptor = "I";
 		}
-		else if (target_type == Predefined.charType) {
+		else if (target.getTypeSpec() == Predefined.charType) {
 			type_descriptor = "Ljava/lang/String;";
 		}
-		else if (target_type == Predefined.booleanType) {
+		else if (target.getTypeSpec() == Predefined.booleanType) {
 			type_descriptor = "Z";
 		}
 
@@ -415,24 +415,21 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 	 */
 	public Object visit(ASTprint node, Object data)
 	{
-
-		SimpleNode target;
-		TypeSpec target_type;
+		SimpleNode target = get_child(node, 0);
 		String type_descriptor = "";
 
 		//type checking to generate according type descriptor
 		target = (SimpleNode) node.jjtGetChild(0);
-		target_type = target.getTypeSpec();
-		if (target_type == Predefined.realType) {
+		if (target.getTypeSpec() == Predefined.realType) {
 			type_descriptor = "F";
 		}
-		else if (target_type == Predefined.integerType) {
+		else if (target.getTypeSpec() == Predefined.integerType) {
 			type_descriptor = "I";
 		}
-		else if (target_type == Predefined.charType) {
+		else if (target.getTypeSpec() == Predefined.charType) {
 			type_descriptor = "Ljava/lang/String;";
 		}
-		else if (target_type == Predefined.booleanType) {
+		else if (target.getTypeSpec() == Predefined.booleanType) {
 			type_descriptor = "Z";
 		}
 
