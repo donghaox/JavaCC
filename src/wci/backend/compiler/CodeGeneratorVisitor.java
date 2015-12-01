@@ -660,11 +660,19 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		SimpleNode node_0 = get_child(node, 0);
 		SimpleNode node_1 =  get_child(node, 1);
 
+		//load node0, convert it to float if necessary
 		node_0.jjtAccept(this, data);
-		int_to_float(node, node_0);
-		node_1.jjtAccept(this, data);
-		int_to_float(node, node_1);
+		if (node_0.getTypeSpec() == Predefined.integerType) {
+			CodeGenerator.objectFile.println("    i2f");
+			CodeGenerator.objectFile.flush();
+		}
 
+		//load node1, convert it to float if necessary
+		node_1.jjtAccept(this, data);
+		if (node_1.getTypeSpec() == Predefined.integerType) {
+			CodeGenerator.objectFile.println("    i2f");
+			CodeGenerator.objectFile.flush();
+		}
 		CodeGenerator.objectFile.println("    fcmpg");
 	}
 
