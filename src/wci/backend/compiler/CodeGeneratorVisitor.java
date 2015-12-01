@@ -651,69 +651,6 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
         return label;
     }
 
-    public Object visit(ASTincrement node, Object data)
-    {
-        SimpleNode incNode = (SimpleNode) node.jjtGetChild(0);
-        TypeSpec type = node.getTypeSpec();
-
-        SymTabEntry id = (SymTabEntry) incNode.getAttribute(ID);
-        String fieldName = id.getName();
-
-        String typePrefix = (type == Predefined.integerType) ? "i" : "f";
-        String typePrefix2 = (type == Predefined.integerType) ? "I" : "F";
-
-        CodeGenerator.objectFile.println("    ldc 1");
-        CodeGenerator.objectFile.flush();
-
-        incNode.jjtAccept(this, data);
-        CodeGenerator.objectFile.println("    " + typePrefix + "add");
-        CodeGenerator.objectFile.flush();
-
-        if (id.getSymTab().getNestingLevel() == 1) {
-            CodeGenerator.objectFile.println("    putstatic " + programName +
-                    "/" + fieldName + " " + typePrefix2);
-        }
-        else {
-            CodeGenerator.objectFile.println("    " + typePrefix + "store " + id.getIndex());
-        }
-
-        CodeGenerator.objectFile.flush();
-
-        return data;
-    }
-
-    public Object visit(ASTdecrement node, Object data)
-    {
-        SimpleNode decNode = (SimpleNode) node.jjtGetChild(0);
-        TypeSpec type = node.getTypeSpec();
-
-        String typePrefix = (type == Predefined.integerType) ? "i" : "f";
-        String typePrefix2 = (type == Predefined.integerType) ? "I" : "F";
-
-        SymTabEntry id = (SymTabEntry) decNode.getAttribute(ID);
-        String fieldName = id.getName();
-
-        CodeGenerator.objectFile.println("    ldc -1");
-        CodeGenerator.objectFile.flush();
-
-        decNode.jjtAccept(this, data);
-        CodeGenerator.objectFile.println("    " + typePrefix + "add");
-        CodeGenerator.objectFile.flush();
-
-        if (id.getSymTab().getNestingLevel() == 1) {
-            CodeGenerator.objectFile.println("    putstatic " + programName +
-                    "/" + fieldName + " " + typePrefix2);
-        }
-        else {
-            CodeGenerator.objectFile.println("    " + typePrefix + "store " + id.getIndex());
-        }
-
-        CodeGenerator.objectFile.flush();
-
-        return data;
-    }
-
-
     public Object visit(ASTadd node, Object data)
     {
         SimpleNode addend0Node = (SimpleNode) node.jjtGetChild(0);

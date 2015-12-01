@@ -174,15 +174,23 @@ public class ProlangParserVisitorAdapter implements ProlangParserVisitor {
         return node.childrenAccept(this, data);
     }
 
-    public Object visit(ASTincrement node, Object data) {
-        return node.childrenAccept(this, data);
-    }
-
-    public Object visit(ASTdecrement node, Object data) {
-        return node.childrenAccept(this, data);
-    }
-
     public Object visit(ASTfunctionCall node, Object data) {
         return node.childrenAccept(this, data);
-    } 
+    }
+
+	public Object visit(ASTif_statement node, Object data) {
+	      return node.childrenAccept(this, data);
+	}
+
+	public Object visit(ASTelse_statement node, Object data) {
+	      return node.childrenAccept(this, data);
+	}
+
+	public Object visit(ASTswitch_statement node, Object data) {
+	      return node.childrenAccept(this, data);
+	}
+
+	public Object visit(ASTfor_statement node, Object data) {
+	      return node.childrenAccept(this, data);
+	} 
 }
