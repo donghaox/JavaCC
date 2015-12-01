@@ -524,7 +524,7 @@ void forClause() : {
 {
     try {
         (LOOKAHEAD(2) (assignmentStatement(syncSet) <DOT> expression(syncSet) <DOT>
-                           (LOOKAHEAD(2) assignmentStatement(syncSet)))
+                           assignmentStatement(syncSet)<DOT>)
         |
         expression(syncSet))
     }

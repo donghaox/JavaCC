@@ -8,11 +8,11 @@
 /ASTbooleanConstant.java
 /ASTcaseGroup.java
 /ASTdivide.java
-/ASTelseStatement.java
+/ASTelse_statement.java
 /ASTequalEqual.java
 /ASTexpressionList.java
+/ASTfor_statement.java
 /ASTforClause.java
-/ASTforStatement.java
 /ASTfunctionCall.java
 /ASTfunctionDeclaration.java
 /ASTgreaterEqual.java
@@ -34,8 +34,8 @@
 /ASTreturnType.java
 /ASTstatementList.java
 /ASTsubtract.java
+/ASTswitch_statement.java
 /ASTswitchBlock.java
-/ASTswitchStatement.java
 /ASTvariableDeclaration.java
 /ASTvoidConstant.java
 /ASTxor.java
@@ -52,6 +52,3 @@
 /ProlangParserTreeConstants.java
 /ProlangParserVisitor.java
 /SimpleNode.java
-/ASTelse_statement.java
-/ASTfor_statement.java
-/ASTswitch_statement.java
