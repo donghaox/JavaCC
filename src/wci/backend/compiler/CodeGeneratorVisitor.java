@@ -18,28 +18,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 	public String getCurrentLabel() { return "label" + tagNumber; }
 	public String getNextLabel() { return "label" + ++tagNumber; }
 
-	public void emitComparisonCode(SimpleNode node, Object data) {
-		SimpleNode lhs = (SimpleNode) node.jjtGetChild(0);
-		SimpleNode rhs = (SimpleNode) node.jjtGetChild(1);
-
-		TypeSpec lhsType = lhs.getTypeSpec();
-		TypeSpec rhsType = rhs.getTypeSpec();
-
-		lhs.jjtAccept(this, data);
-		if (lhsType == Predefined.integerType) {
-			CodeGenerator.objectFile.println("    i2f");
-			CodeGenerator.objectFile.flush();
-		}
-
-		rhs.jjtAccept(this, data);
-		if (rhsType == Predefined.integerType) {
-			CodeGenerator.objectFile.println("    i2f");
-			CodeGenerator.objectFile.flush();
-		}
-
-		CodeGenerator.objectFile.println("    fcmpg");
-	}
-
+	
 	public Object visit(ASTstatementList node, Object data) {
 		if (this.programName == null) {
 			this.programName = (String) data;
@@ -667,77 +646,74 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 
 	public Object visit(ASTadd node, Object data)
 	{
-		SimpleNode addend0Node = (SimpleNode) node.jjtGetChild(0);
-		SimpleNode addend1Node = (SimpleNode) node.jjtGetChild(1);
+		SimpleNode node_0 = get_child(node, 0);
+		SimpleNode node_1 =  get_child(node, 1);
 
-		TypeSpec type0 = addend0Node.getTypeSpec();
-		TypeSpec type1 = addend1Node.getTypeSpec();
-
-		// Get the addition type.
 		TypeSpec type = node.getTypeSpec();
 		String typePrefix = (type == Predefined.integerType) ? "i" : "f";
+		
+		// adding two strings
+		if  (type == Predefined.charType) {
+			String a = "";
+			String b = "";
 
-		if (type != Predefined.charType) {
-			// Emit code for the first expression
-			// with type conversion if necessary.
-			addend0Node.jjtAccept(this, data);
-			if ((type == Predefined.realType) &&
-					(type0 == Predefined.integerType))
-			{
-				CodeGenerator.objectFile.println("    i2f");
-				CodeGenerator.objectFile.flush();
+			if (node_0.getTypeSpec() == Predefined.integerType) {
+				a = "I";
 			}
-
-			// Emit code for the second expression
-			// with type conversion if necessary.
-			addend1Node.jjtAccept(this, data);
-			if ((type == Predefined.realType) &&
-					(type1 == Predefined.integerType))
-			{
-				CodeGenerator.objectFile.println("    i2f");
-				CodeGenerator.objectFile.flush();
+			else if (node_0.getTypeSpec() == Predefined.realType) {
+				a = "F";
+			}
+			else if (node_0.getTypeSpec() == Predefined.charType) {
+				a = "Ljava/lang/String;";
 			}
 
-			// Emit the appropriate add instruction.
-			CodeGenerator.objectFile.println("    " + typePrefix + "add");
-			CodeGenerator.objectFile.flush();
-		}
-		else {
-			String lhsType = null;
-			String rhsType = null;
-
-			if (type0 == Predefined.integerType) {
-				lhsType = "I";
+			if (node_1.getTypeSpec() == Predefined.integerType) {
+				b = "I";
 			}
-			else if (type0 == Predefined.realType) {
-				lhsType = "F";
+			else if (node_1.getTypeSpec() == Predefined.realType) {
+				b = "F";
 			}
-			else if (type0 == Predefined.charType) {
-				lhsType = "Ljava/lang/String;";
-			}
-
-			if (type1 == Predefined.integerType) {
-				rhsType = "I";
-			}
-			else if (type1 == Predefined.realType) {
-				rhsType = "F";
-			}
-			else if (type1 == Predefined.charType) {
-				rhsType = "Ljava/lang/String;";
+			else if (node_1.getTypeSpec() == Predefined.charType) {
+				b = "Ljava/lang/String;";
 			}
 
 			CodeGenerator.objectFile.println("    new       java/lang/StringBuilder");
 			CodeGenerator.objectFile.println("    dup");
 			CodeGenerator.objectFile.println("    invokenonvirtual java/lang/StringBuilder/<init>()V");
-			addend0Node.jjtAccept(this, data);
+			node_0.jjtAccept(this, data);
 			CodeGenerator.objectFile.println("    invokevirtual java/lang/StringBuilder/append("
-					+ lhsType + ")Ljava/lang/StringBuilder;");
-			addend1Node.jjtAccept(this, data);
+					+ a + ")Ljava/lang/StringBuilder;");
+			node_1.jjtAccept(this, data);
 			CodeGenerator.objectFile.println("    invokevirtual java/lang/StringBuilder/append("
-					+ rhsType + ")Ljava/lang/StringBuilder;");
+					+ b + ")Ljava/lang/StringBuilder;");
 			CodeGenerator.objectFile.println("    invokevirtual java/lang/StringBuilder/toString()Ljava/lang/String;");
 			CodeGenerator.objectFile.flush();
 		}
+		
+		//adding two numbers
+		else {
+			//load node0, convert it to float if necessary
+			node_0.jjtAccept(this, data);
+			if ((type == Predefined.realType) &&
+					(node_0.getTypeSpec() == Predefined.integerType))
+			{
+				CodeGenerator.objectFile.println("    i2f");
+				CodeGenerator.objectFile.flush();
+			}
+
+			//load node1, convert it to float if necessary
+			node_1.jjtAccept(this, data);
+			if ((type == Predefined.realType) &&
+					(node_1.getTypeSpec() == Predefined.integerType))
+			{
+				CodeGenerator.objectFile.println("    i2f");
+				CodeGenerator.objectFile.flush();
+			}
+
+			CodeGenerator.objectFile.println("    " + typePrefix + "add");
+			CodeGenerator.objectFile.flush();
+		}
+		
 
 		return data;
 	}
@@ -805,60 +781,14 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		return data;
 	}
 
+	/*
+	 * generate jasmin for subtraction
+	 */
 	public Object visit(ASTsubtract node, Object data)
 	{
-		SimpleNode addend0Node = (SimpleNode) node.jjtGetChild(0);
-		SimpleNode addend1Node = (SimpleNode) node.jjtGetChild(1);
-
-		TypeSpec type0 = addend0Node.getTypeSpec();
-		TypeSpec type1 = addend1Node.getTypeSpec();
-
-		// Get the addition type.
-		TypeSpec type = node.getTypeSpec();
-		String typePrefix = (type == Predefined.integerType) ? "i" : "f";
-
-		// Emit code for the first expression
-		// with type conversion if necessary.
-		addend0Node.jjtAccept(this, data);
-		if ((type == Predefined.realType) &&
-				(type0 == Predefined.integerType))
-		{
-			CodeGenerator.objectFile.println("    i2f");
-			CodeGenerator.objectFile.flush();
-		}
-
-		// Emit code for the second expression
-		// with type conversion if necessary.
-		addend1Node.jjtAccept(this, data);
-		if ((type == Predefined.realType) &&
-				(type1 == Predefined.integerType))
-		{
-			CodeGenerator.objectFile.println("    i2f");
-			CodeGenerator.objectFile.flush();
-		}
-
-		// Emit the appropriate add instruction.
-		CodeGenerator.objectFile.println("    " + typePrefix + "sub");
-		CodeGenerator.objectFile.flush();
-
-		return data;
-	}
-
-	/*
-	 * generate jasmin for multiplication
-	 */
-	public Object visit(ASTmultiply node, Object data)
-	{
-		SimpleNode node_0;
-		SimpleNode node_1;
-		TypeSpec node_0_type;
-		TypeSpec node_1_type;
+		SimpleNode node_0 = get_child(node, 0);
+		SimpleNode node_1 =  get_child(node, 1);
 		String type = "";
-
-		node_0 = (SimpleNode) node.jjtGetChild(0);
-		node_1 = (SimpleNode) node.jjtGetChild(1);
-		node_0_type = node_0.getTypeSpec();
-		node_1_type = node_1.getTypeSpec();
 
 		TypeSpec node_type = node.getTypeSpec();
 		if(node_type == Predefined.integerType){
@@ -871,7 +801,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		//load node0, convert it to float if necessary
 		node_0.jjtAccept(this, data);
 		if ((node_type == Predefined.realType) &&
-				(node_0_type == Predefined.integerType))
+				(node_0.getTypeSpec() == Predefined.integerType))
 		{
 			CodeGenerator.objectFile.println("    i2f");
 			CodeGenerator.objectFile.flush();
@@ -880,7 +810,48 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		//load node1, convert it to float if necessary
 		node_1.jjtAccept(this, data);
 		if ((node_type == Predefined.realType) &&
-				(node_1_type == Predefined.integerType))
+				(node_1.getTypeSpec() == Predefined.integerType))
+		{
+			CodeGenerator.objectFile.println("    i2f");
+			CodeGenerator.objectFile.flush();
+		}
+
+		CodeGenerator.objectFile.println("    " + type + "sub");
+		CodeGenerator.objectFile.flush();
+
+		return data;
+	}
+
+	/*
+	 * generate jasmin for multiplication
+	 */
+	public Object visit(ASTmultiply node, Object data)
+	{
+		SimpleNode node_0 = get_child(node, 0);
+		SimpleNode node_1 =  get_child(node, 1);
+		String type = "";
+
+		TypeSpec node_type = node.getTypeSpec();
+		if(node_type == Predefined.integerType){
+			type = "i";
+		}
+		else{
+			type = "f";
+		}
+
+		//load node0, convert it to float if necessary
+		node_0.jjtAccept(this, data);
+		if ((node_type == Predefined.realType) &&
+				(node_0.getTypeSpec() == Predefined.integerType))
+		{
+			CodeGenerator.objectFile.println("    i2f");
+			CodeGenerator.objectFile.flush();
+		}
+
+		//load node1, convert it to float if necessary
+		node_1.jjtAccept(this, data);
+		if ((node_type == Predefined.realType) &&
+				(node_1.getTypeSpec() == Predefined.integerType))
 		{
 			CodeGenerator.objectFile.println("    i2f");
 			CodeGenerator.objectFile.flush();
@@ -897,16 +868,9 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 	 */
 	public Object visit(ASTmodulo node, Object data)
 	{
-		SimpleNode node_0;
-		SimpleNode node_1;
-		TypeSpec node_0_type;
-		TypeSpec node_1_type;
+		SimpleNode node_0 = get_child(node, 0);
+		SimpleNode node_1 =  get_child(node, 1);
 		String type = "";
-
-		node_0 = (SimpleNode) node.jjtGetChild(0);
-		node_1 = (SimpleNode) node.jjtGetChild(1);
-		node_0_type = node_0.getTypeSpec();
-		node_1_type = node_1.getTypeSpec();
 
 		TypeSpec node_type = node.getTypeSpec();
 		if(node_type == Predefined.integerType){
@@ -919,7 +883,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		//load node0, convert it to float if necessary
 		node_0.jjtAccept(this, data);
 		if ((node_type == Predefined.realType) &&
-				(node_0_type == Predefined.integerType))
+				(node_0.getTypeSpec() == Predefined.integerType))
 		{
 			CodeGenerator.objectFile.println("    i2f");
 			CodeGenerator.objectFile.flush();
@@ -928,11 +892,12 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		//load node1, convert it to float if necessary
 		node_1.jjtAccept(this, data);
 		if ((node_type == Predefined.realType) &&
-				(node_1_type == Predefined.integerType))
+				(node_1.getTypeSpec() == Predefined.integerType))
 		{
 			CodeGenerator.objectFile.println("    i2f");
 			CodeGenerator.objectFile.flush();
 		}
+
 
 		CodeGenerator.objectFile.println("    " + type + "rem");
 		CodeGenerator.objectFile.flush();
@@ -945,16 +910,9 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 	 */
 	public Object visit(ASTdivide node, Object data)
 	{
-		SimpleNode node_0;
-		SimpleNode node_1;
-		TypeSpec node_0_type;
-		TypeSpec node_1_type;
+		SimpleNode node_0 = get_child(node, 0);
+		SimpleNode node_1 =  get_child(node, 1);
 		String type = "";
-
-		node_0 = (SimpleNode) node.jjtGetChild(0);
-		node_1 = (SimpleNode) node.jjtGetChild(1);
-		node_0_type = node_0.getTypeSpec();
-		node_1_type = node_1.getTypeSpec();
 
 		TypeSpec node_type = node.getTypeSpec();
 		if(node_type == Predefined.integerType){
@@ -967,7 +925,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		//load node0, convert it to float if necessary
 		node_0.jjtAccept(this, data);
 		if ((node_type == Predefined.realType) &&
-				(node_0_type == Predefined.integerType))
+				(node_0.getTypeSpec() == Predefined.integerType))
 		{
 			CodeGenerator.objectFile.println("    i2f");
 			CodeGenerator.objectFile.flush();
@@ -976,7 +934,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		//load node1, convert it to float if necessary
 		node_1.jjtAccept(this, data);
 		if ((node_type == Predefined.realType) &&
-				(node_1_type == Predefined.integerType))
+				(node_1.getTypeSpec() == Predefined.integerType))
 		{
 			CodeGenerator.objectFile.println("    i2f");
 			CodeGenerator.objectFile.flush();
@@ -986,5 +944,48 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		CodeGenerator.objectFile.flush();
 
 		return data;
+	}
+	
+	/*
+	 * Helper get_child method
+	 *  int child : 0 = left child, 1 right child.
+	 */
+	private SimpleNode get_child(SimpleNode _node, int child){
+		SimpleNode node = null;
+		if(child == 0){
+			node = (SimpleNode) _node.jjtGetChild(0);
+			return node;
+		}
+		else if(child == 1){
+			node = (SimpleNode) _node.jjtGetChild(1);
+			return node;
+		}
+		else{
+			return null;
+		}
+	}
+	
+	/*
+	 * Helper comparison method
+	 */
+	public void emitComparisonCode(SimpleNode node, Object data) {
+		SimpleNode node_0 = get_child(node, 0);
+		SimpleNode node_1 =  get_child(node, 1);
+		
+		//load node0, convert it to float if necessary
+		node_0.jjtAccept(this, data);
+		if (node_0.getTypeSpec() == Predefined.integerType) {
+			CodeGenerator.objectFile.println("    i2f");
+			CodeGenerator.objectFile.flush();
+		}
+
+		//load node1, convert it to float if necessary
+		node_1.jjtAccept(this, data);
+		if (node_1.getTypeSpec() == Predefined.integerType) {
+			CodeGenerator.objectFile.println("    i2f");
+			CodeGenerator.objectFile.flush();
+		}
+
+		CodeGenerator.objectFile.println("    fcmpg");
 	}
 }

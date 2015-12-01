@@ -1,0 +1,9 @@
+-module (Main).
+
+int A.
+A = 5 + 7.
+string B.
+B = "sdf".
+B = B + "here".
+io:fwriteln(A).
+io:fwrite(B).
