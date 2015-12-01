@@ -19,14 +19,12 @@ public class TypeSetterVisitor extends ProlangParserVisitorAdapter
             if (childType == Predefined.realType) {
                 type = Predefined.realType;
             }
-            else if (childType == Predefined.charType) {
-                type = Predefined.charType;
-            }
-            /* TODO: Haven't implemented handling booleans yet so I am leaving it commented
             else if (childType == Predefined.booleanType) {
                 type = Predefined.booleanType;
             }
-            */
+            else if (childType == Predefined.charType) {
+                type = Predefined.charType;
+            }
         }
 
         for (; i < count && type == Predefined.realType; i++) {

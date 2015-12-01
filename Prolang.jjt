@@ -151,7 +151,7 @@ void statement() #void :
     try
     {
           LOOKAHEAD(2) declarationStatement(syncSet) <DOT>
-        | LOOKAHEAD(2) assignmentStatement(syncSet) <DOT>
+        | LOOKAHEAD(2) assignmentStatement(syncSet)  <DOT>
 		| if_statement(syncSet)
         | for_statement(syncSet)
         | println(syncSet)

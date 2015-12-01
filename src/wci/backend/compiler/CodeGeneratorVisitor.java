@@ -478,30 +478,29 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		return loopData;
 	}
 
+	/*
+	 * generate jasmin for if statement
+	 */
 	public Object visit(ASTif_statement node, Object data)
 	{
-		SimpleNode condition = (SimpleNode) node.jjtGetChild(0);
-		SimpleNode block = (SimpleNode) node.jjtGetChild(1);
-		SimpleNode elseStatement = null;
+		//node0 = expression, node1 = blockcode, node2 = else if exitst
+		SimpleNode node_0 = get_child(node, 0);
+		SimpleNode node_1 = get_child(node, 1);
+		SimpleNode node_2 = get_child(node, 2);
 
-		// Check if an else block exists
-		if (node.jjtGetNumChildren() == 3) {
-			elseStatement = (SimpleNode) node.jjtGetChild(2);
-		}
-
-		// When going into the condition, it will emit a conditional jump to the returned label
-		String label = (String) condition.jjtAccept(this, data);
-		String label2 = getNextLabel(); // If condition is true and there exist an else statement, jump to this label
-		block.jjtAccept(this, label2); // Going in here will emit all the code in the body
-		CodeGenerator.objectFile.println(label + ":"); // The label to jump to when the condition is false
+		String true_false = (String) node_0.jjtAccept(this, data);
+		//if true
+		String if_true = getNextLabel(); 
+		node_1.jjtAccept(this, if_true); 
+		CodeGenerator.objectFile.println(if_true + ":");
 		CodeGenerator.objectFile.flush();
-
-		if (elseStatement != null) {
-			elseStatement.jjtAccept(this, data);
-		}
-
-		CodeGenerator.objectFile.println(label2 + ":"); // Jump to this label if condition is true and there is an else
+	    //else
+		CodeGenerator.objectFile.println(true_false + ":"); 
 		CodeGenerator.objectFile.flush();
+		//executing else block if exists
+		if (node_2 != null) {
+			node_2.jjtAccept(this, data);
+		}
 
 		return data;
 	}
@@ -566,6 +565,9 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		return label;
 	}
 
+	/*
+	 * generate jasmin for addition
+	 */
 	public Object visit(ASTadd node, Object data)
 	{
 		SimpleNode node_0 = get_child(node, 0);
@@ -752,17 +754,10 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 
 	/*
 	 * Helper get_child method
-	 *  int child : 0 = left child, 1 right child.
 	 */
 	private SimpleNode get_child(SimpleNode _node, int child){
-		SimpleNode node = null;
-		if(child == 0){
-			node = (SimpleNode) _node.jjtGetChild(0);
-			return node;
-		}
-		else if(child == 1){
-			node = (SimpleNode) _node.jjtGetChild(1);
-			return node;
+		if(child <= _node.jjtGetNumChildren() - 1){
+			return (SimpleNode) _node.jjtGetChild(child);
 		}
 		else{
 			return null;
