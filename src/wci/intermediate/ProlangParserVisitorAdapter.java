@@ -63,10 +63,6 @@ public class ProlangParserVisitorAdapter implements ProlangParserVisitor {
         return node.childrenAccept(this, data);
     }
 
-    public Object visit(ASTswitchBlock node, Object data) {
-        return node.childrenAccept(this, data);
-    }
-
     public Object visit(ASTcaseGroup node, Object data) {
         return node.childrenAccept(this, data);
     }
@@ -163,10 +159,6 @@ public class ProlangParserVisitorAdapter implements ProlangParserVisitor {
 	}
 
 	public Object visit(ASTelse_statement node, Object data) {
-	      return node.childrenAccept(this, data);
-	}
-
-	public Object visit(ASTswitch_statement node, Object data) {
 	      return node.childrenAccept(this, data);
 	}
 

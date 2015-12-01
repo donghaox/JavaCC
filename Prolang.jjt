@@ -139,7 +139,7 @@ SimpleNode statementList() :
 
 /***********************************  statement  *************************************************
 statement ::= ( declarationStatement <DOT> | arrayDeclaration<DOT> | assignmentStatement<DOT> 
- 						| arrayAssignmentStatement<DOT> | switch_statement | if_statement
+ 						| arrayAssignmentStatement<DOT> | if_statement
  						| for_statement | printStatement<DOT>| functionCall<DOT> )
 **************************************************************************************************/
 void statement() #void :
@@ -156,7 +156,6 @@ void statement() #void :
         | LOOKAHEAD(2) assignmentStatement(syncSet) <DOT>
         | LOOKAHEAD(2) arrayAssignmentStatement(syncSet) <DOT>
 		| if_statement(syncSet)
-        | switch_statement(syncSet)
         | for_statement(syncSet)
         | println(syncSet)
         | print(syncSet)
@@ -436,60 +435,6 @@ void else_statement(HashSet syncSet) : { syncSet.add(ELSE); }
     }
 }
 
-/***********************************  switch_statement  ********************************************
-switch_statement ::= <SWITCH> expression switch_block 
-**************************************************************************************************/
-void switch_statement(HashSet syncSet) :
-{
-    syncSet.add(SWITCH);
-    syncSet.add(CASE);
-    syncSet.add(DEFAULT_TOKEN);
-}
-{
-    try {
-        <SWITCH> ( expression(syncSet))?  switchBlock() {}
-    }
-    catch (ParseException ex) {
-        handleError(ex, syncSet, true);
-    }
-    finally {
-        syncSet.remove(SWITCH);
-        syncSet.remove(CASE);
-        syncSet.remove(DEFAULT_TOKEN);
-    }
-}
-
-/***********************************  switchBlock  ***********************************************
-switchBlock ::= <OPEN_BRACE> caseGroup <CLOSE_BRACE>
-**************************************************************************************************/
-void switchBlock() : {}
-{
-   <OPEN_BRACE> caseGroup() <CLOSE_BRACE>
-}
-
-/***********************************  caseGroup  *************************************************
-caseGroup ::= (<CASE> expressionList <MINUS><GREATER_THAN> statementList)* defaultCase
-**************************************************************************************************/
-void caseGroup() :
-{
-    HashSet syncSet = new HashSet();
-    syncSet.add(EOF);
-    syncSet.add(DOT);
-    syncSet.add(CASE);
-}
-{
-    (<CASE> expressionList(syncSet) <MINUS> <GREATER_THAN> statementList())*
-    defaultCase()
-}
-
-/***********************************  defaultCase  ***********************************************
-caseGroup ::= (<CASE> expressionList <MINUS><GREATER_THAN> statementList)* defaultCase
-**************************************************************************************************/
-void defaultCase() #void : {}
-{
-    (<DEFAULT_TOKEN> ":" statementList())?
-}
-
 /***********************************  assignmentStatement  ***************************************
 assignmentStatement ::= identifier <EQUAL> expression 
 **************************************************************************************************/
@@ -760,8 +705,6 @@ TOKEN: {
       | <ELSE: "else">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <MODULE: "module">
-        { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
-      | <SWITCH: "switch">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <IF: "if">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
