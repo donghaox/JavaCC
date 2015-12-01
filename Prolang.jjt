@@ -490,8 +490,8 @@ void defaultCase() #void : {}
     (<DEFAULT_TOKEN> ":" statementList())?
 }
 
-/***********************************    ***********************************************
-
+/***********************************  assignmentStatement  ***************************************
+assignmentStatement ::= identifier <EQUAL> expression 
 **************************************************************************************************/
 void assignmentStatement(HashSet syncSet) : { SimpleNode variableNode; }
 {
@@ -504,8 +504,8 @@ void assignmentStatement(HashSet syncSet) : { SimpleNode variableNode; }
     <EQUALS> expression(syncSet)
 }
 
-/***********************************  forStatement  ***********************************************
-
+/***********************************  forStatement  **********************************************
+forStatement ::= <FOR> forClause block()
 **************************************************************************************************/
 void forStatement(HashSet syncSet) : {}
 {
@@ -513,7 +513,7 @@ void forStatement(HashSet syncSet) : {}
 }
 
 /***********************************  forClause  *************************************************
-
+forClause ::= assignmentStatement <DOT> expression <DOT> assignmentStatement
 **************************************************************************************************/
 void forClause() : {
     HashSet syncSet = new HashSet();
@@ -523,12 +523,10 @@ void forClause() : {
 }
 {
     try {
-        // A regular c-style for loop
-        (LOOKAHEAD(2) (assignmentStatement(syncSet) <SEMICOLON> expression(syncSet) <SEMICOLON>
+        (LOOKAHEAD(2) (assignmentStatement(syncSet) <DOT> expression(syncSet) <DOT>
                            (LOOKAHEAD(2) assignmentStatement(syncSet)))
         |
         expression(syncSet))
-        // ^ a while loop
     }
     catch (ParseException ex) {
         handleError(ex, syncSet, true);
@@ -539,7 +537,8 @@ void forClause() : {
 }
 
 /***********************************  operand  ***************************************************
-
+operand ::= identifier | integerConstant | realConStant | booleanConstant | string |
+             <OPEN_PAREN> expression <CLOSE_PAREN >
 **************************************************************************************************/
 void operand(HashSet syncSet) #void : {}
 {
@@ -552,43 +551,46 @@ void operand(HashSet syncSet) #void : {}
     )
 }
 
-/***********************************    ***********************************************
-
+/***********************************  relationalOperators  ***************************************
+relationalOperators ::= < EQUAL_EQUAL > | < NOT_EQUAL > | < LESS_THAN > | < LESS_EQUAL >
+                        | < GREATER_THAN > | < GREATER_EQUAL >
 **************************************************************************************************/
 void relationalOperators() #void : {}
 {
     < EQUAL_EQUAL > | < NOT_EQUAL > | < LESS_THAN > | < LESS_EQUAL > | < GREATER_THAN > | < GREATER_EQUAL >
 }
 
-/***********************************    ***********************************************
-
+/***********************************  expression  ************************************************
+expression ::= term (<EQUAL_EQUAL> | <NOT_EQUAL> | <LESS_THAN>  | <GREATER_THAN> |  <PLUS>
+   			   	|  <GREATER_EQUAL> | <PLUS> | <MINUS>)*
 **************************************************************************************************/
 void expression(HashSet syncSet) #void : {}
 {
     term(syncSet) (
-          < EQUAL_EQUAL > term(syncSet) #equalEqual(2)
-        | < NOT_EQUAL > term(syncSet) #notEqual(2)
-        | < LESS_THAN > term(syncSet) #lessThan(2)
-        | < LESS_EQUAL > term(syncSet) #lessEqual(2)
-        | < GREATER_THAN > term(syncSet) #greaterThan(2)
-        | < GREATER_EQUAL > term(syncSet) #greaterEqual(2)
-        | < PLUS > term(syncSet) #add(2)
-        | < MINUS > term(syncSet) #subtract(2)
+          <EQUAL_EQUAL> term(syncSet) #equalEqual(2)
+        | <NOT_EQUAL> term(syncSet) #notEqual(2)
+        | <LESS_THAN> term(syncSet) #lessThan(2)
+        | <LESS_EQUAL> term(syncSet) #lessEqual(2)
+        | <GREATER_THAN> term(syncSet) #greaterThan(2)
+        | <GREATER_EQUAL> term(syncSet) #greaterEqual(2)
+        | <PLUS> term(syncSet) #add(2)
+        | <MINUS> term(syncSet) #subtract(2)
     )*
 }
 
 /***********************************  term  ******************************************************
-
+term ::= operand (<MULTIPLY> operand | <DIVIDE> operand | <MODULO> operand | <AMPERSAND> operand
+		| <PIPE> operand| <CARET> operand )*
 **************************************************************************************************/
 void term(HashSet syncSet) #void : {}
 {
     operand(syncSet) (
-          < MULTIPLY > operand(syncSet) #multiply(2)
-        | < DIVIDE > operand(syncSet) #divide(2)
-        | < MODULO > operand(syncSet) #modulo(2)
-        | < AMPERSAND > operand(syncSet) #bitwiseAnd(2)
-        | < PIPE > operand(syncSet) #bitwiseOr(2)
-        | < CARET > operand(syncSet) #xor(2)
+          <MULTIPLY> operand(syncSet) #multiply(2)
+        | <DIVIDE> operand(syncSet) #divide(2)
+        | <MODULO> operand(syncSet) #modulo(2)
+        | <AMPERSAND> operand(syncSet) #bitwiseAnd(2)
+        | <PIPE> operand(syncSet) #bitwiseOr(2)
+        | <CARET> operand(syncSet) #xor(2)
     )*
 }
 
