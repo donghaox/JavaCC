@@ -80,9 +80,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		StringBuilder parameters = new StringBuilder();
 
 		for (SymTabEntry parameter : scope.values()) {
-			Definition parameterDefinition = parameter.getDefinition();
-
-			if (parameterDefinition != DefinitionImpl.FUNCTION) {
+			if (parameter.getDefinition() != DefinitionImpl.FUNCTION) {
 				int index = parameter.getIndex();
 				SimpleNode param = (SimpleNode) node.jjtGetChild(index + 1);
 				TypeSpec parameterType = param.getTypeSpec();
@@ -91,10 +89,10 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 				String type_des = get_typedes(param);
 				String data_type = get_datatype(param);
 				String type_wrap = get_typewrap(param);
-
+				
 				if (parameterType == Predefined.integerType) {
 
-					if (parameterDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
+					if (parameter.getDefinition() == DefinitionImpl.REFERENCE_PARAMETER) {
 						parameters.append("LIWrap;");
 					}
 					else {
@@ -102,7 +100,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 					}
 				}
 				else if (parameterType == Predefined.realType) {
-					if (parameterDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
+					if (parameter.getDefinition() == DefinitionImpl.REFERENCE_PARAMETER) {
 						parameters.append("LRWrap;");
 					}
 					else {
@@ -113,7 +111,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 					parameters.append("Ljava/lang/String;"); 
 				}
 				else if (parameterType == Predefined.booleanType) {
-					if (parameterDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
+					if (parameter.getDefinition() == DefinitionImpl.REFERENCE_PARAMETER) {
 						parameters.append("LBWrap;");
 					}
 					else {
@@ -121,7 +119,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 					}
 				}
 
-				if (parameterDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
+				if (parameter.getDefinition() == DefinitionImpl.REFERENCE_PARAMETER) {
 					CodeGenerator.objectFile.println("    new " + type_wrap + "Wrap ");
 					CodeGenerator.objectFile.println("    dup");
 					CodeGenerator.objectFile.flush();
@@ -144,7 +142,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 					CodeGenerator.objectFile.flush();
 				}
 
-				if (parameterDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
+				if (parameter.getDefinition() == DefinitionImpl.REFERENCE_PARAMETER) {
 					CodeGenerator.objectFile.println("    invokenonvirtual " + type_wrap
 							+ "Wrap/<init>(" + type_des + ")" + returnTypeCode);
 					CodeGenerator.objectFile.println("    dup");

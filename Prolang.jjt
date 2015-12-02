@@ -485,18 +485,15 @@ void expression(HashSet syncSet) #void : {}
 }
 
 /***********************************  term  ******************************************************
-term ::= operand (<MULTIPLY> operand | <DIVIDE> operand | <MODULO> operand | <AMPERSAND> operand
-		| <PIPE> operand| <CARET> operand )*
+term ::= operand (<MULTIPLY> operand | <DIVIDE> operand | <MODULO> operand )*
 **************************************************************************************************/
 void term(HashSet syncSet) #void : {}
 {
     operand(syncSet) (
           <MULTIPLY> operand(syncSet) #multiply(2)
-        | <DIVIDE> operand(syncSet) #divide(2)
         | <MODULO> operand(syncSet) #modulo(2)
-        | <AMPERSAND> operand(syncSet) #bitwiseAnd(2)
-        | <PIPE> operand(syncSet) #bitwiseOr(2)
-        | <CARET> operand(syncSet) #xor(2)
+        | <DIVIDE> operand(syncSet) #divide(2)
+        
     )*
 }
 
@@ -753,12 +750,8 @@ TOKEN: {
         {debugStream.println("LESS_EQUALS token: " + matchedToken.image); }
     | <GREATER_EQUAL: ">=">
         {debugStream.println("GREATER_EQUALS token: " + matchedToken.image); }
-    | <PIPE: "|">
-        {debugStream.println("OR token: " + matchedToken.image); }
     | <OR: "||">
         {debugStream.println("OR_OR token: " + matchedToken.image); }
-    | <AMPERSAND: "&">
-        {debugStream.println("AND token: " + matchedToken.image); }
     | <AMPERSAND_EQUAL: "&=">
         {debugStream.println("AND_EQUALS token: " + matchedToken.image); }
     | <AND: "&&">
@@ -767,8 +760,6 @@ TOKEN: {
         {debugStream.println("NOT_EQUALS token: " + matchedToken.image); }
     | <NOT: "!">
         {debugStream.println("NOT token: " + matchedToken.image); }
-    | <CARET: "^">
-        {debugStream.println("CARET token: " + matchedToken.image); }
 }
 
 // Types

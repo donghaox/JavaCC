@@ -88,7 +88,6 @@ public class TypeSetterVisitor extends ProlangParserVisitorAdapter
         return obj;
     }
 
-
     public Object visit(ASTbitwiseOr node, Object data)
     {
         Object obj = super.visit(node, data);

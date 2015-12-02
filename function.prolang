@@ -2,6 +2,8 @@
 
 int A.
 A = 5.
+int B.
+B = 100.
 
 function Add_five -> (int *A) void
 {
@@ -9,5 +11,14 @@ A = A + 5.
  io:fwriteln(A).
 }.
 
+function Add_ten -> (int B) void
+{
+B = B + 5.
+ io:fwriteln(B).
+}.
+
+
 Add_five(A).
-io:fwrite(A).
+io:fwriteln(A).
+Add_ten(B).
+io:fwriteln(B).
