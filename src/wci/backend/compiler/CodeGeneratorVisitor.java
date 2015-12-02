@@ -30,7 +30,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 	/*
 	 * assignment statement
 	 */
-	public Object visit(ASTassignmentStatement node, Object data)
+	public Object visit(ASTassignment_statement node, Object data)
 	{
 		String programName        = (String) data;
 		SimpleNode variableNode   = get_child(node, 0);
@@ -68,7 +68,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		return data;
 	}
 
-	public Object visit(ASTfunctionDeclaration node, Object data) {
+	public Object visit(ASTfunction_declaration node, Object data) {
 		return data;
 	}
 
@@ -189,7 +189,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		return data;
 	}
 
-	public Object visit(ASTvariableDeclaration node, Object data)
+	public Object visit(ASTvariable_declaration node, Object data)
 	{
 		return data;
 	}

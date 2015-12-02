@@ -12,10 +12,6 @@ public class ProlangParserVisitorAdapter implements ProlangParserVisitor {
         return node.childrenAccept(this, data);
     }
 
-    public Object visit(ASTassignmentStatement node, Object data) {
-        return node.childrenAccept(this, data);
-    }
-
     public Object visit(ASTidentifier node, Object data) {
         return node.childrenAccept(this, data);
     }
@@ -37,10 +33,6 @@ public class ProlangParserVisitorAdapter implements ProlangParserVisitor {
     }
 
     public Object visit(ASTinterpretedString node, Object data) {
-        return node.childrenAccept(this, data);
-    }
-
-    public Object visit(ASTfunctionDeclaration node, Object data) {
         return node.childrenAccept(this, data);
     }
 
@@ -88,16 +80,11 @@ public class ProlangParserVisitorAdapter implements ProlangParserVisitor {
         return node.childrenAccept(this, data);
     }
 
-    public Object visit(ASTvariableDeclaration node, Object data) {
-        return node.childrenAccept(this, data);
-    }
-
     public Object visit(ASTprintln node, Object data) {
         return node.childrenAccept(this, data);
     }
     
 	public Object visit(ASTprint node, Object data) {
-		// TODO Auto-generated method stub
 		return node.childrenAccept(this, data);
 	}
 
@@ -144,6 +131,21 @@ public class ProlangParserVisitorAdapter implements ProlangParserVisitor {
 
 	@Override
 	public Object visit(ASTfunction_call node, Object data) {
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTvariable_declaration node, Object data) {
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTfunction_declaration node, Object data) {
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTassignment_statement node, Object data) {
 		return node.childrenAccept(this, data);
 	} 
 }

@@ -28,19 +28,19 @@ PARSER_BEGIN(ProlangParser)
 public class ProlangParser
 {
     private static ArrayList<Integer> counter = new ArrayList<Integer>();
-    private static final String SOURCE_SUFFIX = ".go";
+    private static final String SOURCE_SUFFIX = ".prolang";
     private static final String OUTPUT_SUFFIX = ".j";
     private static SymTabStack symTabStack;
     private static SymTabEntry programId;
 
     public static void main(String [] args) throws Exception
     {
-        // Create and initialize the symbol table stack.
+      
         symTabStack = SymTabFactory.createSymTabStack();
         Predefined.initialize(symTabStack);
         counter.add(0);
-        // Process the source file path which ends in .go
-        // and create the output file path which ends in .j
+
+		//handle input and output files
         String sourceFilePath = args [0];
         int truncatedLength = sourceFilePath.length() - SOURCE_SUFFIX.length();
         int suffixIndex = sourceFilePath.lastIndexOf(SOURCE_SUFFIX);
@@ -48,25 +48,30 @@ public class ProlangParser
             (suffixIndex == truncatedLength) ?
             sourceFilePath.substring(0, truncatedLength) + OUTPUT_SUFFIX :
             sourceFilePath + OUTPUT_SUFFIX;
-        // Parse a Go program.
+            
+		//Parse
         Reader reader = new FileReader(sourceFilePath);
         ProlangParser parser = new ProlangParser(reader);
         SimpleNode rootNode = parser.start();
-        // Print the cross-reference table.
+        
+        // Print the cross-reference table
         CrossReferencer crossReferencer = new CrossReferencer();
         crossReferencer.print(symTabStack);
-        // Visit the parse tree nodes to decorate them with type information.
-        // Haven't done Go Types yet.
+
+		//visitor
         TypeSetterVisitor typeVisitor = new TypeSetterVisitor();
         rootNode.jjtAccept(typeVisitor, null);
+        
         // Create and initialize the ICode wrapper for the parse tree.
         ICode iCode = ICodeFactory.createICode();
         iCode.setRoot(rootNode);
         programId.setAttribute(ROUTINE_ICODE, iCode);
-        // Print the parse tree.
+        
+        // Print the parse tree
         ParseTreePrinter treePrinter = new ParseTreePrinter(System.out);
         treePrinter.print(symTabStack);
-        // Create the compiler backend and generate code.
+        
+        // backend doing work
         Backend backend = BackendFactory.createBackend("compile");
         backend.process(iCode, symTabStack, objectFilePath);
     }
@@ -138,8 +143,8 @@ SimpleNode statementList() :
 }
 
 /***********************************  statement  *************************************************
-statement ::= ( declarationStatement <DOT> | | assignmentStatement<DOT> | if_statement
- 						| for_statement | printStatement<DOT>| function_call<DOT> )
+statement ::= ( declaration_statement <DOT> | | assignment_statement<DOT> | if_statement
+ 						| for_statement | print<DOT> | println <DOT>| function_call<DOT> )
 **************************************************************************************************/
 void statement() #void :
 {
@@ -150,8 +155,8 @@ void statement() #void :
 {
     try
     {
-          LOOKAHEAD(2) declarationStatement(syncSet) <DOT>
-        | LOOKAHEAD(2) assignmentStatement(syncSet)  <DOT>
+          LOOKAHEAD(2) declaration_statement(syncSet) <DOT>
+        | LOOKAHEAD(2) assignment_statement(syncSet)  <DOT>
 		| if_statement(syncSet)
         | for_statement(syncSet)
         | println(syncSet)
@@ -164,15 +169,15 @@ void statement() #void :
     }
 }
 
-/***********************************  declarationStatement  ***************************************
-declarationStatement ::= ( variableDeclaration | functionDeclaration ) 
+/***********************************  declaration_statement  ***************************************
+declaration_statement ::= ( variable_declaration | function_declaration ) 
 **************************************************************************************************/
-void declarationStatement(HashSet syncSet) #void :
+void declaration_statement(HashSet syncSet) #void :
 {}
 {
     try
     {
-        LOOKAHEAD(2) variableDeclaration(syncSet) | functionDeclaration(syncSet)
+        LOOKAHEAD(2) variable_declaration(syncSet) | function_declaration(syncSet)
     }
     catch (ParseException ex)
     {
@@ -180,10 +185,10 @@ void declarationStatement(HashSet syncSet) #void :
     }
 }
 
-/***********************************  variableDeclaration  ***************************************
- variableDeclaration ::= type identifier 
+/***********************************  variable_declaration  ***************************************
+ variable_declaration ::= type identifier 
 **************************************************************************************************/
-void variableDeclaration(HashSet syncSet) throws ParseException :
+void variable_declaration(HashSet syncSet) throws ParseException :
 {
     SimpleNode variableNode;
     syncSet.add(EOF);
@@ -213,11 +218,11 @@ void variableDeclaration(HashSet syncSet) throws ParseException :
     }
 }
 
-/***********************************  functionDeclaration  ***************************************
- functionDeclaration ::= <FUNC> identifier <MINUS> <GREATER_THAN> <parameterList >
+/***********************************  function_declaration  ***************************************
+ function_declaration ::= <FUNC> identifier <MINUS> <GREATER_THAN> <parameterList >
  							return code_block
 **************************************************************************************************/
-void functionDeclaration(HashSet syncSet):
+void function_declaration(HashSet syncSet):
 {
     SimpleNode variableNode;
     SimpleNode returnTypeNode;
@@ -396,10 +401,10 @@ void else_statement(HashSet syncSet) : { syncSet.add(ELSE); }
     }
 }
 
-/***********************************  assignmentStatement  ***************************************
-assignmentStatement ::= identifier <EQUAL> expression 
+/***********************************  assignment_statement  ***************************************
+assignment_statement ::= identifier <EQUAL> expression 
 **************************************************************************************************/
-void assignmentStatement(HashSet syncSet) : { SimpleNode variableNode; }
+void assignment_statement(HashSet syncSet) : { SimpleNode variableNode; }
 {
     variableNode = identifier(syncSet, false)
     {
@@ -419,7 +424,7 @@ void for_statement(HashSet syncSet) : {}
 }
 
 /***********************************  for_clause  *************************************************
-for_clause ::= assignmentStatement <DOT> expression <DOT> assignmentStatement <DOT>
+for_clause ::= assignment_statement <DOT> expression <DOT> assignment_statement <DOT>
 **************************************************************************************************/
 void for_header() : {
     HashSet syncSet = new HashSet();
@@ -429,8 +434,8 @@ void for_header() : {
 }
 {
     try {
-        (LOOKAHEAD(2) (assignmentStatement(syncSet) <DOT> expression(syncSet) <DOT>
-                           assignmentStatement(syncSet)<DOT>)
+        (LOOKAHEAD(2) (assignment_statement(syncSet) <DOT> expression(syncSet) <DOT>
+                           assignment_statement(syncSet)<DOT>)
         |
         expression(syncSet))
     }
@@ -457,11 +462,11 @@ void operand(HashSet syncSet) #void : {}
     )
 }
 
-/***********************************  relationalOperators  ***************************************
-relationalOperators ::= < EQUAL_EQUAL > | < NOT_EQUAL > | < LESS_THAN > | < LESS_EQUAL >
+/***********************************  relational_operators  ***************************************
+relational_operators ::= < EQUAL_EQUAL > | < NOT_EQUAL > | < LESS_THAN > | < LESS_EQUAL >
                         | < GREATER_THAN > | < GREATER_EQUAL >
 **************************************************************************************************/
-void relationalOperators() #void : {}
+void relational_operators() #void : {}
 {
     < EQUAL_EQUAL > | < NOT_EQUAL > | < LESS_THAN > | < LESS_EQUAL > | < GREATER_THAN > | < GREATER_EQUAL >
 }
@@ -506,15 +511,15 @@ void expressionList(HashSet syncSet) : {}
 }
 
 /***********************************  println  *********************************************
-printStatement ::= io:fwrite <OPEN_PAREN> expression <CLOSE_PAREN> <DOT>
+println ::= io:fwrite <OPEN_PAREN> expression <CLOSE_PAREN> <DOT>
 **************************************************************************************************/
 void println(HashSet syncSet) #println : {}
 {
     "io:fwriteln" <OPEN_PAREN> expression(syncSet) <CLOSE_PAREN><DOT>
 }
 
-/***********************************  printStatement  *********************************************
-printStatement ::= io:fwrite <OPEN_PAREN> expression <CLOSE_PAREN> <DOT>
+/***********************************  print  *********************************************
+print ::= io:fwrite <OPEN_PAREN> expression <CLOSE_PAREN> <DOT>
 **************************************************************************************************/
 void print(HashSet syncSet) #print:
 {}
