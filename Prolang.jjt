@@ -28,19 +28,19 @@ PARSER_BEGIN(ProlangParser)
 public class ProlangParser
 {
     private static ArrayList<Integer> counter = new ArrayList<Integer>();
-    private static final String SOURCE_SUFFIX = ".prolang";
+    private static final String SOURCE_SUFFIX = ".go";
     private static final String OUTPUT_SUFFIX = ".j";
     private static SymTabStack symTabStack;
     private static SymTabEntry programId;
 
     public static void main(String [] args) throws Exception
     {
-      
+       // Create and initialize the symbol table stack.
         symTabStack = SymTabFactory.createSymTabStack();
         Predefined.initialize(symTabStack);
         counter.add(0);
-
-		//handle input and output files
+        // Process the source file path which ends in .go
+        // and create the output file path which ends in .j
         String sourceFilePath = args [0];
         int truncatedLength = sourceFilePath.length() - SOURCE_SUFFIX.length();
         int suffixIndex = sourceFilePath.lastIndexOf(SOURCE_SUFFIX);
@@ -48,30 +48,25 @@ public class ProlangParser
             (suffixIndex == truncatedLength) ?
             sourceFilePath.substring(0, truncatedLength) + OUTPUT_SUFFIX :
             sourceFilePath + OUTPUT_SUFFIX;
-            
-		//Parse
+        // Parse a Go program.
         Reader reader = new FileReader(sourceFilePath);
         ProlangParser parser = new ProlangParser(reader);
         SimpleNode rootNode = parser.start();
-        
-        // Print the cross-reference table
+        // Print the cross-reference table.
         CrossReferencer crossReferencer = new CrossReferencer();
         crossReferencer.print(symTabStack);
-
-		//visitor
+        // Visit the parse tree nodes to decorate them with type information.
+        // Haven't done Go Types yet.
         TypeSetterVisitor typeVisitor = new TypeSetterVisitor();
         rootNode.jjtAccept(typeVisitor, null);
-        
         // Create and initialize the ICode wrapper for the parse tree.
         ICode iCode = ICodeFactory.createICode();
         iCode.setRoot(rootNode);
         programId.setAttribute(ROUTINE_ICODE, iCode);
-        
-        // Print the parse tree
+        // Print the parse tree.
         ParseTreePrinter treePrinter = new ParseTreePrinter(System.out);
         treePrinter.print(symTabStack);
-        
-        // backend doing work
+        // Create the compiler backend and generate code.
         Backend backend = BackendFactory.createBackend("compile");
         backend.process(iCode, symTabStack, objectFilePath);
     }

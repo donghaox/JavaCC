@@ -19,11 +19,10 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 	public String getNextLabel() { return "label" + ++tagNumber; }
 
 
-	public Object visit(ASTstatementList node, Object data) {
-		if (this.programName == null) {
-			this.programName = (String) data;
+	public Object visit(ASTstatement_list node, Object data) {
+		if (CodeGeneratorVisitor.programName == null) {
+			CodeGeneratorVisitor.programName = (String) data;
 		}
-
 		return node.childrenAccept(this, data);
 	}
 
