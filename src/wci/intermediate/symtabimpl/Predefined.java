@@ -134,7 +134,6 @@ public class Predefined
     }
 
     /**
-    TODO: Put the GO standard routines here
      * Initialize the standard procedures and functions.
      * @param symTabStack the symbol table stack to initialize.
      */
