@@ -684,8 +684,6 @@ TOKEN: {
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <BOOL: "bool">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
-      | <VAR: "var">
-        {debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <VOID: "void">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
 }
