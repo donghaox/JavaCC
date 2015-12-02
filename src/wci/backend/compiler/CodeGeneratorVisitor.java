@@ -397,7 +397,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 	public Object visit(ASTequalEqual node, Object data)
 	{
 		String label = getNextLabel();
-		emitComparisonCode(node, data);
+		jasmin_compare(node, data);
 		CodeGenerator.objectFile.println("    ifne " + label);
 		CodeGenerator.objectFile.flush();
 
@@ -407,7 +407,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 	public Object visit(ASTlessThan node, Object data)
 	{
 		String label = getNextLabel();
-		emitComparisonCode(node, data);
+		jasmin_compare(node, data);
 		CodeGenerator.objectFile.println("    ifge " + label);
 		CodeGenerator.objectFile.flush();
 
@@ -417,7 +417,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 	public Object visit(ASTgreaterThan node, Object data)
 	{
 		String label = getNextLabel();
-		emitComparisonCode(node, data);
+		jasmin_compare(node, data);
 		CodeGenerator.objectFile.println("    ifle " + label);
 		CodeGenerator.objectFile.flush();
 
@@ -427,7 +427,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 	public Object visit(ASTnotEqual node, Object data)
 	{
 		String label = getNextLabel();
-		emitComparisonCode(node, data);
+		jasmin_compare(node, data);
 		CodeGenerator.objectFile.println("    ifeq " + label);
 		CodeGenerator.objectFile.flush();
 
@@ -437,7 +437,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 	public Object visit(ASTlessEqual node, Object data)
 	{
 		String label = getNextLabel();
-		emitComparisonCode(node, data);
+		jasmin_compare(node, data);
 		CodeGenerator.objectFile.println("    ifgt " + label);
 		CodeGenerator.objectFile.flush();
 
@@ -447,7 +447,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 	public Object visit(ASTgreaterEqual node, Object data)
 	{
 		String label = getNextLabel();
-		emitComparisonCode(node, data);
+		jasmin_compare(node, data);
 		CodeGenerator.objectFile.println("    iflt " + label);
 		CodeGenerator.objectFile.flush();
 
@@ -493,69 +493,6 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 			CodeGenerator.objectFile.flush();
 		}
 		
-		return data;
-	}
-
-	public Object visit(ASTbitwiseAnd node, Object data)
-	{
-		SimpleNode addend0Node = (SimpleNode) node.jjtGetChild(0);
-		SimpleNode addend1Node = (SimpleNode) node.jjtGetChild(1);
-
-		TypeSpec type0 = addend0Node.getTypeSpec();
-		TypeSpec type1 = addend1Node.getTypeSpec();
-
-		addend0Node.jjtAccept(this, data);
-		addend1Node.jjtAccept(this, data);
-
-		// Can only use bitwise operations on integers. What do we do when they're not integers? hmm...
-		if (type0 == Predefined.integerType && type1 == Predefined.integerType) {
-			// Emit the appropriate and instruction.
-			CodeGenerator.objectFile.println("    " + "iand");
-			CodeGenerator.objectFile.flush();
-		}
-
-		return data;
-	}
-
-	public Object visit(ASTbitwiseOr node, Object data)
-	{
-		SimpleNode addend0Node = (SimpleNode) node.jjtGetChild(0);
-		SimpleNode addend1Node = (SimpleNode) node.jjtGetChild(1);
-
-		TypeSpec type0 = addend0Node.getTypeSpec();
-		TypeSpec type1 = addend1Node.getTypeSpec();
-
-		addend0Node.jjtAccept(this, data);
-		addend1Node.jjtAccept(this, data);
-
-		// Can only use bitwise operations on integers. What do we do when they're not integers? hmm...
-		if (type0 == Predefined.integerType && type1 == Predefined.integerType) {
-			// Emit the appropriate and instruction.
-			CodeGenerator.objectFile.println("    " + "ior");
-			CodeGenerator.objectFile.flush();
-		}
-
-		return data;
-	}
-
-	public Object visit(ASTxor node, Object data)
-	{
-		SimpleNode addend0Node = (SimpleNode) node.jjtGetChild(0);
-		SimpleNode addend1Node = (SimpleNode) node.jjtGetChild(1);
-
-		TypeSpec type0 = addend0Node.getTypeSpec();
-		TypeSpec type1 = addend1Node.getTypeSpec();
-
-		addend0Node.jjtAccept(this, data);
-		addend1Node.jjtAccept(this, data);
-
-		// Can only use bitwise operations on integers. What do we do when they're not integers? hmm...
-		if (type0 == Predefined.integerType && type1 == Predefined.integerType) {
-			// Emit the appropriate and instruction.
-			CodeGenerator.objectFile.println("    " + "ixor");
-			CodeGenerator.objectFile.flush();
-		}
-
 		return data;
 	}
 
@@ -654,7 +591,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 	/*
 	 * Helper comparison method
 	 */
-	public void emitComparisonCode(SimpleNode node, Object data) {
+	public void jasmin_compare(SimpleNode node, Object data) {
 		SimpleNode node_0 = get_child(node, 0);
 		SimpleNode node_1 =  get_child(node, 1);
 

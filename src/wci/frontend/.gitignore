@@ -53,3 +53,7 @@
 /ProlangParserVisitor.java
 /SimpleNode.java
 /ASTfor_clause.java
+/ASTassignment_statement.java
+/ASTfunction_declaration.java
+/ASTvariable_declaration.java
+/ASTstatement_list.java
