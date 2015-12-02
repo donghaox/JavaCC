@@ -22,3 +22,7 @@ Add_five(A).
 io:fwriteln(A).
 Add_ten(B).
 io:fwriteln(B).
+
+string S.
+S = "abc".
+io:fwrite(S).

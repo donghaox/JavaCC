@@ -28,7 +28,7 @@ public class ProlangParserVisitorAdapter implements ProlangParserVisitor {
         return node.childrenAccept(this, data);
     }
 
-    public Object visit(ASTinterpretedString node, Object data) {
+    public Object visit(ASTprolang_string node, Object data) {
         return node.childrenAccept(this, data);
     }
 

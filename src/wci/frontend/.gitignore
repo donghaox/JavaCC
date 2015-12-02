@@ -57,3 +57,4 @@
 /ASTfunction_declaration.java
 /ASTvariable_declaration.java
 /ASTstatement_list.java
+/ASTprolang_string.java

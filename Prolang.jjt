@@ -458,7 +458,7 @@ void operand(HashSet syncSet) #void : {}
     (
         (
             identifier(syncSet, false) | LOOKAHEAD(2) integerConstant() | LOOKAHEAD(2) realConstant()
-            | booleanConstant() | interpretedString()
+            | prolang_string() | booleanConstant() 
         )
         | <OPEN_PAREN> expression(syncSet) <CLOSE_PAREN>
     )
@@ -620,24 +620,24 @@ void realConstant() : {}
     }
 }
 
-/***********************************  interpretedString  *****************************************
-interpretedString ::= <INTERPRE
-**************************************************************************************************/
-void interpretedString() : {}
-{
-    < INTERPRETED_STRING >
-    {
-        jjtThis.setTypeSpec(Predefined.charType);
-        jjtThis.setAttribute(VALUE, token.image.toString());
-    }
-}
-
 /***********************************  type  ******************************************************
 type ::= INT | FLOAT | STRING | BOOL
 **************************************************************************************************/
 void type() #void : {}
 {
     <INT> | <FLOAT> | <STRING> | <BOOL>
+}
+
+/***********************************  prolang_string  ********************************************
+interpretedString ::= <INTERPRE
+**************************************************************************************************/
+void prolang_string() : {}
+{
+    < PROLANG_STRING >
+    {
+        jjtThis.setTypeSpec(Predefined.charType);
+        jjtThis.setAttribute(VALUE, token.image.toString());
+    }
 }
 
 /***********************************  returnType  ************************************************
@@ -765,9 +765,9 @@ TOKEN :
         { debugStream.println("REAL_NUMBER token: " + matchedToken.image); }
       | < BOOL_CONSTANT : ( "true" | "false")>
         { debugStream.println("BOOL_CONSTANT token: " + matchedToken.image); }
-      | < INTERPRETED_STRING : "\"" ( < ALPHANUMERIC > | < ESCAPED_CHAR >
+      | < PROLANG_STRING : "\"" ( < ALPHANUMERIC > | < ESCAPED_CHAR >
              | < INTERPRETED_LITERAL_SYMBOL > | < WHITE_SPACE >)* "\"" >
-        { debugStream.println("INTERPRETED_STRING token: " + matchedToken.image); }
+        { debugStream.println("STRING token: " + matchedToken.image); }
       | < IDENTIFIER : (< UPPER_CHAR > | "_") ( < LETTER > | < DIGIT > | "_")* >
         { debugStream.println("IDENTIFIER token: " + matchedToken.image); }
       | < #ALPHANUMERIC : ( < LETTER > | < DIGIT >)+ >

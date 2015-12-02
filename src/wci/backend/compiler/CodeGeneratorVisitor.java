@@ -243,7 +243,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 	/*
 	 * generate jasmin for string
 	 */
-	public Object visit(ASTinterpretedString node, Object data)
+	public Object visit(ASTprolang_string node, Object data)
 	{
 		String _string = (String) node.getAttribute(VALUE);
 		CodeGenerator.objectFile.println("    ldc " + _string);
