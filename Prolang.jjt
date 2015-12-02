@@ -28,7 +28,7 @@ PARSER_BEGIN(ProlangParser)
 public class ProlangParser
 {
     private static ArrayList<Integer> counter = new ArrayList<Integer>();
-    private static final String SOURCE_SUFFIX = ".go";
+    private static final String SOURCE_SUFFIX = ".prolang";
     private static final String OUTPUT_SUFFIX = ".j";
     private static SymTabStack symTabStack;
     private static SymTabEntry programId;
@@ -39,8 +39,8 @@ public class ProlangParser
         symTabStack = SymTabFactory.createSymTabStack();
         Predefined.initialize(symTabStack);
         counter.add(0);
-        // Process the source file path which ends in .go
-        // and create the output file path which ends in .j
+
+		//handle source file and output file
         String sourceFilePath = args [0];
         int truncatedLength = sourceFilePath.length() - SOURCE_SUFFIX.length();
         int suffixIndex = sourceFilePath.lastIndexOf(SOURCE_SUFFIX);
@@ -48,25 +48,32 @@ public class ProlangParser
             (suffixIndex == truncatedLength) ?
             sourceFilePath.substring(0, truncatedLength) + OUTPUT_SUFFIX :
             sourceFilePath + OUTPUT_SUFFIX;
-        // Parse a Go program.
+
+      	//Parse 
         Reader reader = new FileReader(sourceFilePath);
         ProlangParser parser = new ProlangParser(reader);
         SimpleNode rootNode = parser.start();
+        
         // Print the cross-reference table.
         CrossReferencer crossReferencer = new CrossReferencer();
         crossReferencer.print(symTabStack);
-        // Visit the parse tree nodes to decorate them with type information.
-        // Haven't done Go Types yet.
+
+		//vistor
         TypeSetterVisitor typeVisitor = new TypeSetterVisitor();
         rootNode.jjtAccept(typeVisitor, null);
-        // Create and initialize the ICode wrapper for the parse tree.
+
+        
+        // Create and initialize the ICode wrapper
         ICode iCode = ICodeFactory.createICode();
         iCode.setRoot(rootNode);
         programId.setAttribute(ROUTINE_ICODE, iCode);
-        // Print the parse tree.
+
+        
+        // Print the parse tree
         ParseTreePrinter treePrinter = new ParseTreePrinter(System.out);
         treePrinter.print(symTabStack);
-        // Create the compiler backend and generate code.
+        
+        // backend
         Backend backend = BackendFactory.createBackend("compile");
         backend.process(iCode, symTabStack, objectFilePath);
     }
@@ -744,8 +751,6 @@ TOKEN: {
         {debugStream.println("GREATER_EQUALS token: " + matchedToken.image); }
     | <OR: "||">
         {debugStream.println("OR_OR token: " + matchedToken.image); }
-    | <AMPERSAND_EQUAL: "&=">
-        {debugStream.println("AND_EQUALS token: " + matchedToken.image); }
     | <AND: "&&">
         {debugStream.println("AND_AND token: " + matchedToken.image); }
     | <NOT_EQUAL: "!=">
