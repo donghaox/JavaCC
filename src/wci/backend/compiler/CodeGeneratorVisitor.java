@@ -698,7 +698,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 	/*
 	 * Helper method get type descriptor
 	 */
-	public String get_typedes(SimpleNode node){
+	public static String get_typedes(SimpleNode node){
 		if(node.getTypeSpec() == Predefined.integerType){
 			return "I";
 		}

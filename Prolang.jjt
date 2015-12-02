@@ -117,7 +117,7 @@ SimpleNode start() #void :
             symTabStack.setProgramId(programId);
         }
         <CLOSE_PAREN><DOT>
-        rootNode = statementList() <EOF>
+        rootNode = statement_list() <EOF>
         {
             programId.setAttribute(ROUTINE_LOCALS_COUNT, counter.get(0) + 1);
             return rootNode;
@@ -130,10 +130,10 @@ SimpleNode start() #void :
     }
 }
 
-/***********************************  statementList  *********************************************
-statementList ::== (statement)*
+/***********************************  statement_list  *********************************************
+statement_list ::== (statement)*
 **************************************************************************************************/
-SimpleNode statementList() :
+SimpleNode statement_list() :
 {}
 {
     (statement())*
@@ -190,7 +190,7 @@ void declaration_statement(HashSet syncSet) #void :
 **************************************************************************************************/
 void variable_declaration(HashSet syncSet) throws ParseException :
 {
-    SimpleNode variableNode;
+    SimpleNode variable_node;
     syncSet.add(EOF);
     syncSet.add(DOT);
 }
@@ -203,14 +203,14 @@ void variable_declaration(HashSet syncSet) throws ParseException :
                 TypeSpec type = typeId.getTypeSpec();
             }
         )
-         variableNode = identifier(syncSet, true) {
-            SymTabEntry variableId = (SymTabEntry) variableNode.getAttribute(ID);
-            variableNode.setAttribute(ID, variableId);
+         variable_node = identifier(syncSet, true) {
+            SymTabEntry variable_id = (SymTabEntry) variable_node.getAttribute(ID);
+            variable_node.setAttribute(ID, variable_id);
             int count = counter.get(counter.size() - 1);
-            variableId.setIndex(count++);
+            variable_id.setIndex(count++);
             counter.set(counter.size() - 1, count);
-            variableId.setTypeSpec(type);
-            variableNode.setTypeSpec(type);
+            variable_id.setTypeSpec(type);
+            variable_node.setTypeSpec(type);
         }
     }
     catch (ParseException ex) {
@@ -224,7 +224,7 @@ void variable_declaration(HashSet syncSet) throws ParseException :
 **************************************************************************************************/
 void function_declaration(HashSet syncSet):
 {
-    SimpleNode variableNode;
+    SimpleNode variable_node;
     SimpleNode returnTypeNode;
     syncSet.add(FUNC); 
 }
@@ -233,11 +233,11 @@ void function_declaration(HashSet syncSet):
         <FUNC> {
             syncSet.remove(FUNC);
         }
-        variableNode = identifier(syncSet, true) {
-            SymTabEntry functionId = (SymTabEntry) variableNode.getAttribute(ID);
+        variable_node = identifier(syncSet, true) {
+            SymTabEntry functionId = (SymTabEntry) variable_node.getAttribute(ID);
             functionId.setDefinition(DefinitionImpl.FUNCTION);
             functionId.setAttribute(ROUTINE_SYMTAB, symTabStack.push());
-            variableNode.setAttribute(ID, functionId);
+            variable_node.setAttribute(ID, functionId);
             jjtThis.setAttribute(ID, functionId);
             counter.add(0);
         }
@@ -272,7 +272,7 @@ void parameterList(HashSet syncSet) : {}
 **************************************************************************************************/
 void parameter(HashSet syncSet) throws ParseException :
 {
-    SimpleNode variableNode;
+    SimpleNode variable_node;
     syncSet.add(EOF);
     syncSet.add(DOT);
     int ref = 0;
@@ -292,19 +292,19 @@ void parameter(HashSet syncSet) throws ParseException :
         
             }
         )?
-        variableNode = identifier(syncSet, true) {
-            SymTabEntry variableId = (SymTabEntry) variableNode.getAttribute(ID);
-            variableId.setTypeSpec(type);
-            variableNode.setAttribute(ID, variableId);
-            variableNode.setTypeSpec(type);
+        variable_node = identifier(syncSet, true) {
+            SymTabEntry variable_id = (SymTabEntry) variable_node.getAttribute(ID);
+            variable_id.setTypeSpec(type);
+            variable_node.setAttribute(ID, variable_id);
+            variable_node.setTypeSpec(type);
             int count = counter.get(counter.size() - 1);
-            variableId.setIndex(count++);
+            variable_id.setIndex(count++);
             counter.set(counter.size() - 1, count);
 			//set reference
             if(ref == 1)            {
-              variableId.setDefinition(DefinitionImpl.REFERENCE_PARAMETER);			}
+              variable_id.setDefinition(DefinitionImpl.REFERENCE_PARAMETER);			}
 			else			{
-			  variableId.setDefinition(DefinitionImpl.VALUE_PARAMETER); 			}      
+			  variable_id.setDefinition(DefinitionImpl.VALUE_PARAMETER); 			}      
         }
     }
     catch (ParseException ex) {
@@ -341,16 +341,16 @@ void function_call(HashSet syncSet) :
 }
 
 /***********************************  block  *****************************************************
-block ::= <OPEN_BRACE> statementList <CLOSE_BRACE>
+block ::= <OPEN_BRACE> statement_list <CLOSE_BRACE>
 **************************************************************************************************/
 void block(HashSet syncSet) : {}
 {
     {
-        syncSet.add(CLOSE_BRACE); // skip to the next closing brace
+        syncSet.add(CLOSE_BRACE);
     }
     try
     {
-        <OPEN_BRACE> statementList() <CLOSE_BRACE>
+        <OPEN_BRACE> statement_list() <CLOSE_BRACE>
     }
     catch (ParseException ex)
     {
@@ -404,13 +404,13 @@ void else_statement(HashSet syncSet) : { syncSet.add(ELSE); }
 /***********************************  assignment_statement  ***************************************
 assignment_statement ::= identifier <EQUAL> expression 
 **************************************************************************************************/
-void assignment_statement(HashSet syncSet) : { SimpleNode variableNode; }
+void assignment_statement(HashSet syncSet) : { SimpleNode variable_node; }
 {
-    variableNode = identifier(syncSet, false)
+    variable_node = identifier(syncSet, false)
     {
-        SymTabEntry variableId = symTabStack.lookup(token.image);
-        TypeSpec typeId = variableId.getTypeSpec();
-        variableNode.setAttribute(ID, variableId);
+        SymTabEntry variable_id = symTabStack.lookup(token.image);
+        TypeSpec typeId = variable_id.getTypeSpec();
+        variable_node.setAttribute(ID, variable_id);
     }
     <EQUALS> expression(syncSet)
 }
@@ -535,24 +535,24 @@ SimpleNode identifier(HashSet syncSet, boolean declaring) : {}
     try {
         <IDENTIFIER>
         {
-            SymTabEntry variableId = symTabStack.lookup(token.image);
+            SymTabEntry variable_id = symTabStack.lookup(token.image);
 
             if (declaring) {
-                variableId = symTabStack.lookupLocal(token.image);
-                if (variableId != null) {
+                variable_id = symTabStack.lookupLocal(token.image);
+                if (variable_id != null) {
                     throw new ParseException("ERROR: Variable already declared in scope.");
                 }
 
-                variableId = symTabStack.enterLocal(token.image);
-                variableId.appendLineNumber(token.beginLine);
-                variableId.setDefinition(DefinitionImpl.VARIABLE);
-                jjtThis.setAttribute(ID, variableId);
+                variable_id = symTabStack.enterLocal(token.image);
+                variable_id.appendLineNumber(token.beginLine);
+                variable_id.setDefinition(DefinitionImpl.VARIABLE);
+                jjtThis.setAttribute(ID, variable_id);
             }
-            else if (variableId != null) {
-                variableId.appendLineNumber(token.beginLine);
-                TypeSpec type = variableId.getTypeSpec();
+            else if (variable_id != null) {
+                variable_id.appendLineNumber(token.beginLine);
+                TypeSpec type = variable_id.getTypeSpec();
                 jjtThis.setTypeSpec(type);
-                jjtThis.setAttribute(ID, variableId);
+                jjtThis.setAttribute(ID, variable_id);
             }
             else {
                 throw new ParseException("ERROR: Variable has not been declared in scope.");
@@ -650,9 +650,8 @@ SimpleNode returnType() : {}
     }
 }
 
-/********************ƒ
-  -- Tokens --
- ********************/
+/***********************************  TOKEN  ************************************************
+**************************************************************************************************/
 
 TOKEN: {
       <BREAK: "break">
@@ -660,10 +659,6 @@ TOKEN: {
       | <DEFAULT_TOKEN: "default">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <FUNC: "function">
-        { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
-      | <CASE: "case">
-        { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
-      | <STRUCT: "struct">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <ELSE: "else">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
@@ -691,10 +686,8 @@ TOKEN: {
         {debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <VOID: "void">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
-        
 }
 
-// Misc tokens
 TOKEN: {
     <#NEWLINE : [ "\r", "\n" ] >
     | <#WHITE_SPACE : < NEWLINE > | "\t" | " " >
@@ -715,7 +708,6 @@ TOKEN: {
         {debugStream.println("CLOSE_BRACKET token: " + matchedToken.image); }
 }
 
-// Special character tokens
 TOKEN: {
     <PLUS: "+">
         {debugStream.println("PLUS token: " + matchedToken.image); }
@@ -767,7 +759,6 @@ TOKEN: {
         {debugStream.println("NOT token: " + matchedToken.image); }
 }
 
-// Types
 TOKEN :
 {
       <INTEGER_NUMBER: ("-")? (<DIGIT>)+ >
@@ -798,10 +789,10 @@ TOKEN: { /* Error token */
 
 JAVACODE String handleError(ParseException ex, HashSet syncSet, boolean doPop) #void
 {
+  	System.out.println("error here");
     Token token = ex.currentToken;
     System.out.println(ex.getMessage());
 
-    // Consume tokens up to but not including a token in the sync set.
     while (!syncSet.contains(getToken(1).kind)) {
         token = getNextToken();
     }

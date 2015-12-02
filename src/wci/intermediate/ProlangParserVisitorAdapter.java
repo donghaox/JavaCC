@@ -8,10 +8,6 @@ public class ProlangParserVisitorAdapter implements ProlangParserVisitor {
         return node.childrenAccept(this, data);
     }
 
-    public Object visit(ASTstatementList node, Object data) {
-        return node.childrenAccept(this, data);
-    }
-
     public Object visit(ASTidentifier node, Object data) {
         return node.childrenAccept(this, data);
     }
@@ -146,6 +142,11 @@ public class ProlangParserVisitorAdapter implements ProlangParserVisitor {
 
 	@Override
 	public Object visit(ASTassignment_statement node, Object data) {
+		return node.childrenAccept(this, data);
+	}
+
+	@Override
+	public Object visit(ASTstatement_list node, Object data) {
 		return node.childrenAccept(this, data);
 	} 
 }
