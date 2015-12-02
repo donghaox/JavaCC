@@ -39,7 +39,7 @@ public class TypeSetterVisitor extends ProlangParserVisitorAdapter
         node.setTypeSpec(type);
     }
     
-    public Object visit(ASTassignmentStatement node, Object data)
+    public Object visit(ASTassignment_statement node, Object data)
     {
         Object obj = super.visit(node, data);
         setType(node);
@@ -92,11 +92,6 @@ public class TypeSetterVisitor extends ProlangParserVisitorAdapter
     }
     
     public Object visit(ASTrealConstant node, Object data)
-    {
-        return data;
-    }
-
-    public Object visit(ASTarray node, Object data)
     {
         return data;
     }
