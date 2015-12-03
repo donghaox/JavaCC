@@ -90,25 +90,6 @@ public class FunctionGeneratorVisitor extends ProlangParserVisitorAdapter
     }
 
     public Object visit(ASTreturnType node, Object data) {
-        TypeSpec type = node.getTypeSpec();
-        String typeCode = null;
-
-        if (type == Predefined.integerType) {
-            typeCode ="I";
-        }
-        else if (type == Predefined.realType) {
-            typeCode = "F";
-        }
-        else if (type == Predefined.charType) {
-            typeCode = "Ljava/lang/String;";
-        }
-        else if (type == Predefined.booleanType) {
-            typeCode = "Z";
-        }
-        else if (type == Predefined.voidType) {
-            typeCode = "V";
-        }
-
-        return typeCode;
+        return CodeGeneratorVisitor.get_typedes(node);
     }
 }
