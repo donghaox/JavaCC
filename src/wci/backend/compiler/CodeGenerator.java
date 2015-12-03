@@ -104,9 +104,9 @@ public class CodeGenerator extends Backend
         objectFile.println(".end method");
         objectFile.println();
 
-        // Generate user defined methods
-        ProlangParserVisitor methodGenerator = new FunctionGeneratorVisitor();
-        iCode.getRoot().jjtAccept(methodGenerator, programName);
+        // Generate user defined function
+        ProlangParserVisitor func_generator = new FunctionGeneratorVisitor();
+        iCode.getRoot().jjtAccept(func_generator, programName);
 
         // Generate the main method header.
         objectFile.println(".method public static main([Ljava/lang/String;)V");
