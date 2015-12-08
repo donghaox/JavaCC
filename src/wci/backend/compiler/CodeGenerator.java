@@ -108,8 +108,10 @@ public class CodeGenerator extends Backend
         objectFile.println();
 
         // Generate user defined function
-        ProlangParserVisitor func_generator = new FunctionGeneratorVisitor();
-        iCode.getRoot().jjtAccept(func_generator, programName);
+        CodeGeneratorVisitor codeVisitor = new CodeGeneratorVisitor();
+        CodeGeneratorVisitor.user_defined_function function_generator = codeVisitor.new user_defined_function();
+        FunctionGeneratorVisitor a = new FunctionGeneratorVisitor();
+        iCode.getRoot().jjtAccept(function_generator, programName);
 
         // Generate the main method header.
         objectFile.println(".method public static main([Ljava/lang/String;)V");
@@ -124,7 +126,6 @@ public class CodeGenerator extends Backend
         objectFile.flush();
 
         // Visit the parse tree nodes to generate code for the main method's compound statement.
-        CodeGeneratorVisitor codeVisitor = new CodeGeneratorVisitor();
         Node rootNode = iCode.getRoot();
         rootNode.jjtAccept(codeVisitor, programName);
         objectFile.println();
