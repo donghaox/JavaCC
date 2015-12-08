@@ -85,6 +85,9 @@ public class CodeGenerator extends Backend
                 else if (type == Predefined.charType) {
                     typeCode = "Ljava/lang/String;";
                 }
+                else if (type == Predefined.booleanType){
+                	typeCode = "Z";
+                }
 
                 objectFile.println(".field private static " + fieldName +
                         " " + typeCode);

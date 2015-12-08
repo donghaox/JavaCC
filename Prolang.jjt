@@ -600,10 +600,10 @@ void booleanConstant() : {}
     {
         jjtThis.setTypeSpec(Predefined.booleanType);
         if (token.image.equals("true")) {
-            jjtThis.setAttribute(VALUE, "true");
+            jjtThis.setAttribute(VALUE, 1);
         }
         else {
-            jjtThis.setAttribute(VALUE, "false");
+            jjtThis.setAttribute(VALUE, 0);
         }
     }
 }
@@ -682,7 +682,7 @@ TOKEN: {
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <STRING: "string">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
-      | <BOOL: "bool">
+      | <BOOL: "boolean">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <VOID: "void">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }

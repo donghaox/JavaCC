@@ -77,7 +77,7 @@ public class FunctionGeneratorVisitor extends ProlangParserVisitorAdapter
         node.jjtGetChild(3).jjtAccept(codeGenerator, data); // Process function body
 
         CodeGenerator.objectFile.println();
-        if(returnType == "I")
+        if(returnType == "I" || returnType == "Z")
         {
         	CodeGenerator.objectFile.println("    iload_0");
         	CodeGenerator.objectFile.println("    ireturn");
@@ -92,13 +92,14 @@ public class FunctionGeneratorVisitor extends ProlangParserVisitorAdapter
         	CodeGenerator.objectFile.println("    fload_0");
         	CodeGenerator.objectFile.println("    freturn");
         }
-        else
+      
             CodeGenerator.objectFile.println("    return");
-        CodeGenerator.objectFile.println();
-        CodeGenerator.objectFile.println(".limit locals " + localCount);
-        CodeGenerator.objectFile.println(".limit stack  " + 16);
-        CodeGenerator.objectFile.println(".end method\n");
-        CodeGenerator.objectFile.flush();
+	        CodeGenerator.objectFile.println();
+	        CodeGenerator.objectFile.println(".limit locals " + localCount);
+	        CodeGenerator.objectFile.println(".limit stack  " + 16);
+	        CodeGenerator.objectFile.println(".end method\n");
+	        CodeGenerator.objectFile.flush();
+        
 
         node.jjtGetChild(3).jjtAccept(this, data); // Process functions declared inside this function
 

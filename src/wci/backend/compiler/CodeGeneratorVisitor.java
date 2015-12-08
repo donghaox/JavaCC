@@ -59,10 +59,15 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		}
 		//push variable
 		else {
-			if(data_type =="Ljava/lang/String;")
+			if(data_type =="Ljava/lang/String;"){
 				CodeGenerator.objectFile.println("    "  + "astore " + variableId.getIndex());
-			else
+			}
+			else if(data_type == "z"){
+				CodeGenerator.objectFile.println("    "  + "istore " + variableId.getIndex());
+			}
+			else{
 			CodeGenerator.objectFile.println("    " + data_type + "store " + variableId.getIndex());
+			}
 		}
 
 		CodeGenerator.objectFile.flush();
@@ -243,6 +248,17 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		return data;
 	}
 
+	/*
+	 * generate jasmin for integer
+	 */
+	public Object visit(ASTbooleanConstant node, Object data)
+	{
+		int _integer = (Integer) node.getAttribute(VALUE);
+		CodeGenerator.objectFile.println("    ldc " + _integer);
+		CodeGenerator.objectFile.flush();
+
+		return data;
+	}
 	/*
 	 * generate jasmin for string
 	 */
