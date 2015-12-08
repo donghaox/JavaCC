@@ -110,7 +110,6 @@ public class CodeGenerator extends Backend
         // Generate user defined function
         CodeGeneratorVisitor codeVisitor = new CodeGeneratorVisitor();
         CodeGeneratorVisitor.user_defined_function function_generator = codeVisitor.new user_defined_function();
-        FunctionGeneratorVisitor a = new FunctionGeneratorVisitor();
         iCode.getRoot().jjtAccept(function_generator, programName);
 
         // Generate the main method header.
