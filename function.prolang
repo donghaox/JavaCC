@@ -5,24 +5,24 @@ A = 5.
 int B.
 B = 100.
 int C.
-function Test -> (int C) int
+function Test(int C) ->int
 {
 	C = 12333 + 5.
 	
 }.
-function Add_five -> (int *A) void
+function Add_five (int *A) ->void
 {
 A = A + 5.
  io:fwriteln(A).
 }.
 
-function Add_ten -> (int B) void
+function Add_ten(int B) ->void
 {
 B = B + 5.
  io:fwriteln(B).
 }.
 
-function Test_String -> (string A) string
+function Test_String(string A) ->string
 {
 	A = "hahahahahlol" + "secondpart".
 }.
@@ -41,7 +41,17 @@ Add_five(A).
 io:fwriteln(A).
 Add_ten(B).
 io:fwriteln(B).
-
 string S.
 S = "abc".
 io:fwriteln(S).
+
+Ret = B % 3.
+io:fwrite(Ret).
+
+function Test_Real(float A) -> float
+{
+	A = 9.000.
+}
+float R.
+R = Test_Real(R).
+
