@@ -59,6 +59,9 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		}
 		//push variable
 		else {
+			if(data_type =="Ljava/lang/String;")
+				CodeGenerator.objectFile.println("    "  + "astore " + variableId.getIndex());
+			else
 			CodeGenerator.objectFile.println("    " + data_type + "store " + variableId.getIndex());
 		}
 

@@ -79,8 +79,13 @@ public class FunctionGeneratorVisitor extends ProlangParserVisitorAdapter
         CodeGenerator.objectFile.println();
         if(returnType == "I")
         {
-        	CodeGenerator.objectFile.println("    iload 0");
+        	CodeGenerator.objectFile.println("    iload_0");
         	CodeGenerator.objectFile.println("    ireturn");
+        }
+        else if (returnType == "Ljava/lang/String;")
+        {
+        	CodeGenerator.objectFile.println("    aload_0");
+        	CodeGenerator.objectFile.println("    areturn");
         }
         else
             CodeGenerator.objectFile.println("    return");

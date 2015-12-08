@@ -7,7 +7,8 @@ B = 100.
 int C.
 function Test -> (int C) int
 {
-	C = 12333.
+	C = 12333 + 5.
+	
 }.
 function Add_five -> (int *A) void
 {
@@ -20,6 +21,15 @@ function Add_ten -> (int B) void
 B = B + 5.
  io:fwriteln(B).
 }.
+
+function Test_String -> (string A) string
+{
+	A = "hahahahahlol" + "secondpart".
+}.
+string Str.
+Str = Test_String(Str).
+io:fwriteln(Str).
+
 int Ret.
 Ret = 0.
 Ret = Test(A).
