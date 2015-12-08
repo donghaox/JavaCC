@@ -711,12 +711,6 @@ TOKEN: {
 TOKEN: {
     <PLUS: "+">
         {debugStream.println("PLUS token: " + matchedToken.image); }
-    |
-    <INCREMENT: "++">
-        {debugStream.println("INCREMENT token: " + matchedToken.image); }
-    |
-    <DECREMENT: "--">
-        {debugStream.println("DECREMENT token: " + matchedToken.image); }
     | <MINUS: "-">
         {debugStream.println("MINUS token: " + matchedToken.image); }
     | <MULTIPLY: "*">
@@ -725,20 +719,10 @@ TOKEN: {
         {debugStream.println("DIVIDE token: " + matchedToken.image); }
     | <MODULO: "%">
         {debugStream.println("MODULO token: " + matchedToken.image); }
-    | <STAR_EQUAL: "*=">
-        {debugStream.println("STAR_EQUALS token: " + matchedToken.image); }
-    | <DIVIDE_EQUAL: "/=">
-        {debugStream.println("DIVIDE_EQUALS token: " + matchedToken.image); }
-    | <MODULO_EQUAL: "%=">
-        {debugStream.println("MODULO_EQUALS token: " + matchedToken.image); }
     | <EQUALS: "=">
         {debugStream.println("EQUALS token: " + matchedToken.image); }
     | <EQUAL_EQUAL: "==">
         {debugStream.println("EQUAL_EQUAL token: " + matchedToken.image); }
-    | <PLUS_EQUAL: "+=">
-        {debugStream.println("PLUS_EQUAL token: " + matchedToken.image); }
-    | <MINUS_EQUAL: "-=">
-        {debugStream.println("MINUS_EQUAL token: " + matchedToken.image); }
     | <LESS_THAN: "<">
         {debugStream.println("LESS_THAN token: " + matchedToken.image); }
     | <GREATER_THAN: ">">
