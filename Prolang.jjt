@@ -414,7 +414,7 @@ void assignment_statement(HashSet syncSet) : { SimpleNode variable_node; }
         TypeSpec typeId = variable_id.getTypeSpec();
         variable_node.setAttribute(ID, variable_id);
     }
-    <EQUALS> expression(syncSet)
+    <EQUALS> ( LOOKAHEAD(2) function_call(syncSet) | expression(syncSet))
 }
 
 /***********************************  for_statement  **********************************************

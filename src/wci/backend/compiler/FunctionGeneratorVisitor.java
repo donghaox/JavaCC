@@ -77,7 +77,13 @@ public class FunctionGeneratorVisitor extends ProlangParserVisitorAdapter
         node.jjtGetChild(3).jjtAccept(codeGenerator, data); // Process function body
 
         CodeGenerator.objectFile.println();
-        CodeGenerator.objectFile.println("    return");
+        if(returnType == "I")
+        {
+        	CodeGenerator.objectFile.println("    iload 0");
+        	CodeGenerator.objectFile.println("    ireturn");
+        }
+        else
+            CodeGenerator.objectFile.println("    return");
         CodeGenerator.objectFile.println();
         CodeGenerator.objectFile.println(".limit locals " + localCount);
         CodeGenerator.objectFile.println(".limit stack  " + 16);

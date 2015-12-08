@@ -4,7 +4,11 @@ int A.
 A = 5.
 int B.
 B = 100.
-
+int C.
+function Test -> (int C) int
+{
+	C = 12333.
+}.
 function Add_five -> (int *A) void
 {
 A = A + 5.
@@ -16,7 +20,12 @@ function Add_ten -> (int B) void
 B = B + 5.
  io:fwriteln(B).
 }.
-
+int Ret.
+Ret = 0.
+Ret = Test(A).
+C = Test(A).
+io:fwriteln(Ret).
+io:fwriteln(C).
 
 Add_five(A).
 io:fwriteln(A).
@@ -25,4 +34,4 @@ io:fwriteln(B).
 
 string S.
 S = "abc".
-io:fwrite(S).
+io:fwriteln(S).
