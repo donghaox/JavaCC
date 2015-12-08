@@ -243,8 +243,8 @@ void function_declaration(HashSet syncSet):
             jjtThis.setAttribute(ID, functionId);
             counter.add(0);
         }
-        <MINUS> <GREATER_THAN>
-        <OPEN_PAREN> parameterList(syncSet) <CLOSE_PAREN> returnTypeNode = returnType() {
+
+        <OPEN_PAREN> parameterList(syncSet) <CLOSE_PAREN> <MINUS> <GREATER_THAN>returnTypeNode = returnType() {
             functionId.setTypeSpec(returnTypeNode.getTypeSpec());
             jjtThis.setTypeSpec(functionId.getTypeSpec());
             syncSet = new HashSet(); 
