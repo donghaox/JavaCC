@@ -8,101 +8,116 @@ import static wci.intermediate.icodeimpl.ICodeKeyImpl.ID;
 
 public class FunctionGeneratorVisitor extends ProlangParserVisitorAdapter
 {
+	static final int stack_limit = 17;
+	
     public Object visit(ASTfunction_declaration node, Object data) {
-        SymTabEntry functionId = (SymTabEntry) node.getAttribute(ID);
-        SymTabImpl scope = (SymTabImpl) functionId.getAttribute(SymTabKeyImpl.ROUTINE_SYMTAB);
-        StringBuilder typeBuffer = new StringBuilder(); // Used to store list of parameter types
-        StringBuilder initBuffer = new StringBuilder(); // Used to store local variable initialization code
-
+        StringBuilder param_dec = new StringBuilder();
+        StringBuilder var_dec = new StringBuilder(); 
+        SymTabEntry function_name = (SymTabEntry) node.getAttribute(ID);
+        SymTabImpl scope = (SymTabImpl) function_name.getAttribute(SymTabKeyImpl.ROUTINE_SYMTAB);
+        
+        //loop through function to generate jasmin code
         for (SymTabEntry parameter : scope.values()) {
-            Definition parameterDefinition = parameter.getDefinition();
-
-            if (parameterDefinition != DefinitionImpl.VARIABLE && parameterDefinition != DefinitionImpl.FUNCTION) {
+            Definition param_def = parameter.getDefinition();
+            if (param_def != DefinitionImpl.VARIABLE && param_def != DefinitionImpl.FUNCTION) {
                 TypeSpec type = parameter.getTypeSpec();
-                initBuffer.append("    .var " + parameter.getIndex() + " is " + parameter.getName() + " ");
-
-                if (parameterDefinition == DefinitionImpl.REFERENCE_PARAMETER) {
+                var_dec.append("    .var " + parameter.getIndex() + " is " + parameter.getName() + " ");
+                
+                //handle function with reference 
+                if (param_def == DefinitionImpl.REFERENCE_PARAMETER) {
                     if (type == Predefined.integerType) {
-                        typeBuffer.append("LIWrap;");
-                        initBuffer.append("LIWrap;\n");
+                        param_dec.append("LIWrap;");
+                        var_dec.append("LIWrap;\n");
                     }
                     else if (type == Predefined.realType) {
-                        typeBuffer.append("LRWrap;");
-                        initBuffer.append("LRWrap;\n");
+                        param_dec.append("LRWrap;");
+                        var_dec.append("LRWrap;\n");
                     }
                     else if (type == Predefined.charType) {
-                        typeBuffer.append("Ljava/lang/String;");
-                        initBuffer.append("Ljava/lang/String;\n");
+                        param_dec.append("Ljava/lang/String;");
+                        var_dec.append("Ljava/lang/String;\n");
                     }
                     else if (type == Predefined.booleanType) {
-                        typeBuffer.append("LBWrap;");
-                        initBuffer.append("LBWrap;\n");
+                        param_dec.append("LBWrap;");
+                        var_dec.append("LBWrap;\n");
                     }
                 }
+                
+                //handle function with copy
                 else if (type == Predefined.integerType) {
-                    typeBuffer.append("I");
-                    initBuffer.append("I\n");
+                    param_dec.append("I");
+                    var_dec.append("I\n");
                 }
                 else if (type == Predefined.realType) {
-                    typeBuffer.append("F");
-                    initBuffer.append("F\n");
+                    param_dec.append("F");
+                    var_dec.append("F\n");
                 }
                 else if (type == Predefined.charType) {
-                    typeBuffer.append("Ljava/lang/String;");
-                    initBuffer.append("Ljava/lang/String;\n");
+                    param_dec.append("Ljava/lang/String;");
+                    var_dec.append("Ljava/lang/String;\n");
                 }
                 else if (type == Predefined.booleanType) {
-                    typeBuffer.append("Z");
-                    initBuffer.append("Z\n");
+                    param_dec.append("Z");
+                    var_dec.append("Z\n");
                 }
             }
         }
 
-        String returnType = (String) node.jjtGetChild(2).jjtAccept(this, data); // Get return type
-        int localCount = 0;
+        String func_return_type = (String) node.jjtGetChild(2).jjtAccept(this, data); 
+        int local_count = 0;
 
         for (SymTabEntry entry : scope.values()) {
             if (entry.getDefinition() != DefinitionImpl.FUNCTION) {
-                localCount++;
+                local_count++;
             }
         }
 
+        //build function header
         CodeGenerator.objectFile.println(".method private static "
-                + functionId.getName() + "(" + typeBuffer.toString() + ")" + returnType + "\n");
+                + function_name.getName() + "(" + param_dec.toString() + ")" + func_return_type + "\n");
         CodeGenerator.objectFile.flush();
-        CodeGenerator.objectFile.println(initBuffer.toString()); // Initialize local variables
+        CodeGenerator.objectFile.println(var_dec.toString());
 
         ProlangParserVisitor codeGenerator = new CodeGeneratorVisitor();
-        node.jjtGetChild(1).jjtAccept(codeGenerator, data); // Process parameter list
-        node.jjtGetChild(3).jjtAccept(codeGenerator, data); // Process function body
+        
+        //handle parameter
+        node.jjtGetChild(1).jjtAccept(codeGenerator, data); 
+        
+        //handle function body
+        node.jjtGetChild(3).jjtAccept(codeGenerator, data); 
 
         CodeGenerator.objectFile.println();
-        if(returnType == "I" || returnType == "Z")
+        
+        //handle return, current support integer, boolean, string and float
+        // integer and boolean are handled the same way, boolean value is 
+        // handled 0 or 1
+        if(func_return_type == "I" || func_return_type == "Z")
         {
         	CodeGenerator.objectFile.println("    iload_0");
         	CodeGenerator.objectFile.println("    ireturn");
         }
-        else if (returnType == "Ljava/lang/String;")
+        //handle string return
+        else if (func_return_type == "Ljava/lang/String;")
         {
         	CodeGenerator.objectFile.println("    aload_0");
         	CodeGenerator.objectFile.println("    areturn");
         }
-        else if(returnType == "F")
+        //handle float return
+        else if(func_return_type == "F")
         {
         	CodeGenerator.objectFile.println("    fload_0");
         	CodeGenerator.objectFile.println("    freturn");
         }
       
-            CodeGenerator.objectFile.println("    return");
-	        CodeGenerator.objectFile.println();
-	        CodeGenerator.objectFile.println(".limit locals " + localCount);
-	        CodeGenerator.objectFile.println(".limit stack  " + 16);
-	        CodeGenerator.objectFile.println(".end method\n");
-	        CodeGenerator.objectFile.flush();
-        
-
-        node.jjtGetChild(3).jjtAccept(this, data); // Process functions declared inside this function
-
+        //finishing up function
+        CodeGenerator.objectFile.println("    return");
+	    CodeGenerator.objectFile.println();
+	    CodeGenerator.objectFile.println(".limit locals " + local_count);
+	    CodeGenerator.objectFile.println(".limit stack  " + stack_limit);
+	    CodeGenerator.objectFile.println(".end method\n");
+	    CodeGenerator.objectFile.flush();
+      
+        node.jjtGetChild(3).jjtAccept(this, data); 
         return data;
     }
 
