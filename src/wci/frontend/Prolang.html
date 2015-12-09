@@ -42,14 +42,6 @@
    </PRE>
   </TD>
  </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  TOKEN  ************************************************
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
  <!-- Token -->
  <TR>
   <TD>
@@ -155,243 +147,86 @@
 </TABLE>
 <H2 ALIGN=CENTER>NON-TERMINALS</H2>
 <TABLE>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  program  ***************************************************
- program ::= <MINUS> <MODULE> <OPEN_PAREN> <IDENTIFIER> <CLOSE_PAREN> <DOT> <EOF>
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod1">start</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>&lt;MINUS&gt; &lt;MODULE&gt; &lt;OPEN_PAREN&gt; &lt;IDENTIFIER&gt; &lt;CLOSE_PAREN&gt; &lt;DOT&gt; <A HREF="#prod2">statement_list</A> &lt;EOF&gt;</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  statement_list  *********************************************
-statement_list ::== (statement)*
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod2">statement_list</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod3">statement</A> )*</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  statement  *************************************************
-statement ::= ( declaration_statement <DOT> | | assignment_statement<DOT> | if_statement
- 						| for_statement | print<DOT> | println <DOT>| function_call<DOT> )
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod3">statement</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod4">declaration_statement</A> &lt;DOT&gt; | <A HREF="#prod5">assignment_statement</A> &lt;DOT&gt; | <A HREF="#prod6">if_statement</A> | <A HREF="#prod7">for_statement</A> | <A HREF="#prod8">println</A> | <A HREF="#prod9">print</A> | <A HREF="#prod10">function_call</A> &lt;DOT&gt; )</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  declaration_statement  ***************************************
-declaration_statement ::= ( variable_declaration | function_declaration ) 
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod4">declaration_statement</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod11">variable_declaration</A> | <A HREF="#prod12">function_declaration</A> )</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  variable_declaration  ***************************************
- variable_declaration ::= type identifier 
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod11">variable_declaration</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod13">type</A> ) <A HREF="#prod14">identifier</A></TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  function_declaration  ***************************************
- function_declaration ::= <FUNC> identifier <MINUS> <GT> <parameterList >
- 							return code_block
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod12">function_declaration</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>&lt;FUNC&gt; <A HREF="#prod14">identifier</A> &lt;OPEN_PAREN&gt; <A HREF="#prod15">parameterList</A> &lt;CLOSE_PAREN&gt; &lt;MINUS&gt; &lt;GT&gt; <A HREF="#prod16">returnType</A> <A HREF="#prod17">block</A></TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  parameterList  *********************************************
- parameterList ::= (parameter (<COMMA> parameter)*)?
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod15">parameterList</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod18">parameter</A> ( &lt;COMMA&gt; <A HREF="#prod18">parameter</A> )* )?</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  parameter  *************************************************
- parameter ::= type ( <MULTIPLY>)? identifier
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod18">parameter</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>( <A HREF="#prod13">type</A> ) ( &lt;MULTIPLY&gt; )? <A HREF="#prod14">identifier</A></TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  function_call  **********************************************
-function_call ::= IDENTIFIER <OPEN_PAREN> expression <CLOSE_PAREN>
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod10">function_call</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod14">identifier</A> &lt;OPEN_PAREN&gt; ( <A HREF="#prod19">expression</A> ( &lt;COMMA&gt; <A HREF="#prod19">expression</A> )* )? &lt;CLOSE_PAREN&gt;</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  block  *****************************************************
-block ::= <OPEN_BRACE> statement_list <CLOSE_BRACE>
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod17">block</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>&lt;OPEN_BRACE&gt; <A HREF="#prod2">statement_list</A> &lt;CLOSE_BRACE&gt;</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  if_statement  ***********************************************
-if_statement ::= <IF> expression <THEN> block (else_statement)?
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod6">if_statement</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>&lt;IF&gt; <A HREF="#prod19">expression</A> &lt;THEN&gt; <A HREF="#prod17">block</A> ( <A HREF="#prod20">else_statement</A> )?</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  else_statement  *********************************************
-else_statement ::= <ELSE> if_statement | block 
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod20">else_statement</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>&lt;ELSE&gt; ( <A HREF="#prod6">if_statement</A> | <A HREF="#prod17">block</A> )</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  assignment_statement  ***************************************
-assignment_statement ::= identifier <EQUAL> expression 
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod5">assignment_statement</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod14">identifier</A> &lt;EQ&gt; ( <A HREF="#prod10">function_call</A> | <A HREF="#prod19">expression</A> )</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  for_statement  **********************************************
-for_statement ::= <FOR> for_header block()
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod7">for_statement</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>&lt;FOR&gt; <A HREF="#prod21">for_header</A> <A HREF="#prod17">block</A></TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  for_clause  *************************************************
-for_clause ::= assignment_statement <DOT> expression <DOT> assignment_statement <DOT>
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod21">for_header</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>( ( <A HREF="#prod5">assignment_statement</A> &lt;DOT&gt; <A HREF="#prod19">expression</A> &lt;DOT&gt; <A HREF="#prod5">assignment_statement</A> &lt;DOT&gt; ) | <A HREF="#prod19">expression</A> )</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  operand  ***************************************************
-operand ::= identifier | integerConstant | realConStant | booleanConstant | string |
-             <OPEN_PAREN> expression <CLOSE_PAREN >
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod22">operand</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>( ( <A HREF="#prod14">identifier</A> | <A HREF="#prod23">integerConstant</A> | <A HREF="#prod24">realConstant</A> | <A HREF="#prod25">prolang_string</A> | <A HREF="#prod26">booleanConstant</A> ) | &lt;OPEN_PAREN&gt; <A HREF="#prod19">expression</A> &lt;CLOSE_PAREN&gt; )</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  relational_operators  ***************************************
-relational_operators ::= < EQUAL > | < NE > | < LT > | < LE >
-                        | < GT > | < GE >
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod27">relational_operators</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
@@ -422,156 +257,56 @@ relational_operators ::= < EQUAL > | < NE > | < LT > | < LE >
 <TD ALIGN=CENTER VALIGN=BASELINE>|</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>&lt;GE&gt;</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  expression  ************************************************
-expression ::= term (<EQUAL> | <NE> | <LT>  | <GT> |  <PLUS>
-   			   	|  <GE> | <PLUS> | <MINUS>)*
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod19">expression</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod28">term</A> ( &lt;EQUAL&gt; <A HREF="#prod28">term</A> | &lt;NE&gt; <A HREF="#prod28">term</A> | &lt;LT&gt; <A HREF="#prod28">term</A> | &lt;LE&gt; <A HREF="#prod28">term</A> | &lt;GT&gt; <A HREF="#prod28">term</A> | &lt;GE&gt; <A HREF="#prod28">term</A> | &lt;PLUS&gt; <A HREF="#prod28">term</A> | &lt;MINUS&gt; <A HREF="#prod28">term</A> )*</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  term  ******************************************************
-term ::= operand (<MULTIPLY> operand | <DIVIDE> operand | <MODULO> operand )*
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod28">term</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod22">operand</A> ( &lt;MULTIPLY&gt; <A HREF="#prod22">operand</A> | &lt;MODULO&gt; <A HREF="#prod22">operand</A> | &lt;DIVIDE&gt; <A HREF="#prod22">operand</A> )*</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  expressionList  ********************************************
-expressionList ::= expression (<COMMA> expression)*
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod29">expressionList</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE><A HREF="#prod19">expression</A> ( &lt;COMMA&gt; <A HREF="#prod19">expression</A> )*</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  println  *********************************************
-println ::= io:fwrite <OPEN_PAREN> expression <CLOSE_PAREN> <DOT>
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod8">println</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>"io:fwriteln" &lt;OPEN_PAREN&gt; <A HREF="#prod19">expression</A> &lt;CLOSE_PAREN&gt; &lt;DOT&gt;</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  print  *********************************************
-print ::= io:fwrite <OPEN_PAREN> expression <CLOSE_PAREN> <DOT>
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod9">print</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>"io:fwrite" &lt;OPEN_PAREN&gt; <A HREF="#prod19">expression</A> &lt;CLOSE_PAREN&gt; &lt;DOT&gt;</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  identifier  ***********************************************
-identifier ::= identifier
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod14">identifier</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>&lt;IDENTIFIER&gt;</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/*********************************** integerConstant   *******************************************
-integerConstant ::= <INTEGER_NUMBER>
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod23">integerConstant</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>&lt;INTEGER_NUMBER&gt;</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  voidConstant  **********************************************
-voidConstant ::= <VOID>
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod30">voidConstant</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>&lt;VOID&gt;</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  booleanConstant  *******************************************
-booleanConstant ::= <BOOL_CONSTANT>
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod26">booleanConstant</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>&lt;BOOL_CONSTANT&gt;</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/*********************************** realConstant   **********************************************
-realConstant ::= <REAL_NUMBER>
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod24">realConstant</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>&lt;REAL_NUMBER&gt;</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  type  ******************************************************
-type ::= INT | FLOAT | STRING | BOOL
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod13">type</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
@@ -592,29 +327,11 @@ type ::= INT | FLOAT | STRING | BOOL
 <TD ALIGN=CENTER VALIGN=BASELINE>|</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>&lt;BOOL&gt;</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  prolang_string  ********************************************
-interpretedString ::= <INTERPRE
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod25">prolang_string</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
 <TD ALIGN=LEFT VALIGN=BASELINE>&lt;PROLANG_STRING&gt;</TD>
 </TR>
- <!-- Special token -->
- <TR>
-  <TD>
-<PRE>
-/***********************************  returnType  ************************************************
-returnType ::= INT | FLOAT | STRING | BOOL | VOID
-**************************************************************************************************/</PRE>
-  </TD>
- </TR>
 <TR>
 <TD ALIGN=RIGHT VALIGN=BASELINE><A NAME="prod16">returnType</A></TD>
 <TD ALIGN=CENTER VALIGN=BASELINE>::=</TD>
