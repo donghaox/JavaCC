@@ -659,8 +659,6 @@ TOKEN: /*RESERVED WORDS*/{
       
         <DEFAULT_TOKEN: "default">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
-      | <BOOL: "bool">
-        { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <CONTINUE: "continue">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <ELSE: "else">
