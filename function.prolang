@@ -1,19 +1,11 @@
 -module (Main).
 
 int A.
-A = 5.
-int B.
-B = 100.
-int C.
+A = 100.
 function Test(int C) ->int
 {
-	C = 12333 + 5.
+	C = C + 5.
 	
-}.
-function Add_five (int *A) ->void
-{
-A = A + 5.
- io:fwriteln(A).
 }.
 
 function Add_ten(int B) ->void
@@ -47,5 +39,3 @@ io:fwriteln(S).
 
 Ret = B % 3.
 io:fwrite(Ret).
-
-

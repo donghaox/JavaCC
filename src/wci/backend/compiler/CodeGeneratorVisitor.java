@@ -2,9 +2,8 @@ package wci.backend.compiler;
 
 import wci.frontend.*;
 import wci.intermediate.*;
-import wci.intermediate.icodeimpl.ICodeKeyImpl;
-import wci.intermediate.icodeimpl.ICodeNodeImpl;
 import wci.intermediate.symtabimpl.*;
+import static wci.intermediate.icodeimpl.ICodeKeyImpl.ID;
 
 import java.util.ArrayList;
 
@@ -13,11 +12,7 @@ import static wci.intermediate.icodeimpl.ICodeKeyImpl.*;
 public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements ProlangParserTreeConstants
 {
 	private static String programName = null;
-	private static int tagNumber = 0;
-
-	public String getCurrentLabel() { return "label" + tagNumber; }
-	public String getNextLabel() { return "label" + ++tagNumber; }
-
+	private static int label_num = 0;
 
 	public Object visit(ASTstatement_list node, Object data) {
 		if (CodeGeneratorVisitor.programName == null) {
@@ -41,12 +36,12 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		String type_des = get_typedes(variableNode);
 
 		int_to_float(node, expressionNode);
-		
+
 		//handle expression
 		if (variableId.getDefinition() != DefinitionImpl.REFERENCE_PARAMETER) {
 			expressionNode.jjtAccept(this, data);
 		}
-		
+
 		//get variable from program
 		if (variableId.getSymTab().getNestingLevel() == 1) {
 			CodeGenerator.objectFile.println("    putstatic " + programName +
@@ -59,10 +54,15 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		}
 		//push variable
 		else {
-			if(data_type =="Ljava/lang/String;")
+			if(data_type =="Ljava/lang/String;"){
 				CodeGenerator.objectFile.println("    "  + "astore " + variableId.getIndex());
-			else
-			CodeGenerator.objectFile.println("    " + data_type + "store " + variableId.getIndex());
+			}
+			else if(data_type == "z"){
+				CodeGenerator.objectFile.println("    "  + "istore " + variableId.getIndex());
+			}
+			else{
+				CodeGenerator.objectFile.println("    " + data_type + "store " + variableId.getIndex());
+			}
 		}
 
 		CodeGenerator.objectFile.flush();
@@ -75,10 +75,10 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 	}
 
 	public Object visit(ASTfunction_call node, Object data) {
-		SymTabEntryImpl functionId = (SymTabEntryImpl) node.getAttribute(ID);
-		SymTabImpl scope = (SymTabImpl) functionId.getAttribute(SymTabKeyImpl.ROUTINE_SYMTAB);
+		SymTabEntryImpl function_name = (SymTabEntryImpl) node.getAttribute(ID);
+		SymTabImpl scope = (SymTabImpl) function_name.getAttribute(SymTabKeyImpl.ROUTINE_SYMTAB);
 		ArrayList<SimpleNode> unwrapReferences = new ArrayList<SimpleNode>();
-		String returnTypeCode = get_typedes(node);
+		String return_type = get_typedes(node);
 		StringBuilder parameters = new StringBuilder();
 
 		for (SymTabEntry parameter : scope.values()) {
@@ -92,8 +92,8 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 				String data_type = get_datatype(param);
 				String type_wrap = get_typewrap(param);
 				
+				//build jasmin string to call function
 				if (parameterType == Predefined.integerType) {
-
 					if (parameter.getDefinition() == DefinitionImpl.REFERENCE_PARAMETER) {
 						parameters.append("LIWrap;");
 					}
@@ -101,6 +101,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 						parameters.append("I");
 					}
 				}
+				
 				else if (parameterType == Predefined.realType) {
 					if (parameter.getDefinition() == DefinitionImpl.REFERENCE_PARAMETER) {
 						parameters.append("LRWrap;");
@@ -109,9 +110,11 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 						parameters.append("F");
 					}
 				}
+				
 				else if (parameterType == Predefined.charType) {
 					parameters.append("Ljava/lang/String;"); 
 				}
+				
 				else if (parameterType == Predefined.booleanType) {
 					if (parameter.getDefinition() == DefinitionImpl.REFERENCE_PARAMETER) {
 						parameters.append("LBWrap;");
@@ -121,6 +124,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 					}
 				}
 
+				//bring in Wrap class to handle reference
 				if (parameter.getDefinition() == DefinitionImpl.REFERENCE_PARAMETER) {
 					CodeGenerator.objectFile.println("    new " + type_wrap + "Wrap ");
 					CodeGenerator.objectFile.println("    dup");
@@ -130,7 +134,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 				if (parameterEntry == null) {
 					param.jjtAccept(this, data);
 				}
-				else if (functionId.getSymTab().getNestingLevel() == 1) {
+				else if (function_name.getSymTab().getNestingLevel() == 1) {
 					CodeGenerator.objectFile.println("    getstatic " + programName +
 							"/" + parameterEntry.getName() + " " + type_des);
 					CodeGenerator.objectFile.flush();
@@ -143,10 +147,11 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 					CodeGenerator.objectFile.println("    " + data_type + "load " + slot);
 					CodeGenerator.objectFile.flush();
 				}
-
+				
+				//load wrap class for function call with reference
 				if (parameter.getDefinition() == DefinitionImpl.REFERENCE_PARAMETER) {
 					CodeGenerator.objectFile.println("    invokenonvirtual " + type_wrap
-							+ "Wrap/<init>(" + type_des + ")" + returnTypeCode);
+							+ "Wrap/<init>(" + type_des + ")" + return_type);
 					CodeGenerator.objectFile.println("    dup");
 					int slot = parameterEntry.getIndex();
 					if (parameterEntry.getSymTab().getNestingLevel() == 1) {
@@ -159,8 +164,9 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 			}
 		}
 
+		/* actual jasmin method call, caller unwrapping*/
 		CodeGenerator.objectFile.println("    invokestatic  " + programName + "/"
-				+ functionId.getName() + "(" + parameters.toString() + ")" + returnTypeCode);
+				+ function_name.getName() + "(" + parameters.toString() + ")" + return_type);
 
 		for (SimpleNode unwrappingNode : unwrapReferences) {
 			SymTabEntry parameterEntry = (SymTabEntry) unwrappingNode.getAttribute(ID);
@@ -243,6 +249,17 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		return data;
 	}
 
+	/*
+	 * generate jasmin for integer
+	 */
+	public Object visit(ASTbooleanConstant node, Object data)
+	{
+		int _integer = (Integer) node.getAttribute(VALUE);
+		CodeGenerator.objectFile.println("    ldc " + _integer);
+		CodeGenerator.objectFile.flush();
+
+		return data;
+	}
 	/*
 	 * generate jasmin for string
 	 */
@@ -329,11 +346,11 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		SimpleNode for_clause_data_0 = (SimpleNode) for_clause.get(0);
 		String start_location =  (String) for_clause.get(1);
 		String end_location = (String) for_clause.get(2);
-		
+
 		//execute body and increment/decrement
 		node_1.jjtAccept(this, data);
 		for_clause_data_0.jjtAccept(this, data); 
-		
+
 		//afterthought
 		CodeGenerator.objectFile.println("    goto " + start_location);
 		CodeGenerator.objectFile.println(end_location + ":");
@@ -352,11 +369,11 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		SimpleNode node_0 = get_child(node, 0);
 		SimpleNode node_1 = get_child(node, 1);
 		SimpleNode node_2 = get_child(node, 2);
-		
+
 		//initialization, get start location
-		String start_location = getNextLabel();
+		String start_location = next_label();
 		node_0.jjtAccept(this, data);
-		
+
 		//afterthought
 		CodeGenerator.objectFile.println(start_location + ":");
 		CodeGenerator.objectFile.flush();
@@ -381,7 +398,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 
 		String true_false = (String) node_0.jjtAccept(this, data);
 		//if true
-		String if_true = getNextLabel(); 
+		String if_true = next_label(); 
 		node_1.jjtAccept(this, if_true); 
 		CodeGenerator.objectFile.println(if_true + ":");
 		CodeGenerator.objectFile.flush();
@@ -396,9 +413,13 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		return data;
 	}
 
+	public Object visit(ASTreturnType node, Object data) {
+		return CodeGeneratorVisitor.get_typedes(node);
+	}
+
 	public Object visit(ASTequalEqual node, Object data)
 	{
-		String label = getNextLabel();
+		String label = next_label();
 		jasmin_compare(node, data);
 		CodeGenerator.objectFile.println("    ifne " + label);
 		CodeGenerator.objectFile.flush();
@@ -408,7 +429,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 
 	public Object visit(ASTlessThan node, Object data)
 	{
-		String label = getNextLabel();
+		String label = next_label();
 		jasmin_compare(node, data);
 		CodeGenerator.objectFile.println("    ifge " + label);
 		CodeGenerator.objectFile.flush();
@@ -418,7 +439,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 
 	public Object visit(ASTgreaterThan node, Object data)
 	{
-		String label = getNextLabel();
+		String label = next_label();
 		jasmin_compare(node, data);
 		CodeGenerator.objectFile.println("    ifle " + label);
 		CodeGenerator.objectFile.flush();
@@ -428,7 +449,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 
 	public Object visit(ASTnotEqual node, Object data)
 	{
-		String label = getNextLabel();
+		String label = next_label();
 		jasmin_compare(node, data);
 		CodeGenerator.objectFile.println("    ifeq " + label);
 		CodeGenerator.objectFile.flush();
@@ -438,7 +459,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 
 	public Object visit(ASTlessEqual node, Object data)
 	{
-		String label = getNextLabel();
+		String label = next_label();
 		jasmin_compare(node, data);
 		CodeGenerator.objectFile.println("    ifgt " + label);
 		CodeGenerator.objectFile.flush();
@@ -448,7 +469,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 
 	public Object visit(ASTgreaterEqual node, Object data)
 	{
-		String label = getNextLabel();
+		String label = next_label();
 		jasmin_compare(node, data);
 		CodeGenerator.objectFile.println("    iflt " + label);
 		CodeGenerator.objectFile.flush();
@@ -494,7 +515,7 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 			CodeGenerator.objectFile.println("    " + typePrefix + "add");
 			CodeGenerator.objectFile.flush();
 		}
-		
+
 		return data;
 	}
 
@@ -692,6 +713,137 @@ public class CodeGeneratorVisitor extends ProlangParserVisitorAdapter implements
 		}
 		else{
 			return false;
+		}
+	}
+	
+	/*
+	 * Helper get label for jasmin
+	 */
+	public String current_label(){ 
+		return "label" + label_num; 
+	}
+	
+	/*
+	 * Helper generate label for jasmin
+	 */
+	public String next_label() { 
+		return "label" + ++label_num; 
+	}
+
+
+	public class user_defined_function extends ProlangParserVisitorAdapter
+	{
+		static final int stack_limit = 17;
+
+		public Object visit(ASTfunction_declaration node, Object data) {
+			StringBuilder param_dec = new StringBuilder();
+			StringBuilder var_dec = new StringBuilder(); 
+			SymTabEntry function_name = (SymTabEntry) node.getAttribute(ID);
+			SymTabImpl scope = (SymTabImpl) function_name.getAttribute(SymTabKeyImpl.ROUTINE_SYMTAB);
+
+			//loop through function to generate jasmin code
+			for (SymTabEntry parameter : scope.values()) {
+				Definition param_def = parameter.getDefinition();
+				if (param_def != DefinitionImpl.VARIABLE && param_def != DefinitionImpl.FUNCTION) {
+					TypeSpec type = parameter.getTypeSpec();
+					var_dec.append("    .var " + parameter.getIndex() + " is " + parameter.getName() + " ");
+
+					//handle function with reference 
+					if (param_def == DefinitionImpl.REFERENCE_PARAMETER) {
+						if (type == Predefined.integerType) {
+							param_dec.append("LIWrap;");
+							var_dec.append("LIWrap;\n");
+						}
+						else if (type == Predefined.realType) {
+							param_dec.append("LRWrap;");
+							var_dec.append("LRWrap;\n");
+						}
+						else if (type == Predefined.charType) {
+							param_dec.append("Ljava/lang/String;");
+							var_dec.append("Ljava/lang/String;\n");
+						}
+						else if (type == Predefined.booleanType) {
+							param_dec.append("LBWrap;");
+							var_dec.append("LBWrap;\n");
+						}
+					}
+
+					//handle function with copy
+					else if (type == Predefined.integerType) {
+						param_dec.append("I");
+						var_dec.append("I\n");
+					}
+					else if (type == Predefined.realType) {
+						param_dec.append("F");
+						var_dec.append("F\n");
+					}
+					else if (type == Predefined.charType) {
+						param_dec.append("Ljava/lang/String;");
+						var_dec.append("Ljava/lang/String;\n");
+					}
+					else if (type == Predefined.booleanType) {
+						param_dec.append("Z");
+						var_dec.append("Z\n");
+					}
+				}
+			}
+
+			String func_return_type = (String) node.jjtGetChild(2).jjtAccept(CodeGeneratorVisitor.this, data); 
+			int local_count = 0;
+
+			for (SymTabEntry entry : scope.values()) {
+				if (entry.getDefinition() != DefinitionImpl.FUNCTION) {
+					local_count++;
+				}
+			}
+
+			//build function header
+			CodeGenerator.objectFile.println(".method private static "
+					+ function_name.getName() + "(" + param_dec.toString() + ")" + func_return_type + "\n");
+			CodeGenerator.objectFile.flush();
+			CodeGenerator.objectFile.println(var_dec.toString());
+
+			ProlangParserVisitor codeGenerator = new CodeGeneratorVisitor();
+
+			//handle parameter
+			node.jjtGetChild(1).jjtAccept(codeGenerator, data); 
+
+			//handle function body
+			node.jjtGetChild(3).jjtAccept(codeGenerator, data); 
+
+			CodeGenerator.objectFile.println();
+
+			//handle return, current support integer, boolean, string and float
+			// integer and boolean are handled the same way, boolean value is 
+			// handled 0 or 1
+			if(func_return_type == "I" || func_return_type == "Z")
+			{
+				CodeGenerator.objectFile.println("    iload_0");
+				CodeGenerator.objectFile.println("    ireturn");
+			}
+			//handle string return
+			else if (func_return_type == "Ljava/lang/String;")
+			{
+				CodeGenerator.objectFile.println("    aload_0");
+				CodeGenerator.objectFile.println("    areturn");
+			}
+			//handle float return
+			else if(func_return_type == "F")
+			{
+				CodeGenerator.objectFile.println("    fload_0");
+				CodeGenerator.objectFile.println("    freturn");
+			}
+
+			//finishing up function
+			CodeGenerator.objectFile.println("    return");
+			CodeGenerator.objectFile.println();
+			CodeGenerator.objectFile.println(".limit locals " + local_count);
+			CodeGenerator.objectFile.println(".limit stack  " + stack_limit);
+			CodeGenerator.objectFile.println(".end method\n");
+			CodeGenerator.objectFile.flush();
+
+			node.jjtGetChild(3).jjtAccept(this, data); 
+			return data;
 		}
 	}
 }
