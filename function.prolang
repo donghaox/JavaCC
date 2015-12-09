@@ -14,28 +14,5 @@ B = B + 5.
  io:fwriteln(B).
 }.
 
-function Test_String(string A) ->string
-{
-	A = "hahahahahlol" + "secondpart".
-}.
-string Str.
-Str = Test_String(Str).
-io:fwriteln(Str).
-
-int Ret.
-Ret = 0.
-Ret = Test(A).
-C = Test(A).
-io:fwriteln(Ret).
-io:fwriteln(C).
-
-Add_five(A).
-io:fwriteln(A).
-Add_ten(B).
-io:fwriteln(B).
-string S.
-S = "abc".
-io:fwriteln(S).
-
-Ret = B % 3.
-io:fwrite(Ret).
+A = Add_ten(A).
+io:fwrite(A).

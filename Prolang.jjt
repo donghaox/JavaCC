@@ -656,12 +656,7 @@ SimpleNode returnType() : {}
 **************************************************************************************************/
 
 TOKEN: /*RESERVED WORDS*/{
-      
-        <DEFAULT_TOKEN: "default">
-        { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
-      | <CONTINUE: "continue">
-        { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
-      | <ELSE: "else">
+       <ELSE: "else">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <FUNC: "function">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
