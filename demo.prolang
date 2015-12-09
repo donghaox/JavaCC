@@ -1,0 +1,29 @@
+-module (Main).
+
+//display all prime numbers
+//and return the number of prime numbers
+int A.
+A = 0.
+int R.
+int B.
+B = 0.
+
+function CalculatePrime(int Num) -> int
+{
+	for A = 2. A < Num. A = A + 1.
+	{
+		if Num % A == 0 then {Num = 0.}
+	}
+}.
+
+int Ret.
+int Num.
+Num = 100.
+Ret = 0.
+
+io:fwriteln("All Prime Numbers under 1000").
+for B = 2. B <= 1000. B = B + 1.
+{
+	Ret = CalculatePrime(B).
+	if Ret != 0 then {io:fwrite(Ret). io:fwrite(" ").}
+}

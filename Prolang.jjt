@@ -221,7 +221,7 @@ void variable_declaration(HashSet syncSet) throws ParseException :
 }
 
 /***********************************  function_declaration  ***************************************
- function_declaration ::= <FUNC> identifier <MINUS> <GREATER_THAN> <parameterList >
+ function_declaration ::= <FUNC> identifier <MINUS> <GT> <parameterList >
  							return code_block
 **************************************************************************************************/
 void function_declaration(HashSet syncSet):
@@ -244,7 +244,7 @@ void function_declaration(HashSet syncSet):
             counter.add(0);
         }
 
-        <OPEN_PAREN> parameterList(syncSet) <CLOSE_PAREN> <MINUS> <GREATER_THAN>returnTypeNode = returnType() {
+        <OPEN_PAREN> parameterList(syncSet) <CLOSE_PAREN> <MINUS> <GT>returnTypeNode = returnType() {
             functionId.setTypeSpec(returnTypeNode.getTypeSpec());
             jjtThis.setTypeSpec(functionId.getTypeSpec());
             syncSet = new HashSet(); 
@@ -414,7 +414,7 @@ void assignment_statement(HashSet syncSet) : { SimpleNode variable_node; }
         TypeSpec typeId = variable_id.getTypeSpec();
         variable_node.setAttribute(ID, variable_id);
     }
-    <EQUALS> ( LOOKAHEAD(2) function_call(syncSet) | expression(syncSet))
+    <EQ> ( LOOKAHEAD(2) function_call(syncSet) | expression(syncSet))
 }
 
 /***********************************  for_statement  **********************************************
@@ -465,27 +465,27 @@ void operand(HashSet syncSet) #void : {}
 }
 
 /***********************************  relational_operators  ***************************************
-relational_operators ::= < EQUAL_EQUAL > | < NOT_EQUAL > | < LESS_THAN > | < LESS_EQUAL >
-                        | < GREATER_THAN > | < GREATER_EQUAL >
+relational_operators ::= < EQUAL > | < NE > | < LT > | < LE >
+                        | < GT > | < GE >
 **************************************************************************************************/
 void relational_operators() #void : {}
 {
-    < EQUAL_EQUAL > | < NOT_EQUAL > | < LESS_THAN > | < LESS_EQUAL > | < GREATER_THAN > | < GREATER_EQUAL >
+    < EQUAL > | < NE > | < LT > | < LE > | < GT > | < GE >
 }
 
 /***********************************  expression  ************************************************
-expression ::= term (<EQUAL_EQUAL> | <NOT_EQUAL> | <LESS_THAN>  | <GREATER_THAN> |  <PLUS>
-   			   	|  <GREATER_EQUAL> | <PLUS> | <MINUS>)*
+expression ::= term (<EQUAL> | <NE> | <LT>  | <GT> |  <PLUS>
+   			   	|  <GE> | <PLUS> | <MINUS>)*
 **************************************************************************************************/
 void expression(HashSet syncSet) #void : {}
 {
     term(syncSet) (
-          <EQUAL_EQUAL> term(syncSet) #equalEqual(2)
-        | <NOT_EQUAL> term(syncSet) #notEqual(2)
-        | <LESS_THAN> term(syncSet) #lessThan(2)
-        | <LESS_EQUAL> term(syncSet) #lessEqual(2)
-        | <GREATER_THAN> term(syncSet) #greaterThan(2)
-        | <GREATER_EQUAL> term(syncSet) #greaterEqual(2)
+          <EQUAL> term(syncSet) #equalEqual(2)
+        | <NE> term(syncSet) #notEqual(2)
+        | <LT> term(syncSet) #lessThan(2)
+        | <LE> term(syncSet) #lessEqual(2)
+        | <GT> term(syncSet) #greaterThan(2)
+        | <GE> term(syncSet) #greaterEqual(2)
         | <PLUS> term(syncSet) #add(2)
         | <MINUS> term(syncSet) #subtract(2)
     )*
@@ -599,7 +599,7 @@ void booleanConstant() : {}
     < BOOL_CONSTANT >
     {
         jjtThis.setTypeSpec(Predefined.booleanType);
-        if (token.image.equals("true")) {
+        if (token.image.EQ("true")) {
             jjtThis.setAttribute(VALUE, "true");
         }
         else {
@@ -655,22 +655,23 @@ SimpleNode returnType() : {}
 /***********************************  TOKEN  ************************************************
 **************************************************************************************************/
 
-TOKEN: {
-      <BREAK: "break">
+TOKEN: /*RESERVED WORDS*/{
+      
+        <DEFAULT_TOKEN: "default">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
-      | <DEFAULT_TOKEN: "default">
+      | <BOOL: "bool">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
-      | <FUNC: "function">
+      | <CONTINUE: "continue">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <ELSE: "else">
+        { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
+      | <FUNC: "function">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <MODULE: "module">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <IF: "if">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <THEN: "then">
-        { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
-      | <CONTINUE: "continue">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <FOR: "for">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
@@ -682,13 +683,11 @@ TOKEN: {
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <STRING: "string">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
-      | <BOOL: "bool">
-        { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
       | <VOID: "void">
         { debugStream.println("RESERVED_WORD token: " + matchedToken.image); }
 }
 
-TOKEN: {
+TOKEN: /*delimiter tokens*/{
     <#NEWLINE : [ "\r", "\n" ] >
     | <#WHITE_SPACE : < NEWLINE > | "\t" | " " >
     | <SEMICOLON : ";" >
@@ -708,7 +707,7 @@ TOKEN: {
         {debugStream.println("CLOSE_BRACKET token: " + matchedToken.image); }
 }
 
-TOKEN: {
+TOKEN: /*Special Symbol Tokens*/{
     <PLUS: "+">
         {debugStream.println("PLUS token: " + matchedToken.image); }
     | <MINUS: "-">
@@ -719,29 +718,29 @@ TOKEN: {
         {debugStream.println("DIVIDE token: " + matchedToken.image); }
     | <MODULO: "%">
         {debugStream.println("MODULO token: " + matchedToken.image); }
-    | <EQUALS: "=">
-        {debugStream.println("EQUALS token: " + matchedToken.image); }
-    | <EQUAL_EQUAL: "==">
-        {debugStream.println("EQUAL_EQUAL token: " + matchedToken.image); }
-    | <LESS_THAN: "<">
-        {debugStream.println("LESS_THAN token: " + matchedToken.image); }
-    | <GREATER_THAN: ">">
-        {debugStream.println("GREATER_THAN token: " + matchedToken.image); }
-    | <LESS_EQUAL: "<=">
-        {debugStream.println("LESS_EQUALS token: " + matchedToken.image); }
-    | <GREATER_EQUAL: ">=">
-        {debugStream.println("GREATER_EQUALS token: " + matchedToken.image); }
+    | <EQ: "=">
+        {debugStream.println("EQ token: " + matchedToken.image); }
+    | <EQUAL: "==">
+        {debugStream.println("EQUAL token: " + matchedToken.image); }
+    | <LT: "<">
+        {debugStream.println("LT token: " + matchedToken.image); }
+    | <GT: ">">
+        {debugStream.println("GT token: " + matchedToken.image); }
+    | <LE: "<=">
+        {debugStream.println("LESS_EQ token: " + matchedToken.image); }
+    | <GE: ">=">
+        {debugStream.println("GREATER_EQ token: " + matchedToken.image); }
     | <OR: "||">
         {debugStream.println("OR_OR token: " + matchedToken.image); }
     | <AND: "&&">
         {debugStream.println("AND_AND token: " + matchedToken.image); }
-    | <NOT_EQUAL: "!=">
-        {debugStream.println("NOT_EQUALS token: " + matchedToken.image); }
+    | <NE: "!=">
+        {debugStream.println("NOT_EQ token: " + matchedToken.image); }
     | <NOT: "!">
         {debugStream.println("NOT token: " + matchedToken.image); }
 }
 
-TOKEN :
+TOKEN /*variable tokens*/:
 {
       <INTEGER_NUMBER: ("-")? (<DIGIT>)+ >
         { debugStream.println("INTEGER_NUMBER token: " + matchedToken.image); }

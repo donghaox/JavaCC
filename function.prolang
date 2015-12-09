@@ -48,10 +48,4 @@ io:fwriteln(S).
 Ret = B % 3.
 io:fwrite(Ret).
 
-function Test_Real(float A) -> float
-{
-	A = 9.000.
-}
-float R.
-R = Test_Real(R).
 
