@@ -62,12 +62,10 @@ public class ProlangParser
         TypeSetterVisitor typeVisitor = new TypeSetterVisitor();
         rootNode.jjtAccept(typeVisitor, null);
 
-        
         // Create and initialize the ICode wrapper
         ICode iCode = ICodeFactory.createICode();
         iCode.setRoot(rootNode);
         programId.setAttribute(ROUTINE_ICODE, iCode);
-
         
         // Print the parse tree
         ParseTreePrinter treePrinter = new ParseTreePrinter(System.out);
